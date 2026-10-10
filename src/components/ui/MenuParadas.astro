@@ -1,0 +1,90 @@
+---
+// Menú de píldora del móvil: un icono por sección que lleva directo a su
+// parada (el viaje lo hace paginado.ts). Solo se muestra con el scroll por
+// paradas activo. Iconos SVG propios, sin recursos externos.
+import { PARADAS, type IdParada } from '../../datos/paradas';
+
+const ICONOS: Partial<Record<IdParada, string>> = {
+  // Horario: reloj.
+  '1': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  // Clases: el octógono.
+  '2': '<path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z"/>',
+  // Galería: fotografía.
+  '3': '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m21 16-5-5-10 8"/>',
+  // Premios: trofeo.
+  '4': '<path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4.5v1A3 3 0 0 0 7.5 10M17 6h2.5v1a3 3 0 0 1-3 3M12 13v4M8.5 21h7M9.5 17h5v4h-5z"/>',
+  // Ubicación: chincheta de mapa.
+  '5': '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+};
+
+const entradas = PARADAS.map((parada, indice) => ({ parada, indice })).filter(({ parada }) => ICONOS[parada.id]);
+---
+
+<nav class="menu" aria-label="Secciones del recorrido">
+  {
+    entradas.map(({ parada, indice }) => (
+      <button type="button" data-indice={indice} aria-label={parada.nombre} title={parada.nombre}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICONOS[parada.id]} />
+      </button>
+    ))
+  }
+</nav>
+
+<style>
+  .menu {
+    position: fixed;
+    left: 50%;
+    bottom: calc(0.9rem + env(safe-area-inset-bottom));
+    z-index: 3;
+    display: none;
+    gap: 0.15rem;
+    padding: 0.3rem;
+    transform: translateX(-50%);
+    background: rgb(13 14 16 / 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 999px;
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  }
+
+  :global([data-paginado]) .menu {
+    display: flex;
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-chapa);
+    cursor: pointer;
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button[aria-current='true'] {
+    background: var(--color-acento);
+    color: #fff;
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--color-luz);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

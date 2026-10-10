@@ -37,7 +37,8 @@ src/
   layouts/
     Base.astro               # <html lang="es">, metadatos, fuentes, estilos globales
   components/
-    ui/                      # Astro: cabecera, paradas (HTML), progreso, saltar, pie
+    ui/                      # Astro: cabecera, paradas (HTML), progreso, saltar, pie,
+                             # MenuParadas (píldora del móvil)
     nave/                    # isla React Three Fiber
       Nave.tsx               # <Canvas>, carga, niveles de calidad
       escena/                # Envolvente, Ventanales, Techo, Fluorescentes, Pilares,

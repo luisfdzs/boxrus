@@ -56,6 +56,8 @@ export const RECORRIDO = {
    */
   paginadoMovil: {
     segundosPorTransicion: 2.2,
+    /** Duración de cada tramo cuando se viaja directo desde el menú de píldora. */
+    segundosPorTramoMenu: 1.5,
     /** Desplazamiento mínimo del dedo (px) para contar como gesto. */
     umbralGesto: 30,
   },

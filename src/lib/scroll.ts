@@ -5,10 +5,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { fijarProgreso } from './progreso';
 import type { Modo } from './modo';
-import { iniciarPaginado, usarPaginado } from './paginado';
+import { iniciarPaginado, usarPaginado, type ControladorPaginado } from './paginado';
 import { calcularPausas, progresoDeParada } from './pausas';
 
-export function iniciarScroll(pista: HTMLElement, modo: Modo): void {
+/** Devuelve el controlador del scroll por paradas si está activo (móvil). */
+export function iniciarScroll(pista: HTMLElement, modo: Modo): ControladorPaginado | undefined {
   gsap.registerPlugin(ScrollTrigger);
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const paginado = !modo.captura && usarPaginado(modo.paginado);
@@ -43,7 +44,7 @@ export function iniciarScroll(pista: HTMLElement, modo: Modo): void {
 
   if (paginado) {
     const pausas = calcularPausas();
-    iniciarPaginado({
+    return iniciarPaginado({
       reducido,
       posiciones: () => {
         const { start, end } = disparador;

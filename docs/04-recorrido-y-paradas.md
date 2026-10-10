@@ -97,6 +97,7 @@ Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arq
 - **Reversible:** subir el scroll deshace exactamente el recorrido.
 - **Ajuste a paradas (escritorio):** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real: por ahora desactivado; se prueba con `?ajuste=1`.
 - **Scroll por paradas (móvil):** en pantalla táctil y vertical (ancho/alto < 0,8), cada gesto lleva a la parada siguiente o a la anterior, sin posiciones intermedias. El scroll se anima a ritmo constante (2,2 s por transición, en `RECORRIDO.paginadoMovil`) y la trayectoria pone su propia aceleración y frenada, así que la cámara hace el mismo recorrido que con scroll libre. Los gestos durante la animación se ignoran; tras el epílogo, el siguiente gesto lleva al cierre. Se puede forzar en escritorio con `?paginado=1`.
+- **Menú de píldora (móvil):** abajo y centrado, con un icono por sección (reloj, octógono, fotografía, trofeo, chincheta). Un toque viaja directo a esa parada: la cámara hace el recorrido completo, pasando por las intermedias sin detenerse, a 1,5 s por tramo (`RECORRIDO.paginadoMovil.segundosPorTramoMenu`). Durante el viaje solo se muestra el texto de la parada de destino; el icono de la sección actual (o de destino) va resaltado. Otro toque a mitad de viaje cambia el destino desde donde esté la cámara. Solo aparece con el scroll por paradas activo.
 - **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables.
 
 ## Encuadres en móvil (vertical)
