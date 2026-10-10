@@ -20,5 +20,19 @@
       "Bash(vercel --prod *)",
       "Bash(npx vercel --prod *)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/comprobar-tipos.mjs\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
   }
 }

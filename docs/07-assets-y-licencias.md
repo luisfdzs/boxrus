@@ -37,4 +37,5 @@
 
 | Recurso | Fichero en el repo | Autor | Fuente (URL) | Licencia | Atribución necesaria | Fecha |
 |---|---|---|---|---|---|---|
-| _(vacío)_ | | | | | | |
+| Anton (titulares, peso 400, subconjunto latino) | `@fontsource/anton` (npm, se empaqueta en `/_astro/`) | The Anton Project Authors | https://github.com/googlefonts/AntonFont · https://fontsource.org/fonts/anton | SIL OFL 1.1 | No (licencia incluida en el paquete) | 2026-10-10 |
+| Inter variable (textos, eje `wght`) | `@fontsource-variable/inter` (npm, se empaqueta en `/_astro/`) | The Inter Project Authors | https://github.com/rsms/inter · https://fontsource.org/fonts/inter | SIL OFL 1.1 | No (licencia incluida en el paquete) | 2026-10-10 |

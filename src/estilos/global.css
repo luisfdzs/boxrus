@@ -1,0 +1,38 @@
+/* Paleta y tipografía de docs/02-direccion-de-arte.md */
+:root {
+  --color-acero: #16181b;
+  --color-tatami: #1b1f22;
+  --color-chapa: #8a9096;
+  --color-luz: #fff4e2;
+  --color-acento: #d4382a;
+
+  --fuente-titulares: 'Anton', 'Arial Narrow', sans-serif;
+  --fuente-texto: 'Inter Variable', system-ui, sans-serif;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--color-acero);
+  color: var(--color-luz);
+  font-family: var(--fuente-texto);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulares);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}

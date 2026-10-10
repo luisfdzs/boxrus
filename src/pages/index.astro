@@ -1,11 +1,26 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Base from '../layouts/Base.astro';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Base titulo="Boxrus" descripcion="Gimnasio de MMA y deportes de contacto. Recorre la nave: horario, clases, galería, premios y ubicación.">
+  <main>
+    <h1>Boxrus</h1>
+    <p>La nave está en obras. Vuelve pronto.</p>
+  </main>
+</Base>
+
+<style>
+  main {
+    min-height: 100svh;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(3rem, 12vw, 8rem);
+    color: var(--color-acento);
+  }
+</style>

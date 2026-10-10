@@ -53,6 +53,7 @@ src/
     progreso.ts              # estado compartido del progreso del scroll
     scroll.ts                # Lenis + ScrollTrigger → progreso
     azar.ts                  # generador aleatorio con semilla
+    esquemas.ts              # esquemas zod del contenido (los usa content.config.ts)
     modo.ts                  # lectura de ?parada, ?captura, ?depuracion
     soporte.ts               # WebGL, movimiento reducido, nivel de calidad
   estilos/
