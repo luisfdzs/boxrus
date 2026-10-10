@@ -14,7 +14,7 @@ Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajust
 | 3 | Galería | Sacos del bastidor derecho | Travelling lateral paralelo a la fila | (12,5, 1,6, −12,0) | (16,5, 1,3, −18,0) | 35 mm |
 | 4 | Premios | La jaula desde arriba | Picado desde las cerchas | (0,0, 5,6, −7,5) | (0,0, 0,6, −20,0) | 22 mm |
 | 5 | Ubicación | Ventanales del fondo | Contraluz con haces de luz | (6,0, 1,6, −31,0) | (−1,0, 2,8, −44,0) | 24 mm |
-| E | Epílogo | Un ventanal | Avance hacia la luz, fundido a blanco | (1,8, 4,5, −39,5) | (1,8, 4,5, −50,0) | 35 mm |
+| E | Epílogo | Un ventanal | Avance hacia la luz, fundido a blanco | (1,8, 4,5, −41,0) | (1,8, 4,5, −50,0) | 35 mm |
 
 ## Detalle de cada plano
 
@@ -73,7 +73,7 @@ Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajust
   - Botones: «Cómo llegar» (abre la ruta en un servicio de mapas) y «Ver ubicación» → `/ubicacion`
 
 ### E · Epílogo
-- **Movimiento:** la cámara sube y avanza hacia el ventanal central hasta que la luz llena la pantalla; fundido a blanco y, después, a las secciones HTML finales (llamada a la acción y pie).
+- **Movimiento:** una sola transición desde Ubicación, igual que las demás: la cámara sube y avanza hacia el ventanal central y funde a blanco en la segunda mitad del tramo (`RECORRIDO.inicioFundidoFinal`). Al llegar, la pausa del epílogo es el cierre en blanco; no hay parada en el ventanal ni scroll posterior.
 - **Interfaz:** «Boxrus. Tu primera clase te espera.» + accesos a las 5 secciones.
 
 Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arquitectura.md` (colecciones de contenido).
@@ -85,7 +85,7 @@ Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arq
 - **3 · Galería:** el travelling avanza hacia **+Z** (2 m): la cámara llega desde la puerta trasera por el sur y así no tiene que dar media vuelta.
 - **4 · Premios:** retrasada a `z = −7,5` con 22 mm: el picado abarca la jaula entera y los fluorescentes entran por arriba. El refuerzo de la jaula baja a `y = 4,4` para no confundirse con la banda de ventanales.
 - **5 · Ubicación:** en (6, 1,6, −31) con 24 mm: el pilar (−10, −40) entra como silueta a contraluz y se ve más suelo, donde caerán los haces.
-- **E · Epílogo:** centrada en el ventanal central (`x = 1,8`; en `x = 0` hay machón) y a `z = −39,5`, con una deriva de 3 m hacia el ventanal mientras funde a blanco.
+- **E · Epílogo:** centrada en el ventanal central (`x = 1,8`; en `x = 0` hay machón). Desde el 2026-10-10 llega a `z = −41` (donde acababa la antigua deriva de 3 m) y sin deriva: su pausa es el cierre en blanco.
 - **Puntos de paso:** cada transición tiene los suyos en `paradas.ts`; los de las puertas de la jaula se calculan desde `nave.ts`.
 - **Velocidad:** cada transición se recorre a ritmo uniforme sobre una «longitud» que suma desplazamiento y giro de la mirada (8 m por radián), con aceleración y frenada suaves. Límite comprobado en pruebas: 36° de giro por cada 1 % de progreso; el pico está al salir por la puerta trasera.
 
@@ -96,7 +96,7 @@ Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arq
 - **Entrada y salida de la jaula** solo por las puertas: es la transición más delicada del recorrido.
 - **Reversible:** subir el scroll deshace exactamente el recorrido.
 - **Ajuste a paradas (escritorio):** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real: por ahora desactivado; se prueba con `?ajuste=1`.
-- **Scroll por paradas (móvil):** en pantalla táctil y vertical (ancho/alto < 0,8), cada gesto lleva a la parada siguiente o a la anterior, sin posiciones intermedias. El scroll se anima a ritmo constante (2,2 s por transición, en `RECORRIDO.paginadoMovil`) y la trayectoria pone su propia aceleración y frenada, así que la cámara hace el mismo recorrido que con scroll libre. Los gestos durante la animación se ignoran; tras el epílogo, el siguiente gesto lleva al cierre. Se puede forzar en escritorio con `?paginado=1`.
+- **Scroll por paradas (móvil):** en pantalla táctil y vertical (ancho/alto < 0,8), cada gesto lleva a la parada siguiente o a la anterior, sin posiciones intermedias. El scroll se anima a ritmo constante (2,2 s por transición, en `RECORRIDO.paginadoMovil`) y la trayectoria pone su propia aceleración y frenada, así que la cámara hace el mismo recorrido que con scroll libre. Los gestos durante la animación se ignoran; el gesto desde Ubicación lleva directamente al cierre y es el último. Se puede forzar en escritorio con `?paginado=1`.
 - **Menú de píldora (móvil):** abajo y centrado, con un icono por sección (reloj, octógono, fotografía, trofeo, chincheta). Un toque lleva a esa parada y **todos los saltos duran lo mismo: 1,5 s** (`RECORRIDO.paginadoMovil.segundosPorTramoMenu`). Si la sección es vecina, la cámara hace el tramo real. Si está a más de un paso, recorre la primera mitad del tramo de salida, funde a negro, corta en negro total a la mitad del tramo de llegada y funde desde negro hasta el destino (`corte`: el fundido ocupa el 40 % central del salto y el negro total, el 16 %). La cámara no se detiene y va a la misma velocidad que en un salto vecino. Durante el salto solo se muestra el texto de la parada de destino y su icono va resaltado; los toques durante un salto se ignoran. Solo aparece con el scroll por paradas activo.
 - **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables.
 

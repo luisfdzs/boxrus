@@ -4,7 +4,7 @@ import MenuParadas from '../components/ui/MenuParadas.astro';
 import Base from '../layouts/Base.astro';
 import { PARADAS, RECORRIDO } from '../datos/paradas';
 
-// El epílogo no lleva sección superpuesta: su texto va en el cierre, tras el fundido.
+// El epílogo no lleva panel: su pausa es el cierre, sobre el fundido a blanco.
 const superpuestas = PARADAS.filter((p) => p.id !== 'E');
 const epilogo = PARADAS.find((p) => p.id === 'E')!;
 const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
@@ -44,7 +44,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
       }
     </div>
 
-    <section class="cierre" aria-labelledby="titular-cierre">
+    <section class="cierre" data-parada={epilogo.id} aria-labelledby="titular-cierre">
       <h2 id="titular-cierre">{epilogo.interfaz.titular}</h2>
       <nav aria-label="Secciones">
         <ul>
@@ -62,6 +62,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
 </Base>
 
 <script>
+  import { RECORRIDO } from '../datos/paradas';
   import { calcularPausas } from '../lib/pausas';
   import { leerModo } from '../lib/modo';
   import { suscribir } from '../lib/progreso';
@@ -70,12 +71,15 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
 
   const modo = leerModo();
   const pausas = calcularPausas();
-  const secciones = [...document.querySelectorAll<HTMLElement>('.parada')];
+  const secciones = [...document.querySelectorAll<HTMLElement>('[data-parada]')];
   const botones = [...document.querySelectorAll<HTMLButtonElement>('.menu button')];
   let controlador: ControladorPaginado | undefined;
   const fundido = document.querySelector<HTMLElement>('.fundido')!;
   const corte = document.querySelector<HTMLElement>('.corte')!;
+  // El fundido a blanco empieza a mitad del último tramo y acaba al llegar al cierre.
+  const ubicacion = pausas.at(-2)!;
   const epilogo = pausas.at(-1)!;
+  const inicioFundido = ubicacion.fin + (epilogo.inicio - ubicacion.fin) * RECORRIDO.inicioFundidoFinal;
 
   if (modo.captura) document.documentElement.dataset.captura = 'si';
 
@@ -89,8 +93,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
       seccion.toggleAttribute('data-activa', activa);
       seccion.setAttribute('aria-hidden', String(!activa));
     });
-    // Fundido a blanco en la segunda mitad de la pausa del epílogo.
-    const f = Math.min(1, Math.max(0, (p - epilogo.centro) / (epilogo.fin - epilogo.centro)));
+    const f = Math.min(1, Math.max(0, (p - inicioFundido) / (epilogo.inicio - inicioFundido)));
     fundido.style.opacity = String(f);
 
     // Icono resaltado: la parada más cercana o, durante un viaje, la de destino.
@@ -138,11 +141,9 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     height: calc((var(--pantallas) + 1) * 100svh);
   }
 
-  .parada {
+  .parada,
+  .cierre {
     position: fixed;
-    inset: auto auto 0 0;
-    width: min(32rem, 100%);
-    padding: clamp(1rem, 4vw, 3rem);
     opacity: 0;
     visibility: hidden;
     transition:
@@ -150,12 +151,18 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
       visibility 0.4s;
   }
 
-  .parada[data-activa] {
+  .parada {
+    inset: auto auto 0 0;
+    width: min(32rem, 100%);
+    padding: clamp(1rem, 4vw, 3rem);
+  }
+
+  [data-parada][data-activa] {
     opacity: 1;
     visibility: visible;
   }
 
-  :global([data-captura]) .parada {
+  :global([data-captura]) [data-parada] {
     transition: none;
   }
 
@@ -203,14 +210,14 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     text-decoration: none;
   }
 
+  /* Sobre el fundido a blanco, que pone el fondo. */
   .cierre {
-    min-height: 100svh;
+    inset: 0;
     display: grid;
     place-content: center;
     gap: 1.5rem;
     padding: 2rem;
     text-align: center;
-    background: #fff;
     color: var(--color-acero);
   }
 

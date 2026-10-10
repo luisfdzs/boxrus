@@ -53,9 +53,8 @@ export function iniciarScroll(
       fundirANegro,
       posiciones: () => {
         const { start, end } = disparador;
-        const maximo = document.documentElement.scrollHeight - innerHeight;
-        // Centros de las pausas y, tras el epílogo, el cierre de la página.
-        return [...pausas.map((p) => start + p.centro * (end - start)), Math.min(maximo, end + innerHeight)];
+        // Centros de las pausas; la del epílogo es el cierre.
+        return pausas.map((p) => start + p.centro * (end - start));
       },
     });
   }

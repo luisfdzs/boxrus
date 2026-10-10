@@ -1,6 +1,6 @@
 // Scroll por paradas en móvil: cada gesto lleva a la parada siguiente o
 // anterior y nunca deja la cámara a medio camino. Las posiciones son los
-// centros de las pausas y, tras el epílogo, el cierre de la página. El menú
+// centros de las pausas (la del epílogo es el cierre). El menú
 // de píldora usa el mismo controlador para viajar directo a una parada.
 import gsap from 'gsap';
 import { RECORRIDO } from '../datos/paradas';
@@ -42,7 +42,7 @@ export const usarPaginado = (forzado: boolean): boolean =>
   forzado || (matchMedia('(pointer: coarse)').matches && innerWidth / innerHeight < RECORRIDO.aspectoMovil);
 
 interface Opciones {
-  /** Posiciones de scroll (px) de cada parada y del cierre, en orden. Se recalculan en cada uso. */
+  /** Posiciones de scroll (px) de cada parada, en orden. Se recalculan en cada uso. */
   posiciones: () => number[];
   reducido: boolean;
   /** Pinta el fundido a negro de los saltos del menú (0 = transparente, 1 = negro). */

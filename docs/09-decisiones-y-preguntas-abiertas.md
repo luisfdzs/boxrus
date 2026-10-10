@@ -63,6 +63,7 @@
 | 2026-10-10 | Rótulos BOXRUS de los postes de la jaula, en la **fase 4** | Decisión de Luis |
 | 2026-10-10 | **Fase 3 aprobada** | Aprobación de Luis |
 | 2026-10-10 | HDRI Empty Warehouse 01 **retirado del repo** | Decisión de Luis: ya no se cargaba (entorno capturado de la nave) |
+| 2026-10-10 | **Final en una sola transición**: Ubicación → cierre «Boxrus. Tu primera clase te espera.», con el avance al ventanal y el fundido a blanco dentro del tramo; se elimina la parada en el ventanal y el scroll extra del cierre (ahora capa fija en la pausa del epílogo) | Petición de Luis: las dos transiciones finales se hacían largas y pesadas. Dura lo mismo que las demás (un tramo; 2,2 s por gesto en móvil) |
 
 ## Preguntas abiertas
 

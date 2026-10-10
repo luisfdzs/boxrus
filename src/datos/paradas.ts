@@ -50,6 +50,11 @@ export const RECORRIDO = {
   /** Por debajo de esta relación ancho/alto se usa el encuadre móvil. */
   aspectoMovil: 0.8,
   /**
+   * Fracción del último tramo (Ubicación → epílogo) en la que empieza el fundido
+   * a blanco; acaba al llegar a la pausa del epílogo, que es el cierre.
+   */
+  inicioFundidoFinal: 0.5,
+  /**
    * Móvil (táctil y vertical): cada gesto lleva a la parada siguiente o anterior,
    * sin posiciones intermedias. El scroll avanza a ritmo constante y la propia
    * trayectoria pone la aceleración y la frenada de cada transición.
@@ -184,11 +189,12 @@ export const PARADAS: Parada[] = [
   {
     id: 'E',
     nombre: 'Epílogo',
-    // x = 1,8 e y = 4,5: centro del ventanal central (en x = 0 hay machón entre ventanales).
-    escritorio: { posicion: [1.8, 4.5, -39.5], mira: [1.8, 4.5, -50], focal: 35 },
-    movil: { posicion: [1.8, 4.5, -39.5], mira: [1.8, 4.1, -50], focal: 24 },
-    // Avance hacia el ventanal durante la pausa, mientras funde a blanco.
-    deriva: [0, 0, -3],
+    // Una sola transición desde Ubicación: la cámara avanza hacia el ventanal central
+    // (x = 1,8 e y = 4,5; en x = 0 hay machón) mientras funde a blanco, y la pausa
+    // es el cierre en blanco. Llega a z = −41, a 3 m del muro (z = −44).
+    escritorio: { posicion: [1.8, 4.5, -41], mira: [1.8, 4.5, -50], focal: 35 },
+    movil: { posicion: [1.8, 4.5, -41], mira: [1.8, 4.1, -50], focal: 24 },
+    deriva: [0, 0, 0],
     llegada: [],
     interfaz: {
       titular: 'Boxrus. Tu primera clase te espera.',
