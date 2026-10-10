@@ -24,7 +24,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 ## Ventanales
 - **Muro del fondo** (`z = −44`): fila de 10 ventanales de 2,4 × 2,2 m, alféizar a `y = 3,4`, repartidos en el ancho. Perfilería de acero negro con cuarterones.
 - **Muros laterales**: un ventanal alto (2,4 × 1,6 m, alféizar a `y = 4,2`) entre cada par de pórticos.
-- El vidrio es emisivo y algo sobreexpuesto: el exterior no se modela (blanco cálido difuso).
+- El vidrio es emisivo y algo sobreexpuesto: el exterior no se modela. *(Fase 3, iteración 2:)* vidrio y perfilería retranqueados 0,18 m dentro del hueco (`VENTANALES.retranqueo`), para que se vea el canto del muro; emisivo 7 con un degradado vertical por hoja, frío y luminoso arriba (`#dce8f8`), cálido y más tenue abajo (`#a8865f`), y ±4 % de brillo entre hojas con semilla (`LUZ.vidrio`). Con 2,4 y un solo color se leían como papel blanco.
 
 ## La jaula (octógono)
 | Elemento | Valor |
@@ -33,10 +33,10 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 | Plataforma | octógono regular, radio a vértices 4,9 m (~9 m entre caras), altura 0,6 m |
 | Faldón | negro, de la plataforma al suelo, ligeramente retranqueado |
 | Postes | 8, en los vértices; acolchado negro de Ø 0,3 m hasta `y = 2,5` |
-| Malla | eslabones de acero (textura con alfa por código, rombo de 6 cm y alambre de Ø 5 mm), de `y = 0,75` a `y = 2,35` |
+| Malla | eslabones de acero (textura con alfa por código, rombo de 6 cm y alambre de Ø 5 mm), de `y = 0,75` a `y = 2,35`. Acero medio mate (`#8a9096`, metal 0,5, rugosidad 0,55); la cobertura del alfa crece con la inclinación de la vista (los alambres se solapan), así que los paños oblicuos se leen como un velo gris y el frontal deja ver la jaula |
 | Cable superior | acolchado negro a `y = 2,45` |
 | Puertas | 2, en las caras que miran a la diagonal delantera izquierda (−X, +Z) y trasera derecha (+X, −Z); hueco libre de 1,2 m centrado en la cara. Los vértices están a 22,5° + k·45° para que haya caras mirando a las diagonales |
-| Lona | gris muy oscuro, mate |
+| Lona | gris muy oscuro, mate (`#3a3c3f`, rugosidad 0,92), con desgaste por código en planta (`LONA`: anillo de roce, manchas y rozaduras de pisadas, determinista); la caída del foco del refuerzo hace el resto |
 | Rotulación | «BOXRUS» vertical en los 8 acolchados |
 
 ## Sacos y bastidores
@@ -59,10 +59,10 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 
 ## Paredes
 - Ladrillo visto en todo el perímetro, de 0 a 7 m.
-- **Marcador de asaltos**: caja negra de 1,2 × 0,5 m en la pared izquierda, centrada en (−17,9, 3,6, −22) *(fase 1: en z = −20 quedaba encajonado entre poste, viga y ventanal)*, mirando a +X (hacia la jaula). Dígitos LED rojos `05:00` y un indicador de asalto `R1`.
+- **Marcador de asaltos**: caja negra de 1,2 × 0,5 m en la pared izquierda, centrada en (−17,9, 3,8, −22) *(fase 1: en z = −20 quedaba encajonado entre poste, viga y ventanal; fase 3: subida 0,2 m porque en la parada 1 su borde inferior rozaba la viga del bastidor)*, mirando a +X (hacia la jaula). Dígitos LED de 7 segmentos por geometría propia (`src/lib/marcador.ts`, medidas en `MARCADOR.digitos`): `05:00` en cifras de 0,3 m y el asalto `R1` a la derecha, a 0,55 de escala y alineado por abajo; la R lleva una pata diagonal. Rojo `#ff2a1a` con emisivo moderado (0,9: con más, AgX lo vira a salmón) y segmentos apagados apenas visibles; carcasa negra mate.
 
 ## Suelo
-- Tatami negro en placas de 1 × 2 m, juntas finas, satinado (rugosidad media-baja).
+- Tatami negro en placas de 1 × 2 m, juntas finas, satinado. *(Fase 3, iteración 2:)* gris base `#1e2225` (`SUELO.colorPlaca`), rugosidad 0,7 multiplicada por el desgaste (≈ 0,60–0,70), reflejo del entorno a 0,3; juntas `#15181b`. En pantalla queda en `#1d2024`–`#2d2f31`, dentro de la paleta.
 - Una ligera variación de tono entre placas (determinista, con semilla).
 - Desgaste por código: manchas amplias de roce y grano fino (tono y rugosidad, ±14 %), en coordenadas del mundo con tesela de 8 m, para que no se repita placa a placa.
 
@@ -87,6 +87,19 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 A diferencia de Billaron, la escena es **estática y cerrada**, con pocos objetos repetidos; eso permite más luz real y hace muy rentable la luz precalculada.
 1. **Sol**: una luz direccional desde los ventanales del fondo, con una sola sombra de calidad.
 2. **Fluorescentes**: caras emisivas en todas las regletas + 4–6 `RectAreaLight` representativas (más las 4 del refuerzo de la jaula en nivel alto).
-3. **Entorno**: mapa de entorno oscuro y frío para reflejos en tatami, cuero y malla.
+3. **Entorno**: mapa de entorno **capturado de la propia nave** (fase 3, iteración 2): una cámara cúbica de 128 px en (0, 3, −20) pinta la escena en el primer fotograma, ya con texturas, y pasa a PMREM (`luz/Entorno.tsx`). Sustituye al HDRI genérico, cuyas ventanas y cielo, multiplicados por el Fresnel, ponían gris el tatami a ángulo rasante. Intensidad general 1; por material: tatami y juntas 0,3, hormigón 0,4, lona 0,5, malla 0,6 (`LUZ.entorno.materiales`).
 4. **Luz precalculada (recomendada para fase 3, ver `09`)**: *baking* en Blender de la arquitectura (ladrillo, techo, suelo) para luz indirecta y oclusión ambiental creíbles; los objetos con brillo (sacos, jaula) mantienen luz en tiempo real.
 5. Postproceso: bloom selectivo (fluorescentes, ventanales, dígitos), profundidad de campo en planos cercanos, viñeteado, grano sutil, mapeo tonal ACES/AgX con gradación fría.
+
+### Luz en tiempo real: valores actuales (fase 3, iteración 2)
+Todo en `src/datos/luz.ts`. La luz de los fluorescentes en suelo, muros y techo y la oclusión de contacto llegan horneadas: aquí no se persiguen.
+| Pieza | Valor |
+|---|---|
+| Mapeo tonal | AgX, exposición 1,8 (A/B con Neutral en `09`) |
+| Sol | `#fff4e2`, 2,5, a ~23° de elevación (dirección `[0,584, 0,391, −0,711]`); sombra PCF de 2048 px, radio 1, sesgo −0,0004, sesgo normal 0,015. Los muros proyectan sombra con su cara exterior (`shadowSide = FrontSide`) |
+| Relleno (hemisferio) | cielo `#cfdcea`, suelo `#2a2b2d`, intensidad 0,45 |
+| Refuerzo de la jaula | foco `#e6f2ff` de 200 cd en (0, 6,3, −20), ángulo 0,75, penumbra 0,6, alcance 14 m, **sin sombra** (ver `09`) |
+| Emisivos | fluorescentes 4, vidrio 7 (con degradado), dígitos 0,9 |
+| Ladrillo | saturación 2,1 y brillo 1,35 en el sombreador (`TEXTURAS.ladrillo`): AgX y el relleno frío lo apagaban |
+| Chapa | metal 0,3, rugosidad 0,5 (con 0,65 de metal salía oliva) |
+| Sacos | grano de 0,12 m, relieve 0,15, `normalScale` 0,35, rugosidad 0,5 (`CUERO`) |

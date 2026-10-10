@@ -45,6 +45,17 @@ No hace falta cargador de modelos ni Meshopt: no se descarga ningún `.glb`. `vi
 
 **Decisión (2026-10-10, Luis):** el postproceso se carga en un **trozo diferido** tras el primer fotograma y se mide aparte, con tope propio de ~80 KB (gzip). Los 350 KB siguen siendo el presupuesto de la isla inicial.
 
+### Estado medido (fase 3, iteración 2 de luz, 2026-10-10)
+| Pieza (gzip) | Peso | Cuenta en |
+|---|---|---|
+| Three.js + React Three Fiber (`events-*.esm.*.js`, antes `ControladorCamara.*.js`) | 237,9 KB | JS de la isla |
+| `client.*.js` | 64,5 KB | JS de la isla |
+| `Nave.*.js` (sin `HDRLoader`; con entorno capturado, marcador de 7 segmentos y lona por código) | 39,2 KB (+0,25 KB) | JS de la isla |
+| **Total JS de la isla** | **341,6 KB de 350** (+ `scheduler.*.js`, 4,7 KB, sin cambios) | |
+| HDRI | ya no se descarga (−0,52 MB; −0,38 MB con gzip) | descarga 3D |
+
+FPS con `?depuracion=1` sobre la compilación de producción (`astro preview`), 1440 × 900, DPR 1, GPU integrada AMD Radeon (APU): 60 en P, 1, 2, 3, 5 y E; 56,7 en la parada 4 (picado con toda la nave). Llamadas de dibujo 33–51 y 47.000–51.000 triángulos, contando la capa de depuración. El modo captura y el servidor de desarrollo dan cifras más bajas y ruidosas: no sirven para medir.
+
 Palancas si no cabe, de menor a mayor esfuerzo: importar de drei solo lo usado (ya se hace; vigilar que no entren `Text`, `Environment` con presets remotos, etc.); cargar el postproceso en diferido tras el primer fotograma; partir la isla en dos trozos (escena base + postproceso/atmósfera); revisar el presupuesto con Luis si la calidad lo justifica.
 
 Cómo medirlo tras `npm run build`:
