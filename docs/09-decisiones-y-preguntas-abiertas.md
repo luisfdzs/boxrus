@@ -12,6 +12,7 @@
 | 2026-10-09 | Contenido **ficticio** en colecciones de Astro | Sustituible por el real sin tocar código |
 | 2026-10-09 | Solo **español**, alojamiento en **Vercel**, marca **Boxrus** | — |
 | 2026-10-10 | Repositorio público `luisfdzs/boxrus`; ramas `dev` (desarrollo), `test` (`boxrustest.vercel.app`) y `prod` (producción, `boxrus.vercel.app`) en un solo proyecto de Vercel. Responde a la pregunta 1 | Separar desarrollo, revisión y publicación; producción solo al fusionar en `prod` |
+| 2026-10-10 | *Ignored Build Step* en Vercel que descarta despliegues de producción fuera de `prod` | El primer push a `dev` generó un despliegue de producción (probablemente por ser el primero del proyecto); se canceló antes de servirse |
 | 2026-10-10 | `noindex, nofollow` en `Base.astro` mientras sea de práctica (pregunta 2, con la opción recomendada) | No indexar un gimnasio inexistente; se quita al pasar al gimnasio real |
 | 2026-10-10 | Tipografías: **Anton** (titulares) e **Inter** variable (textos), vía Fontsource | Las primeras candidatas de `02`; OFL y alojadas en el sitio. Revisables al ver la interfaz (fase 4) |
 | 2026-10-10 | Esquemas de contenido en `src/lib/esquemas.ts`; `content.config.ts` solo los conecta a las colecciones | Así Vitest los prueba sin depender de `astro:content` |

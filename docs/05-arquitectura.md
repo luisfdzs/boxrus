@@ -115,4 +115,6 @@ tests/                       # Vitest
 | `prod` | Producción; rama de producción de Vercel | `https://boxrus.vercel.app` |
 
 - Flujo: `dev` → `test` → `prod`. Fusionar en `prod` **publica**, así que solo se hace con aprobación explícita de Luis.
+- Salvaguarda en el proyecto de Vercel (*Ignored Build Step*): se descarta cualquier despliegue de producción que no venga de `prod`.
+- La protección de Vercel (Vercel Authentication) está activa en previsualizaciones y en `boxrustest.vercel.app`: hay que iniciar sesión en Vercel para verlas.
 - Caché larga para `/_astro/`, `modelos/`, `texturas/`, `fuentes/`.
