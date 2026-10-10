@@ -39,7 +39,7 @@ export const destinoPaginado = (actual: number, direccion: 1 | -1, total: number
 
 /**
  * Dirección de un gesto (+1 avanza, −1 retrocede, null si no cuenta). Deslizar
- * hacia arriba o hacia la derecha avanza; hacia abajo o hacia la izquierda,
+ * hacia arriba o hacia la izquierda avanza; hacia abajo o hacia la derecha,
  * retrocede. En horizontal solo entre paradas del recorrido por la nave, hasta
  * `ultimaHorizontal`: la salida por el ventanal y el cierre, solo en vertical.
  */
@@ -52,7 +52,7 @@ export const direccionGesto = (
 ): 1 | -1 | null => {
   if (Math.max(Math.abs(dx), Math.abs(dy)) < umbral) return null;
   if (Math.abs(dy) >= Math.abs(dx)) return dy > 0 ? 1 : -1;
-  const direccion = dx > 0 ? 1 : -1;
+  const direccion = dx < 0 ? 1 : -1;
   return actual + direccion > ultimaHorizontal || actual > ultimaHorizontal ? null : direccion;
 };
 

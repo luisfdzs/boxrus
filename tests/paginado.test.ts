@@ -17,12 +17,12 @@ describe('scroll por paradas (móvil)', () => {
     expect(destinoPaginado(0, -1, 4)).toBe(0);
   });
 
-  it('deslizar a la derecha avanza y a la izquierda retrocede, solo antes del epílogo', () => {
+  it('deslizar a la izquierda avanza y a la derecha retrocede, solo antes del epílogo', () => {
     // Paradas 0–5 en horizontal; la 6 (epílogo) solo en vertical.
-    expect(direccionGesto(80, 10, 30, 2, 5)).toBe(1);
-    expect(direccionGesto(-80, 10, 30, 2, 5)).toBe(-1);
-    expect(direccionGesto(80, 0, 30, 5, 5)).toBeNull();
-    expect(direccionGesto(-80, 0, 30, 6, 5)).toBeNull();
+    expect(direccionGesto(-80, 10, 30, 2, 5)).toBe(1);
+    expect(direccionGesto(80, 10, 30, 2, 5)).toBe(-1);
+    expect(direccionGesto(-80, 0, 30, 5, 5)).toBeNull();
+    expect(direccionGesto(80, 0, 30, 6, 5)).toBeNull();
     expect(direccionGesto(20, 10, 30, 2, 5)).toBeNull();
   });
 
