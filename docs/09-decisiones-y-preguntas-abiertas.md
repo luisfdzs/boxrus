@@ -41,13 +41,17 @@
 | 2026-10-10 | Normales `.ktx2` a 512 px (UASTC + zstd); color y rugosidad a 1K (ETC1S). Sin la rugosidad del caucho (el tatami usa el desgaste por código) | A 1K cada normal pesaba ~1,3 MB y RDO apenas ahorraba; a 512 son ~0,3 MB. Total texturas: 1,39 MB |
 | 2026-10-10 | UV en coordenadas del mundo para muros, hormigón y tatami (`usarUvMundo` en `materiales.ts`); escena y cámara dentro de un `Suspense` que espera a las texturas | Las cajas unidad escaladas estiraban las texturas; el modo captura no debe marcar «lista» con la escena a medias |
 | 2026-10-10 | Transcodificador Basis en `public/basis/` (excluido de `tsconfig`) | Regla de `07`: nada de CDN. `astro check` analizaba el JS minificado y fallaba |
+| 2026-10-10 | **Luz precalculada en Blender: sí** (pregunta 4). Blender 5.2.2 LTS portátil instalado en la carpeta de programas del usuario | Decisión de Luis. Proceso documentado en `03` cuando esté probado |
+| 2026-10-10 | **Hora del día: mañana fría** (pregunta 5): sol blanco neutro (`#fff4e2`) a ~30° desde el fondo y el muro derecho | Decisión de Luis; coincide con la gradación fría de `02` |
+| 2026-10-10 | **El postproceso va en un trozo diferido** y se cuenta aparte de los 350 KB de la isla inicial, con tope propio de ~80 KB (gzip) | Decisión de Luis. Los 350 KB son lo que bloquea el primer fotograma |
+| 2026-10-10 | Muros con **huecos reales** en los ventanales (franja baja, franja alta y machones) | Con muros macizos y cubierta arrojando sombra, el sol no entraba en la nave; ahora solo entra por los ventanales y dibuja sus manchas en el suelo |
+| 2026-10-10 | Mapeo tonal **AgX**, sombras `PCFShadowMap` con radio (three r186 retiró `PCFSoftShadowMap`) | AgX satura menos las altas luces: encaja con «fría y algo desaturada» |
+| 2026-10-10 | Ladrillo: saturación ajustable y relieve que se apaga a distancia en el sombreador (`TEXTURAS.ladrillo`); costuras de los sacos en el sombreador (`CUERO.costuras`) | Pendientes heredados de la fase 2, sin texturas nuevas. La textura de ladrillo es menos saturada que la paleta: la saturación que se veía venía de la luz y de ACES |
 
 ## Preguntas abiertas
 
 | # | Pregunta | Afecta a | Cuándo hace falta |
 |---|---|---|---|
-| 4 | ¿Luz precalculada en Blender? Requiere Blender instalado; muy rentable en esta escena | Calidad visual | Fase 3 |
-| 5 | ¿Hora del día? Luz de mañana fría (como la referencia) o tarde con haces más cálidos y bajos | Atmósfera | Fase 3 |
 | 6 | ¿Ajuste a paradas al dejar de hacer scroll o scroll libre? **En escritorio** (en móvil ya está decidido: scroll por paradas) | Coreografía | Fase 1 (probar ambos) |
 | 7 | ¿Ciudad para la dirección ficticia? (afecta al mapa) | Contenido | Fase 4 |
 | 8 | Paleta de marca: ¿rojo Boxrus (`#d4382a`) como acento o prefieres otro? | Interfaz | Fase 4 |

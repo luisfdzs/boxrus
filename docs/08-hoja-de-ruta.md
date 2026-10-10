@@ -58,11 +58,11 @@ Punto de partida en una sesión nueva: leer `02` (paleta, lista de comprobación
 
 Pendientes heredados de la fase 2:
 - **JS de la isla:** quedan ~10 KB. Antes de añadir el postproceso, separarlo en un trozo diferido (y valorar lo mismo con `TexturasNave` + `KTX2Loader`) o pedir a Luis que revise el presupuesto.
-- **HDRI** Empty Warehouse 01: reducirlo a 512 × 256 (`herramientas/reducir_hdr.py`, que necesita numpy) y llevarlo a `public/entorno/`. El clasificador de permisos bloqueó a Claude ejecutarlo sobre el fichero descargado: que lo ejecute Luis con `!` o que lo autorice.
-- **Ladrillo:** chispas blancas en las juntas a distancia (aliasing especular de la normal; muy visible en móvil). Bajar `normalScale` o reducir el relieve en los mipmaps, como en la chapa.
-- **Ladrillo, color:** más saturado que la paleta (`#7d4430`–`#a85a3c`); desaturar con el color del material o en el sombreador.
+- ✅ **HDRI** Empty Warehouse 01 en `public/entorno/` (512 × 256). El bloqueo de la fase 2 venía de `python -I`, que ignora el numpy del usuario; con `-E -P` funciona.
+- ✅ (pendiente de confirmar en móvil) **Ladrillo:** chispas blancas en las juntas a distancia (aliasing especular de la normal; muy visible en móvil). Bajar `normalScale` o reducir el relieve en los mipmaps, como en la chapa.
+- ✅ (control `TEXTURAS.ladrillo.saturacion`, ajuste fino con la luz definitiva) **Ladrillo, color:** más saturado que la paleta (`#7d4430`–`#a85a3c`); desaturar con el color del material o en el sombreador.
 - **Hormigón:** Concrete 034 es encofrado claro con agujeros de latiguillos; comprobar que se lee como pulido (está detrás de la cámara en casi todo el recorrido).
-- **Sacos:** faltan las costuras; el grano de cuero ya está.
+- ✅ **Sacos:** costuras en el sombreador (`CUERO.costuras`).
 - **Chapa:** con la luz de la maqueta apenas se ven las ondas; con el sol y los fluorescentes deberían aparecer los reflejos lineales de `02`.
 
 - Materiales: ladrillo, acero, chapa, tatami, cuero, malla, lona.

@@ -17,6 +17,7 @@ description: Captura los 7 planos del recorrido 3D de Boxrus (prólogo, 5 parada
 - **Un solo lienzo WebGL a la vez.** Varios iframes con la escena cuelgan la pestaña (`Runtime.evaluate` se agota a los 45 s). Captura plano a plano reutilizando un único iframe.
 - **La recarga automática de Vite** (al guardar cualquier fichero) recarga la página y borra las funciones auxiliares definidas con `javascript_tool`: defínelas en la misma llamada que las usa.
 - Si una llamada de JavaScript larga se agota, lanza el trabajo en segundo plano (una función `async` sin `await` que guarde el resultado en `window.resultado`), espera con `computer → wait` y léelo en otra llamada.
+- **Si la ventana de Chrome está oculta o minimizada** (`document.visibilityState === 'hidden'`), no hay fotogramas: el lienzo se queda en 300 px y la señal no llega nunca, sin errores. Compruébalo antes de buscar fallos en el código y pide a Luis que restaure la ventana (fase 3).
 - Señal de «listo para capturar»: `<html data-nave-lista>` aparece cuando la cámara está colocada y hay fotogramas pintados.
 - La barra de desarrollo de Astro está desactivada (`astro.config.mjs`), así que no sale en las capturas.
 

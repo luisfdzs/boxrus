@@ -43,6 +43,8 @@ No hace falta cargador de modelos ni Meshopt: no se descarga ningún `.glb`. `vi
 
 **Margen: ~10 KB.** El postproceso de la fase 3 (`@react-three/postprocessing` + `postprocessing`, ~40–60 KB) **no cabe** sin aplicar alguna palanca de abajo; la primera candidata es cargar en un trozo diferido el postproceso (y quizá `TexturasNave` + `KTX2Loader`). Los modelos y texturas **no** cuentan aquí, sino en la descarga 3D (10 MB / 5 MB).
 
+**Decisión (2026-10-10, Luis):** el postproceso se carga en un **trozo diferido** tras el primer fotograma y se mide aparte, con tope propio de ~80 KB (gzip). Los 350 KB siguen siendo el presupuesto de la isla inicial.
+
 Palancas si no cabe, de menor a mayor esfuerzo: importar de drei solo lo usado (ya se hace; vigilar que no entren `Text`, `Environment` con presets remotos, etc.); cargar el postproceso en diferido tras el primer fotograma; partir la isla en dos trozos (escena base + postproceso/atmósfera); revisar el presupuesto con Luis si la calidad lo justifica.
 
 Cómo medirlo tras `npm run build`:
