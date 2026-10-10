@@ -95,7 +95,8 @@ Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arq
 - **Colisiones:** la cámara nunca atraviesa sacos, cadenas, pilares, bastidores, la malla de la jaula (salvo por las puertas) ni las regletas. Prueba automática obligatoria.
 - **Entrada y salida de la jaula** solo por las puertas: es la transición más delicada del recorrido.
 - **Reversible:** subir el scroll deshace exactamente el recorrido.
-- **Ajuste a paradas:** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real: por ahora desactivado; se prueba con `?ajuste=1`.
+- **Ajuste a paradas (escritorio):** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real: por ahora desactivado; se prueba con `?ajuste=1`.
+- **Scroll por paradas (móvil):** en pantalla táctil y vertical (ancho/alto < 0,8), cada gesto lleva a la parada siguiente o a la anterior, sin posiciones intermedias. El scroll se anima a ritmo constante (2,2 s por transición, en `RECORRIDO.paginadoMovil`) y la trayectoria pone su propia aceleración y frenada, así que la cámara hace el mismo recorrido que con scroll libre. Los gestos durante la animación se ignoran; tras el epílogo, el siguiente gesto lleva al cierre. Se puede forzar en escritorio con `?paginado=1`.
 - **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables.
 
 ## Encuadres en móvil (vertical)
@@ -106,4 +107,5 @@ Cada parada define un **encuadre alternativo** para pantalla vertical: más camp
 - `/?captura=1` desactiva animaciones, deriva, balanceo de sacos, polvo animado, grano y toda aleatoriedad.
 - `/?depuracion=1` muestra la trayectoria, los ejes, el FPS y los avisos de colisión (y expone `window.naveRender` con llamadas de dibujo y triángulos).
 - `/?ajuste=1` activa el ajuste a paradas (pregunta abierta 6).
+- `/?paginado=1` fuerza el scroll por paradas del móvil (para probarlo en escritorio).
 - Cuando la cámara está colocada y hay fotogramas pintados, `<html>` recibe `data-nave-lista`: es la señal para capturar.

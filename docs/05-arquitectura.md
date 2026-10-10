@@ -52,12 +52,13 @@ src/
   lib/
     progreso.ts              # estado compartido del progreso del scroll
     pausas.ts                # reparto del progreso en pausas (sin Three.js)
+    paginado.ts              # scroll por paradas en móvil
     trayectoria.ts           # progreso → posición, mira y campo de visión
     colisiones.ts            # obstáculos de la nave y prueba de colisiones
     scroll.ts                # Lenis + ScrollTrigger → progreso
     azar.ts                  # generador aleatorio con semilla
     esquemas.ts              # esquemas zod del contenido (los usa content.config.ts)
-    modo.ts                  # lectura de ?parada, ?captura, ?depuracion, ?ajuste
+    modo.ts                  # lectura de ?parada, ?captura, ?depuracion, ?ajuste, ?paginado
     soporte.ts               # WebGL, movimiento reducido, nivel de calidad
   estilos/
 public/

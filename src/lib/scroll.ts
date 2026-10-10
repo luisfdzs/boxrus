@@ -1,17 +1,20 @@
 // Scroll suave (Lenis) + ScrollTrigger → progreso global de la pista.
+// En móvil, scroll por paradas (paginado.ts) en lugar de scroll libre.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { fijarProgreso } from './progreso';
 import type { Modo } from './modo';
+import { iniciarPaginado, usarPaginado } from './paginado';
 import { calcularPausas, progresoDeParada } from './pausas';
 
 export function iniciarScroll(pista: HTMLElement, modo: Modo): void {
   gsap.registerPlugin(ScrollTrigger);
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const paginado = !modo.captura && usarPaginado(modo.paginado);
 
   let lenis: Lenis | undefined;
-  if (!modo.captura && !reducido) {
+  if (!modo.captura && !reducido && !paginado) {
     lenis = new Lenis();
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((tiempo) => lenis!.raf(tiempo * 1000));
@@ -23,7 +26,7 @@ export function iniciarScroll(pista: HTMLElement, modo: Modo): void {
     start: 'top top',
     end: 'bottom bottom',
     onUpdate: (self) => fijarProgreso(self.progress),
-    snap: modo.ajuste
+    snap: modo.ajuste && !paginado
       ? { snapTo: calcularPausas().map((p) => p.centro), delay: 0.25, duration: { min: 0.4, max: 1.2 }, ease: 'power2.inOut' }
       : undefined,
   });
@@ -36,5 +39,18 @@ export function iniciarScroll(pista: HTMLElement, modo: Modo): void {
     fijarProgreso(p);
   } else {
     fijarProgreso(disparador.progress);
+  }
+
+  if (paginado) {
+    const pausas = calcularPausas();
+    iniciarPaginado({
+      reducido,
+      posiciones: () => {
+        const { start, end } = disparador;
+        const maximo = document.documentElement.scrollHeight - innerHeight;
+        // Centros de las pausas y, tras el epílogo, el cierre de la página.
+        return [...pausas.map((p) => start + p.centro * (end - start)), Math.min(maximo, end + innerHeight)];
+      },
+    });
   }
 }

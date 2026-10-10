@@ -49,6 +49,16 @@ export const RECORRIDO = {
   metrosPorRadian: 8,
   /** Por debajo de esta relación ancho/alto se usa el encuadre móvil. */
   aspectoMovil: 0.8,
+  /**
+   * Móvil (táctil y vertical): cada gesto lleva a la parada siguiente o anterior,
+   * sin posiciones intermedias. El scroll avanza a ritmo constante y la propia
+   * trayectoria pone la aceleración y la frenada de cada transición.
+   */
+  paginadoMovil: {
+    segundosPorTransicion: 2.2,
+    /** Desplazamiento mínimo del dedo (px) para contar como gesto. */
+    umbralGesto: 30,
+  },
 } as const;
 
 /** Punto a `d` metros de una puerta de la jaula a lo largo de su normal (d < 0: hacia dentro). */

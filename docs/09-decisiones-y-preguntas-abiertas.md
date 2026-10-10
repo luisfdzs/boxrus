@@ -21,6 +21,7 @@
 | 2026-10-10 | Fase 1: encuadres de todas las paradas ajustados tras dos rondas de capturas (detalle en `04`) | Composición revisada con el agente `revisor-visual` |
 | 2026-10-10 | Velocidad de cámara uniforme sobre desplazamiento + giro de la mirada (8 m/rad), con límite de 36° por 1 % de progreso | Sin el giro en la cuenta, la salida por la puerta trasera hacía un barrido de casi 90° en un instante |
 | 2026-10-10 | Ajuste a paradas desactivado por defecto; se prueba con `?ajuste=1` | Pregunta 6: probar ambos en uso real antes de decidir |
+| 2026-10-10 | **Móvil: scroll por paradas.** Cada gesto lleva a la parada siguiente o anterior, sin posiciones intermedias, a ritmo constante (2,2 s por transición) | Decisión de Luis: scroll totalmente controlado en móvil. Resuelve la pregunta 6 para móvil; en escritorio sigue abierta |
 
 ## Preguntas abiertas
 
@@ -29,7 +30,7 @@
 | 3 | ¿Detalles de vida (guantes colgados, comba) o nave totalmente desnuda? | Escena | Fase 3 |
 | 4 | ¿Luz precalculada en Blender? Requiere Blender instalado; muy rentable en esta escena | Calidad visual | Fase 3 |
 | 5 | ¿Hora del día? Luz de mañana fría (como la referencia) o tarde con haces más cálidos y bajos | Atmósfera | Fase 3 |
-| 6 | ¿Ajuste a paradas al dejar de hacer scroll o scroll libre? | Coreografía | Fase 1 (probar ambos) |
+| 6 | ¿Ajuste a paradas al dejar de hacer scroll o scroll libre? **En escritorio** (en móvil ya está decidido: scroll por paradas) | Coreografía | Fase 1 (probar ambos) |
 | 7 | ¿Ciudad para la dirección ficticia? (afecta al mapa) | Contenido | Fase 4 |
 | 8 | Paleta de marca: ¿rojo Boxrus (`#d4382a`) como acento o prefieres otro? | Interfaz | Fase 4 |
 | 9 | Tono de los textos (tú/usted, más agresivo o más cercano) | Interfaz | Fase 4 |
