@@ -6,6 +6,9 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 
 ---
 
+## Estado
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · **Siguiente: fase 2**.
+
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
 - Instalar dependencias del stack (`05`), integración React, Vitest y script `test`.
@@ -27,14 +30,19 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 - Agentes: `escena-3d`, `coreografia-camara`; `revisor-visual` al final.
 
 **Criterios de aceptación:**
-- [ ] Capturas de los 7 planos en escritorio (1440 × 900) y móvil (390 × 844) **aprobadas por Luis**.
-- [ ] Recorrido fluido y reversible; prueba de colisiones en verde.
-- [ ] Coordenadas definitivas actualizadas en `03` y `04`.
+- [x] Capturas de los 7 planos en escritorio (1440 × 900) y móvil (390 × 844) **aprobadas por Luis**.
+- [x] Recorrido fluido y reversible; prueba de colisiones en verde.
+- [x] Coordenadas definitivas actualizadas en `03` y `04`.
+
+**✅ Fase 1 aprobada por Luis el 2026-10-10.** Además de lo previsto se hizo: scroll por paradas y menú de píldora en móvil, y logotipo que vuelve al inicio (ver `04` y `09`). Está en producción (`boxrus.vercel.app`).
 
 ## Fase 2 · Assets
-- Agente `buscador-assets`: propuestas según `07`, con licencias.
+- Agente `buscador-assets`: propuestas según `07`, con licencias. Incluye los **detalles de vida** de `03` (lista cerrada, sin saturar).
 - Texturas por código: malla de eslabones, chapa, variación del tatami.
-- Compresión a `.glb`/`.ktx2`.
+- Compresión a `.glb`/`.ktx2`. Herramientas ya instaladas y cadena probada (ver `07`, «Herramientas»). El transcodificador Basis, alojado en `public/basis/`.
+- Vigilar el JS de la isla (~302 KB de 350, ver `06`): los cargadores añaden peso.
+
+Punto de partida en una sesión nueva: leer `07` (inventario y herramientas), `03` (medidas y detalles de vida), `06` (presupuestos y estado del peso) y la memoria local del proyecto (capturas y entorno).
 
 **Criterios de aceptación:**
 - [ ] Registro de licencias completo.

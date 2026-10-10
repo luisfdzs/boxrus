@@ -72,7 +72,14 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 
 ## Contenido determinista
 - Toda variación (tono de placas, balanceo de sacos, polvo, posición de detalles) sale del generador con semilla.
-- Detalles opcionales (pendientes de aprobación, ver `09`): guantes colgados en el gancho del primer saco del bastidor derecho; una comba sobre el borde de la plataforma.
+- **Detalles de vida** (aprobados por Luis el 2026-10-10, **sin saturar**): la nave debe parecer usada, no decorada. Lista cerrada, como máximo estos seis, repartidos en pocos puntos y nunca tapando al protagonista de un plano:
+  1. Un par de guantes colgados del gancho del primer saco del bastidor derecho (visible en la parada 3).
+  2. Una comba enrollada sobre el borde de la plataforma de la jaula, junto a un poste.
+  3. Un banco bajo de madera y acero junto al muro izquierdo, entre bastidor y portón, con una toalla doblada y una botella de agua sin etiqueta.
+  4. Un par de vendas enrolladas sobre el banco.
+  5. Dos o tres balones medicinales en el suelo, junto al extremo del bastidor derecho.
+  6. Unas espinilleras apoyadas en el banco.
+  Sin marcas en ningún objeto (solo BOXRUS si hiciera falta). Posiciones en `src/datos/nave.ts`; variación de giro o color con el generador con semilla.
 
 ## Iluminación (estrategia)
 A diferencia de Billaron, la escena es **estática y cerrada**, con pocos objetos repetidos; eso permite más luz real y hace muy rentable la luz precalculada.

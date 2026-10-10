@@ -22,7 +22,7 @@ Los documentos son **vivos**: si una cifra cambia al verla renderizada, actualiz
 - **Determinismo:** toda aleatoriedad (polvo, balanceo, variación del tatami) con el generador con semilla de `src/lib/azar.ts`.
 - **Referencia visual:** la imagen de referencia es solo inspiración. No se descarga al repo ni se usa como textura o calco. Su marca de agua, logotipos de terceros, personas y objetos sueltos quedan fuera. La fuente de verdad visual es `docs/02-direccion-de-arte.md`.
 - **Marcas:** solo BOXRUS. Ningún logotipo de terceros en sacos, jaula ni material.
-- **Licencias:** ningún recurso externo sin anotarlo antes en `docs/07-assets-y-licencias.md`. Solo CC0 o CC BY (y ODbL para OpenStreetMap, con atribución).
+- **Licencias:** ningún recurso externo sin anotarlo antes en `docs/07-assets-y-licencias.md`. Solo CC0 o CC BY; SIL OFL para tipografías; ODbL para OpenStreetMap, con atribución.
 - **Por fases:** sigue `docs/08-hoja-de-ruta.md`. No pases de fase sin la aprobación de Luis.
 - **Verificación visual:** tras cambios en escena, cámara o interfaz, usa la skill `verificar-visual` y enseña las capturas.
 - **Ramas y despliegue:** se trabaja en `dev` (previsualizaciones). Fusionar en `test` publica en `boxrustest.vercel.app`, sin problema. Fusionar en `prod` publica en producción (`boxrus.vercel.app`): **solo con aprobación explícita**.
@@ -42,6 +42,7 @@ El **hilo principal** coordina y hace él mismo el trabajo acoplado de escena, l
 | `revisor-visual` | Comparar capturas con la dirección de arte y la lista de comprobación (no edita código) |
 
 ## Comandos
-- Servidor: `astro dev --background` (`http://localhost:4321`); `astro dev stop|status|logs`.
+- Servidor: `astro dev --background`; `astro dev stop|status|logs`. La URL real la da `astro dev status` (el puerto puede no ser 4321).
 - Producción local: `npm run build` y `npm run preview`.
-- Tipos: `npx astro check`. Pruebas: `npm run test` (desde la fase 0).
+- Tipos: `npx astro check` (también lo lanza un hook tras cada edición de `.ts`, `.tsx` o `.astro`). Pruebas: `npm run test`.
+- Compresión de assets: `npx gltf-transform …` y `ktx`/`toktx` (ver `docs/07`, «Herramientas»).

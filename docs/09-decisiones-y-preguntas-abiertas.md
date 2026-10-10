@@ -25,15 +25,25 @@
 | 2026-10-10 | **Móvil: menú de píldora** abajo y centrado, un icono por sección, que lleva directo a la parada. Iconos SVG propios | Decisión de Luis: llegar a cualquier sección con un toque. Se adelanta a la fase 4 solo en móvil; la navegación de escritorio (cabecera, indicador «01 / 05») sigue en la fase 4 |
 | 2026-10-10 | Saltos del menú: tramo real si la sección es vecina; si no, medio tramo de salida, fundido a negro, corte y medio tramo de llegada. Todos duran 1,5 s | Decisión de Luis: que ningún salto dure más que uno entre vecinas |
 | 2026-10-10 | Logotipo arriba y centrado (texto BOXRUS en Anton, en píldora oscura) en `Base.astro`; al pulsarlo recarga `/` desde el prólogo | Decisión de Luis. Es texto provisional hasta que haya logotipo gráfico |
+| 2026-10-10 | **Fase 1 aprobada** (capturas de los 7 planos incluidas) | Aprobación de Luis |
+| 2026-10-10 | **Detalles de vida, sin saturar**: lista cerrada de seis en `03` (guantes, comba, banco con toalla y botella, vendas, espinilleras, balones medicinales). Responde a la pregunta 3 | Decisión de Luis: que la nave parezca usada, no decorada |
+| 2026-10-10 | Se admite **SIL OFL** para tipografías | Autorización de Luis; ya era la licencia de Anton e Inter |
+| 2026-10-10 | Herramientas de compresión: `@gltf-transform/cli` (npm, desarrollo) y KTX-Software 4.4.2 (usuario, en el `PATH`) | Necesarias para `.glb`/`.ktx2` en la fase 2. `npm audit` avisa de 3 vulnerabilidades «altas» en `braces` (dependencia del CLI): denegación de servicio solo con patrones de archivo maliciosos, en una herramienta local; no se aplica `audit fix --force` porque bajaría el CLI a la versión 2 |
 
 ## Preguntas abiertas
 
 | # | Pregunta | Afecta a | Cuándo hace falta |
 |---|---|---|---|
-| 3 | ¿Detalles de vida (guantes colgados, comba) o nave totalmente desnuda? | Escena | Fase 3 |
 | 4 | ¿Luz precalculada en Blender? Requiere Blender instalado; muy rentable en esta escena | Calidad visual | Fase 3 |
 | 5 | ¿Hora del día? Luz de mañana fría (como la referencia) o tarde con haces más cálidos y bajos | Atmósfera | Fase 3 |
 | 6 | ¿Ajuste a paradas al dejar de hacer scroll o scroll libre? **En escritorio** (en móvil ya está decidido: scroll por paradas) | Coreografía | Fase 1 (probar ambos) |
 | 7 | ¿Ciudad para la dirección ficticia? (afecta al mapa) | Contenido | Fase 4 |
 | 8 | Paleta de marca: ¿rojo Boxrus (`#d4382a`) como acento o prefieres otro? | Interfaz | Fase 4 |
 | 9 | Tono de los textos (tú/usted, más agresivo o más cercano) | Interfaz | Fase 4 |
+
+## Pendientes menores
+- Probar en un **teléfono real** (sobre todo iPhone/Safari) el scroll por paradas, el menú de píldora y los saltos con fundido; solo se han probado con gestos simulados.
+- Rama **`main`** antigua en GitHub, sin uso (las ramas de trabajo son `dev`, `test` y `prod`): borrarla cuando Luis lo confirme.
+- `docs/02` **enlaza** la imagen de referencia de un tercero en un repositorio público (no la aloja). Valorar sustituir el enlace por una mención a la memoria local.
+- Duración de los saltos: gesto 2,2 s, menú 1,5 s (`RECORRIDO.paginadoMovil`). Revisar en el teléfono si conviene igualarlas.
+- En el prólogo coinciden el logotipo de arriba y el titular grande «BOXRUS» (se revisará con la interfaz, fase 4).

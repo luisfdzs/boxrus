@@ -17,6 +17,26 @@ Valores objetivo; se miden en la fase 5 y se revisan si resultan irreales.
 
 El presupuesto de descarga es algo mayor que en Billaron porque los mapas de luz precalculados, si se usan, pesan.
 
+### Estado medido (fin de la fase 1, 2026-10-10)
+| Pieza (gzip) | Peso | Cuenta en |
+|---|---|---|
+| Isla 3D: Three.js, React Three Fiber, drei, escena y cámara (`ControladorCamara.*.js`) | ~238 KB | JS de la isla |
+| Cliente de React (`client.*.js`) | ~64 KB | JS de la isla |
+| **Total JS de la isla** | **~302 KB de 350** | |
+| Script de la página: GSAP, ScrollTrigger, Lenis, scroll por paradas (`index.astro_*.js`) | ~49 KB | aparte (no es la isla) |
+| Capa de depuración (`Depuracion.*.js`) | carga solo con `?depuracion=1` | — |
+| Llamadas de dibujo / triángulos | ~27 / ~30.000 | presupuesto de 150 / — |
+
+Margen: **~48 KB** para todo lo que falta en la isla. Lo que más pesará: `@react-three/postprocessing` + `postprocessing` (fase 3; del orden de 40–60 KB gzip según los efectos) y los cargadores de la fase 2 (`KTX2Loader`, decodificador Meshopt). Los modelos y texturas **no** cuentan aquí, sino en la descarga 3D (10 MB / 5 MB).
+
+Palancas si no cabe, de menor a mayor esfuerzo: importar de drei solo lo usado (ya se hace; vigilar que no entren `Text`, `Environment` con presets remotos, etc.); cargar el postproceso en diferido tras el primer fotograma; partir la isla en dos trozos (escena base + postproceso/atmósfera); revisar el presupuesto con Luis si la calidad lo justifica.
+
+Cómo medirlo tras `npm run build`:
+```bash
+for f in dist/_astro/*.js; do echo "$(gzip -c "$f" | wc -c) $f"; done | sort -n | tail
+```
+Y en el navegador, con `?depuracion=1`: `window.naveRender` da llamadas de dibujo y triángulos del último fotograma.
+
 ## Niveles de calidad
 | Ajuste | Alto | Medio | Bajo |
 |---|---|---|---|
