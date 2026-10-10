@@ -35,7 +35,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 | Postes | 8, en los vértices; acolchado negro de Ø 0,3 m hasta `y = 2,5` |
 | Malla | eslabones de acero (textura con alfa), de `y = 0,75` a `y = 2,35` |
 | Cable superior | acolchado negro a `y = 2,45` |
-| Puertas | 2, en las caras que miran a la diagonal delantera izquierda (−X, +Z) y trasera derecha (+X, −Z) |
+| Puertas | 2, en las caras que miran a la diagonal delantera izquierda (−X, +Z) y trasera derecha (+X, −Z); hueco libre de 1,2 m centrado en la cara. Los vértices están a 22,5° + k·45° para que haya caras mirando a las diagonales |
 | Lona | gris muy oscuro, mate |
 | Rotulación | «BOXRUS» vertical en los 8 acolchados |
 
@@ -43,7 +43,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 | Elemento | Valor |
 |---|---|
 | Saco pesado | cilindro Ø 0,4 m × 1,5 m; base a `y = 0,5` |
-| Sacos protagonistas | (−7, z −2) y (+7, z −2), colgados de una viga auxiliar tendida entre los pórticos de `z = +2` y `z = −4`; cadena hasta `y = 6,5` |
+| Sacos protagonistas | (−2,2, z −3) y (+2,2, z −3) *(fase 1: en (±7, −2) quedaban fuera del plano del prólogo)*, colgados de una viga auxiliar tendida entre los pórticos de `z = +2` y `z = −4`; cadena hasta `y = 6,5` |
 | Bastidor izquierdo | estructura de acero a lo largo de `x = −16,5`, de `z = −8` a `z = −32`, altura 3,2 m |
 | Bastidor derecho | igual en `x = +16,5` |
 | Sacos en bastidores | 9 por lado, cada 3 m (`z = −8, −11, … −32`), cadena corta de 4 ramales |
@@ -55,11 +55,11 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 - Correas rojo óxido cada 1,5 m, paralelas a la cumbrera.
 - Chapa ondulada gris (geometría o normal map ondulado).
 - **Fluorescentes**: regletas dobles de 1,5 m colgadas a `y = 6,2`, en 6 filas longitudinales (`x = −13, −8, −3, +3, +8, +13`), una regleta cada 3 m.
-- **Refuerzo sobre la jaula**: 4 regletas adicionales formando un cuadrado sobre el octógono.
+- **Refuerzo sobre la jaula**: 4 regletas adicionales formando un cuadrado de 4 m sobre el octógono, a `y = 4,4` (fase 1: a 5,2 se confundían con los ventanales en el picado).
 
 ## Paredes
 - Ladrillo visto en todo el perímetro, de 0 a 7 m.
-- **Marcador de asaltos**: caja negra de 1,2 × 0,5 m en la pared izquierda, centrada en (−17,9, 3,6, −20), mirando a +X (hacia la jaula). Dígitos LED rojos `05:00` y un indicador de asalto `R1`.
+- **Marcador de asaltos**: caja negra de 1,2 × 0,5 m en la pared izquierda, centrada en (−17,9, 3,6, −22) *(fase 1: en z = −20 quedaba encajonado entre poste, viga y ventanal)*, mirando a +X (hacia la jaula). Dígitos LED rojos `05:00` y un indicador de asalto `R1`.
 
 ## Suelo
 - Tatami negro en placas de 1 × 2 m, juntas finas, satinado (rugosidad media-baja).

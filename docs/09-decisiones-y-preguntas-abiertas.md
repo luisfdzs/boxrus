@@ -17,6 +17,10 @@
 | 2026-10-10 | Tipografías: **Anton** (titulares) e **Inter** variable (textos), vía Fontsource | Las primeras candidatas de `02`; OFL y alojadas en el sitio. Revisables al ver la interfaz (fase 4) |
 | 2026-10-10 | Esquemas de contenido en `src/lib/esquemas.ts`; `content.config.ts` solo los conecta a las colecciones | Así Vitest los prueba sin depender de `astro:content` |
 | 2026-10-10 | Colecciones vacías hasta la fase 4 (incluida `ubicacion`, que usa `glob` en vez de `file`) | Evita inventar ahora una dirección que depende de la pregunta 7 |
+| 2026-10-10 | Fase 1: sacos protagonistas en (±2,2, −3) en vez de (±7, −2); marcador en z = −22; refuerzo de la jaula a y = 4,4 | Sacos visibles en el prólogo también en vertical; marcador en pared limpia; refuerzo separado de los ventanales en el picado (propuestas del `revisor-visual`) |
+| 2026-10-10 | Fase 1: encuadres de todas las paradas ajustados tras dos rondas de capturas (detalle en `04`) | Composición revisada con el agente `revisor-visual` |
+| 2026-10-10 | Velocidad de cámara uniforme sobre desplazamiento + giro de la mirada (8 m/rad), con límite de 36° por 1 % de progreso | Sin el giro en la cuenta, la salida por la puerta trasera hacía un barrido de casi 90° en un instante |
+| 2026-10-10 | Ajuste a paradas desactivado por defecto; se prueba con `?ajuste=1` | Pregunta 6: probar ambos en uso real antes de decidir |
 
 ## Preguntas abiertas
 

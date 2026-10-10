@@ -1,26 +1,222 @@
 ---
+import Nave from '../components/nave/Nave';
 import Base from '../layouts/Base.astro';
+import { PARADAS, RECORRIDO } from '../datos/paradas';
+
+// El epílogo no lleva sección superpuesta: su texto va en el cierre, tras el fundido.
+const superpuestas = PARADAS.filter((p) => p.id !== 'E');
+const epilogo = PARADAS.find((p) => p.id === 'E')!;
+const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
 ---
 
 <Base titulo="Boxrus" descripcion="Gimnasio de MMA y deportes de contacto. Recorre la nave: horario, clases, galería, premios y ubicación.">
+  <div class="lienzo">
+    <Nave client:only="react" />
+  </div>
+  <div class="fundido" aria-hidden="true"></div>
+
   <main>
-    <h1>Boxrus</h1>
-    <p>La nave está en obras. Vuelve pronto.</p>
+    <div id="pista" class="pista" style={`--pantallas: ${RECORRIDO.pantallas}`}>
+      {
+        superpuestas.map((parada) => (
+          <section class="parada" id={`parada-${parada.id}`} data-parada={parada.id} aria-labelledby={`titular-${parada.id}`}>
+            <div class="panel">
+              {parada.interfaz.antetitulo && <p class="antetitulo">{parada.interfaz.antetitulo}</p>}
+              {parada.id === 'P' ? (
+                <h1 id={`titular-${parada.id}`}>{parada.interfaz.titular}</h1>
+              ) : (
+                <h2 id={`titular-${parada.id}`}>{parada.interfaz.titular}</h2>
+              )}
+              {parada.interfaz.subtitulo && <p class="subtitulo">{parada.interfaz.subtitulo}</p>}
+              {parada.interfaz.texto && <p>{parada.interfaz.texto}</p>}
+              {parada.interfaz.boton && (
+                <a class="boton" href={parada.interfaz.boton.href}>
+                  {parada.interfaz.boton.texto}
+                </a>
+              )}
+              {parada.interfaz.indicacion && <p class="indicacion">{parada.interfaz.indicacion}</p>}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <section class="cierre" aria-labelledby="titular-cierre">
+      <h2 id="titular-cierre">{epilogo.interfaz.titular}</h2>
+      <nav aria-label="Secciones">
+        <ul>
+          {
+            secciones.map((p) => (
+              <li>
+                <a href={p.interfaz.boton?.href}>{p.interfaz.antetitulo}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </section>
   </main>
 </Base>
 
+<script>
+  import { calcularPausas } from '../lib/pausas';
+  import { leerModo } from '../lib/modo';
+  import { suscribir } from '../lib/progreso';
+  import { iniciarScroll } from '../lib/scroll';
+
+  const modo = leerModo();
+  const pausas = calcularPausas();
+  const secciones = [...document.querySelectorAll<HTMLElement>('.parada')];
+  const fundido = document.querySelector<HTMLElement>('.fundido')!;
+  const epilogo = pausas.at(-1)!;
+
+  if (modo.captura) document.documentElement.dataset.captura = 'si';
+
+  suscribir((p) => {
+    secciones.forEach((seccion, k) => {
+      const { inicio, fin } = pausas[k];
+      const margen = (fin - inicio) * 0.35;
+      const activa = p >= inicio - margen && p <= fin + margen;
+      seccion.toggleAttribute('data-activa', activa);
+      seccion.setAttribute('aria-hidden', String(!activa));
+    });
+    // Fundido a blanco en la segunda mitad de la pausa del epílogo.
+    const f = Math.min(1, Math.max(0, (p - epilogo.centro) / (epilogo.fin - epilogo.centro)));
+    fundido.style.opacity = String(f);
+  });
+
+  iniciarScroll(document.getElementById('pista')!, modo);
+</script>
+
 <style>
+  .lienzo {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .fundido {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+  }
+
   main {
+    position: relative;
+    z-index: 2;
+  }
+
+  .pista {
+    height: calc((var(--pantallas) + 1) * 100svh);
+  }
+
+  .parada {
+    position: fixed;
+    inset: auto auto 0 0;
+    width: min(32rem, 100%);
+    padding: clamp(1rem, 4vw, 3rem);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s;
+  }
+
+  .parada[data-activa] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  :global([data-captura]) .parada {
+    transition: none;
+  }
+
+  .panel {
+    padding: 1.25rem 1.5rem;
+    background: rgb(13 14 16 / 0.72);
+    backdrop-filter: blur(6px);
+    border-left: 3px solid var(--color-acento);
+  }
+
+  .panel h1 {
+    margin: 0;
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    color: var(--color-acento);
+  }
+
+  .panel h2 {
+    text-wrap: balance;
+    margin: 0.25rem 0 0.75rem;
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  }
+
+  .subtitulo {
+    margin: 0.5rem 0 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .antetitulo,
+  .indicacion {
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-chapa);
+  }
+
+  .boton {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    background: var(--color-acento);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .cierre {
     min-height: 100svh;
     display: grid;
     place-content: center;
-    text-align: center;
+    gap: 1.5rem;
     padding: 2rem;
+    text-align: center;
+    background: #fff;
+    color: var(--color-acero);
   }
 
-  h1 {
+  .cierre h2 {
     margin: 0;
-    font-size: clamp(3rem, 12vw, 8rem);
-    color: var(--color-acento);
+    font-size: clamp(2rem, 6vw, 4rem);
+  }
+
+  .cierre ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cierre a {
+    color: var(--color-acero);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .parada {
+      width: 100%;
+      padding: 0.75rem;
+    }
+
+    .panel h1 {
+      font-size: 3.2rem;
+    }
   }
 </style>

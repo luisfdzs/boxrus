@@ -2,19 +2,19 @@
 
 El recorrido tiene un **prólogo**, **5 paradas** (una por sección de la web) y un **epílogo**. Cada parada usa un tipo de plano distinto: pared con el marcador, dentro de la jaula, travelling lateral, picado desde las cerchas y contraluz en los ventanales.
 
-Coordenadas en el sistema de `03-escena.md`. Posiciones y encuadres son **hipótesis**; se ajustan en la fase de maqueta y se anotan aquí.
+Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajustados en la fase 1** (maqueta en bloques); la fuente de verdad es `src/datos/paradas.ts`.
 
 ## Resumen
 
 | # | Sección | Elemento | Tipo de plano | Cámara (x, y, z) | Mira a (x, y, z) | Focal aprox. |
 |---|---|---|---|---|---|---|
-| P | Prólogo: la entrada | Jaula + sacos | Simétrico desde el portón, cámara baja | (0,0, 1,3, 2,5) | (0,0, 1,6, −30,0) | 24 mm |
-| 1 | Horario | Marcador de asaltos | Tres cuartos hacia la pared izquierda | (−9,5, 2,2, −14,0) | (−17,9, 3,4, −20,5) | 35 mm |
-| 2 | Clases | Interior de la jaula | Gran angular desde dentro, a través de la malla | (−2,8, 1,75, −18,4) | (3,2, 1,3, −21,8) | 20 mm |
+| P | Prólogo: la entrada | Jaula + sacos | Simétrico desde el portón, cámara baja | (0,0, 1,3, 3,0) | (0,0, 1,6, −30,0) | 27 mm |
+| 1 | Horario | Marcador de asaltos | Tres cuartos hacia la pared izquierda | (−9,5, 2,2, −14,0) | (−17,9, 3,2, −22,5) | 35 mm |
+| 2 | Clases | Interior de la jaula | Gran angular desde dentro, a través de la malla | (−0,6, 2,1, −19,4) | (3,2, 1,5, −23,2) | 20 mm |
 | 3 | Galería | Sacos del bastidor derecho | Travelling lateral paralelo a la fila | (12,5, 1,6, −12,0) | (16,5, 1,3, −18,0) | 35 mm |
-| 4 | Premios | La jaula desde arriba | Picado desde las cerchas | (0,0, 5,6, −12,5) | (0,0, 0,6, −20,5) | 24 mm |
-| 5 | Ubicación | Ventanales del fondo | Contraluz con haces de luz | (3,0, 1,6, −34,5) | (−1,0, 3,8, −44,0) | 28 mm |
-| E | Epílogo | Un ventanal | Avance hacia la luz, fundido a blanco | (0,0, 4,4, −42,5) | (0,0, 4,4, −50,0) | 35 mm |
+| 4 | Premios | La jaula desde arriba | Picado desde las cerchas | (0,0, 5,6, −7,5) | (0,0, 0,6, −20,0) | 22 mm |
+| 5 | Ubicación | Ventanales del fondo | Contraluz con haces de luz | (6,0, 1,6, −31,0) | (−1,0, 2,8, −44,0) | 24 mm |
+| E | Epílogo | Un ventanal | Avance hacia la luz, fundido a blanco | (1,8, 4,5, −39,5) | (1,8, 4,5, −50,0) | 35 mm |
 
 ## Detalle de cada plano
 
@@ -78,19 +78,32 @@ Coordenadas en el sistema de `03-escena.md`. Posiciones y encuadres son **hipót
 
 Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arquitectura.md` (colecciones de contenido).
 
+### Ajustes de la fase 1
+- **P · Prólogo:** cámara a `z = 3,0` (con la deriva no cabe más cerca del portón) y 27 mm; sacos protagonistas en (±2,2, −3) para el tríptico saco–jaula–saco, también en vertical.
+- **1 · Horario:** marcador movido a `z = −22`, en pared limpia. Los sacos quedan a media distancia, no en primer término: el saco cercano caería bajo la tarjeta.
+- **2 · Clases:** cámara a `y = 2,1` (ojos de alguien de pie sobre la lona, que está a 0,6 m), por debajo del cable superior al cruzar la puerta. Mira a la puerta trasera: sus dos postes anclan el plano y anticipan la salida. En vertical, un poste centrado (donde irá BOXRUS).
+- **3 · Galería:** el travelling avanza hacia **+Z** (2 m): la cámara llega desde la puerta trasera por el sur y así no tiene que dar media vuelta.
+- **4 · Premios:** retrasada a `z = −7,5` con 22 mm: el picado abarca la jaula entera y los fluorescentes entran por arriba. El refuerzo de la jaula baja a `y = 4,4` para no confundirse con la banda de ventanales.
+- **5 · Ubicación:** en (6, 1,6, −31) con 24 mm: el pilar (−10, −40) entra como silueta a contraluz y se ve más suelo, donde caerán los haces.
+- **E · Epílogo:** centrada en el ventanal central (`x = 1,8`; en `x = 0` hay machón) y a `z = −39,5`, con una deriva de 3 m hacia el ventanal mientras funde a blanco.
+- **Puntos de paso:** cada transición tiene los suyos en `paradas.ts`; los de las puertas de la jaula se calculan desde `nave.ts`.
+- **Velocidad:** cada transición se recorre a ritmo uniforme sobre una «longitud» que suma desplazamiento y giro de la mirada (8 m por radián), con aceleración y frenada suaves. Límite comprobado en pruebas: 36° de giro por cada 1 % de progreso; el pico está al salir por la puerta trasera.
+
 ## Reglas de coreografía
 - **Tramos:** 7 (P, 1–5, E). Cada parada tiene una **zona de pausa** (~40 % del tramo) con deriva lenta de cámara y la interfaz visible; el resto es transición.
 - **Trayectoria:** curvas suaves (Catmull-Rom o Bézier) para posición y punto de mira, independientes; velocidad angular limitada.
 - **Colisiones:** la cámara nunca atraviesa sacos, cadenas, pilares, bastidores, la malla de la jaula (salvo por las puertas) ni las regletas. Prueba automática obligatoria.
 - **Entrada y salida de la jaula** solo por las puertas: es la transición más delicada del recorrido.
 - **Reversible:** subir el scroll deshace exactamente el recorrido.
-- **Ajuste a paradas:** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real.
+- **Ajuste a paradas:** suave y solo cuando el usuario deja de hacer scroll. A validar en uso real: por ahora desactivado; se prueba con `?ajuste=1`.
 - **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables.
 
 ## Encuadres en móvil (vertical)
-Cada parada define un **encuadre alternativo** para pantalla vertical: más campo de visión o más distancia, y el elemento protagonista desplazado hacia arriba para dejar la interfaz abajo. Se ajusta en la fase de maqueta con capturas en 390 × 844.
+Cada parada define un **encuadre alternativo** para pantalla vertical: más campo de visión o más distancia, y el elemento protagonista desplazado hacia arriba para dejar la interfaz abajo. Se usa cuando la relación ancho/alto es menor que 0,8. Valores de la fase 1 (390 × 844) en `src/datos/paradas.ts` (`movil`); focales entre 14 y 24 mm. En el prólogo vertical los sacos protagonistas quedan fuera de cuadro: se prioriza la jaula.
 
 ## Modo de captura (necesario para verificar)
 - `/?parada=N` (N = `P`, `1`…`5`, `E`) coloca la cámara directamente en esa parada.
 - `/?captura=1` desactiva animaciones, deriva, balanceo de sacos, polvo animado, grano y toda aleatoriedad.
-- `/?depuracion=1` muestra la trayectoria, los ejes, el FPS y los avisos de colisión.
+- `/?depuracion=1` muestra la trayectoria, los ejes, el FPS y los avisos de colisión (y expone `window.naveRender` con llamadas de dibujo y triángulos).
+- `/?ajuste=1` activa el ajuste a paradas (pregunta abierta 6).
+- Cuando la cámara está colocada y hay fotogramas pintados, `<html>` recibe `data-nave-lista`: es la señal para capturar.
