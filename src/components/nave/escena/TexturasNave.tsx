@@ -1,7 +1,8 @@
 import { useLoader, useThree } from '@react-three/fiber';
 import { useLayoutEffect } from 'react';
-import { RepeatWrapping, type Texture } from 'three';
+import { ClampToEdgeWrapping, RepeatWrapping, type Texture } from 'three';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import { LUZ } from '../../../datos/luz';
 import { TEXTURAS } from '../../../datos/texturas';
 import { MATERIALES } from './materiales';
 
@@ -15,6 +16,9 @@ const FICHEROS = [
   hormigon.rugosidad,
   caucho.normal,
 ].map((f) => carpeta + f);
+// Mapas de luz horneados en Blender (LUZ.horneado.mapas): suelo, techo y muros.
+const LUZ_MAPAS = LUZ.horneado.mapas;
+const FICHEROS_LUZ = [LUZ_MAPAS.suelo, LUZ_MAPAS.techo, LUZ_MAPAS.muros].map((f) => LUZ_MAPAS.carpeta + f);
 
 /**
  * Carga las texturas externas (.ktx2, transcodificador Basis alojado en el sitio)
@@ -23,9 +27,11 @@ const FICHEROS = [
  */
 export function TexturasNave() {
   const gl = useThree((s) => s.gl);
-  const texturas = useLoader(KTX2Loader, FICHEROS, (cargador) => {
+  const todas = useLoader(KTX2Loader, [...FICHEROS, ...FICHEROS_LUZ], (cargador) => {
     cargador.setTranscoderPath(TEXTURAS.transcodificador).detectSupport(gl);
   }) as Texture[];
+  const texturas = todas.slice(0, FICHEROS.length);
+  const mapasLuz = todas.slice(FICHEROS.length);
 
   useLayoutEffect(() => {
     for (const t of texturas) {
@@ -42,7 +48,19 @@ export function TexturasNave() {
     MATERIALES.tatami.normalMap = cNormal;
     MATERIALES.tatami.normalScale.set(0.5, 0.5);
     for (const m of [MATERIALES.muro, MATERIALES.hormigon, MATERIALES.tatami]) m.needsUpdate = true;
-  }, [texturas]);
+
+    // Mapas de luz: sin repetir (las UV van de 0 a 1 en toda la nave; ver usarLuzHorneada).
+    const [luzSuelo, luzTecho, luzMuros] = mapasLuz;
+    const intensidad = LUZ_MAPAS.escala * LUZ_MAPAS.intensidad;
+    const asignar = (mapa: Texture, materiales: typeof MATERIALES.muro[]) => {
+      mapa.wrapS = mapa.wrapT = ClampToEdgeWrapping;
+      mapa.needsUpdate = true;
+      for (const m of materiales) Object.assign(m, { lightMap: mapa, lightMapIntensity: intensidad, needsUpdate: true });
+    };
+    asignar(luzSuelo, [MATERIALES.tatami, MATERIALES.juntaTatami, MATERIALES.hormigon]);
+    asignar(luzTecho, [MATERIALES.chapa]);
+    asignar(luzMuros, [MATERIALES.muro]);
+  }, [todas]);
 
   return null;
 }

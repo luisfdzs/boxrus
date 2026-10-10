@@ -118,6 +118,53 @@ function ajustarLadrillo(material: MeshStandardMaterial) {
  * (u alrededor, v a lo alto). El surco inclina la normal y oscurece una línea fina;
  * a distancia se promedia con fwidth para que no parpadee.
  */
+/**
+ * Mapa de luz horneado (LUZ.horneado.mapas) con UV proyectadas en el mundo, con
+ * las mismas fórmulas que herramientas/blender/hornear.py: suelo y techo en planta;
+ * muros desplegados por el perímetro (s) y la altura. El muro de cada caja se
+ * elige por el centro de la instancia, no por el vértice (las esquinas son ambiguas).
+ * También rebaja el relleno indirecto (hemisferio) en estos materiales, que ya
+ * traen en el mapa la luz difusa de la nave.
+ */
+function usarLuzHorneada(material: MeshStandardMaterial, superficie: 'suelo' | 'techo' | 'muros') {
+  const { xMin, xMax, zFrente, zFondo, alturaCumbrera } = ENVOLVENTE;
+  const ancho = xMax - xMin;
+  const perimetro = 2 * (ancho + PROFUNDIDAD);
+  const enPlanta = `vLightMapUv = vec2((pLuz.x - ${f(xMin)}) / ${f(ancho)}, (pLuz.z - ${f(zFondo)}) / ${f(PROFUNDIDAD)});`;
+  const enMuros = `
+    vec3 cLuz = (mLuz * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+    vec4 dLuz = abs(vec4(cLuz.x - ${f(xMin)}, cLuz.z - ${f(zFondo)}, cLuz.x - ${f(xMax)}, cLuz.z - ${f(zFrente)}));
+    float mLado = min(min(dLuz.x, dLuz.y), min(dLuz.z, dLuz.w));
+    float sLuz;
+    if (mLado == dLuz.x) sLuz = ${f(zFrente)} - pLuz.z;
+    else if (mLado == dLuz.y) sLuz = ${f(PROFUNDIDAD)} + pLuz.x - ${f(xMin)};
+    else if (mLado == dLuz.z) sLuz = ${f(PROFUNDIDAD + ancho)} + pLuz.z - ${f(zFondo)};
+    else sLuz = ${f(2 * PROFUNDIDAD + ancho)} + ${f(xMax)} - pLuz.x;
+    vLightMapUv = vec2(sLuz / ${f(perimetro)}, pLuz.y / ${f(alturaCumbrera)});`;
+  alCompilar(material, `luz-${superficie}`, (shader) => {
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <uv_vertex>',
+      `#include <uv_vertex>
+      #ifdef USE_LIGHTMAP
+        #ifdef USE_INSTANCING
+          mat4 mLuz = modelMatrix * instanceMatrix;
+        #else
+          mat4 mLuz = modelMatrix;
+        #endif
+        vec3 pLuz = (mLuz * vec4(position, 1.0)).xyz;
+        ${superficie === 'muros' ? enMuros : enPlanta}
+      #endif`,
+    );
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <lights_fragment_maps>',
+      `#ifdef USE_LIGHTMAP
+        irradiance *= ${f(LUZ.horneado.mapas.relleno)};
+      #endif
+      #include <lights_fragment_maps>`,
+    );
+  });
+}
+
 function coserSaco(material: MeshStandardMaterial) {
   const { paneles, arriba, abajo, ancho, profundidad, oscurecer } = CUERO.costuras;
   const perimetro = 2 * Math.PI * SACOS.radio;
@@ -311,3 +358,6 @@ MATERIALES.muro.shadowSide = FrontSide;
 coserSaco(MATERIALES.saco);
 degradarVidrio(MATERIALES.vidrio);
 espesarMallaDeLado(MATERIALES.malla);
+for (const m of [MATERIALES.tatami, MATERIALES.juntaTatami, MATERIALES.hormigon]) usarLuzHorneada(m, 'suelo');
+usarLuzHorneada(MATERIALES.chapa, 'techo');
+usarLuzHorneada(MATERIALES.muro, 'muros');

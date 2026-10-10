@@ -81,10 +81,11 @@ export const LUZ = {
     solAngulo: 2,
     /** Albedo difuso por material para la luz rebotada (los texturizados, con su color medio). */
     albedos: {
-      muro: '#76615a',
-      tatami: '#23272b',
-      juntaTatami: '#0e0f10',
-      hormigon: '#6c6c6a',
+      // Ladrillo: color medio de Red Brick 03 con la saturación y el brillo de TEXTURAS.ladrillo.
+      muro: '#a8705c',
+      tatami: '#1e2225',
+      juntaTatami: '#15181b',
+      hormigon: '#4e4f50',
       acero: '#16181b',
       correa: '#6e2a22',
       chapa: '#8a9096',
@@ -94,8 +95,24 @@ export const LUZ = {
       acolchado: '#141517',
       saco: '#1b1b1d',
       cadena: '#7a7e83',
+      carcasa: '#0e0f10',
       otros: '#3a3a3a',
     },
     mezcla: { fluorescentes: 1, dia: 1 },
+    /**
+     * Mapas de luz en la escena (public/luz/, generados con combinar.py y toktx).
+     * `escala`: la de escala.json (los PNG van divididos por ella); `intensidad` la
+     * ajusta a ojo. `relleno`: factor del hemisferio y del entorno en los materiales
+     * con mapa de luz, que ya traen la luz difusa de la nave.
+     */
+    mapas: {
+      carpeta: '/luz/',
+      suelo: 'luz_suelo.ktx2',
+      techo: 'luz_techo.ktx2',
+      muros: 'luz_muros.ktx2',
+      escala: 1.15,
+      intensidad: 0.85,
+      relleno: 0.4,
+    },
   },
 } as const;

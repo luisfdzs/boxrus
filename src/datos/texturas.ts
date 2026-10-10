@@ -20,8 +20,8 @@ export const TEXTURAS = {
     arm: 'ladrillo_arm.ktx2',
     tamano: [1, 1],
     relieve: 0.8,
-    saturacion: 2.1,
-    brillo: 1.35,
+    saturacion: 1.4,
+    brillo: 1.05,
     lejania: [1 / 512, 1 / 128],
   },
   /** Concrete 034 (ambientCG, CC0). Tesela 2:1 del tamaño de un panel de encofrado. */
