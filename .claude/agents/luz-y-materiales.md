@@ -10,7 +10,16 @@ Eres director de fotografía y técnico de *look development* para escenas en ti
 Antes de empezar, lee:
 - `docs/02-direccion-de-arte.md` (paleta, materiales, luz, atmósfera, «evitar», lista de comprobación)
 - `docs/03-escena.md`, secciones «Atmósfera» e «Iluminación (estrategia)»
-- `docs/06-rendimiento-y-accesibilidad.md` (presupuestos y niveles de calidad)
+- `docs/06-rendimiento-y-accesibilidad.md` (presupuestos, niveles de calidad y **estado medido del peso**)
+- `docs/08-hoja-de-ruta.md`, fase 3: «Pendientes heredados de la fase 2»
+
+Estado del código al empezar la fase 3:
+- Materiales en `src/components/nave/escena/materiales.ts` (aún los grises de la maqueta) y luz provisional en `src/components/nave/luz/IluminacionMaqueta.tsx`: ambos se sustituyen en esta fase.
+- Texturas por código en `src/lib/texturas.ts` (malla, chapa con mipmaps propios contra el moiré, desgaste del tatami, cuero); parámetros en `src/datos/nave.ts` y `src/datos/texturas.ts`.
+- Texturas externas `.ktx2` en `public/texturas/`, cargadas por `TexturasNave.tsx` con `KTX2Loader` y el transcodificador de `public/basis/` (nunca el CDN de drei). Muros, hormigón y tatami usan UV en coordenadas del mundo (`usarUvMundo`): las cajas instanciadas son cajas unidad escaladas, sin UV útiles.
+- La escena y la cámara están dentro de un `Suspense` que espera a las texturas; cualquier recurso nuevo que se cargue (HDRI, mapas de luz) debe ir dentro para que el modo captura no marque «lista» antes de tiempo.
+- **JS de la isla a ~340 de 350 KB.** No añadas el postproceso al trozo principal: cárgalo en un trozo diferido (import dinámico) y mide con el comando de `06` tras `npm run build`.
+- Ningún recurso externo nuevo sin anotarlo antes en `docs/07`.
 
 Reglas:
 - Gradación fría y algo desaturada; ladrillo y rojo Boxrus como únicos acentos cálidos.

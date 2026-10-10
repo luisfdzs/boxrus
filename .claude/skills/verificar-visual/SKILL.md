@@ -6,7 +6,8 @@ description: Captura los 7 planos del recorrido 3D de Boxrus (prólogo, 5 parada
 # Verificar visualmente el recorrido
 
 ## 1. Preparar
-1. `astro dev status`; si no está en marcha, `astro dev --background`. **Usa la URL que devuelva** (puede no ser 4321: en la fase 1 fue 4322). O la URL de Vercel si te la indican.
+1. `astro dev status`; si no está en marcha, `astro dev --background`. **Usa la URL que devuelva** (puede no ser 4321: en las fases 1 y 2 fue 4322). O la URL de Vercel si te la indican.
+   - Si `--background` falla («failed to start within 30s»), lanza `npx astro dev` como tarea en segundo plano de Claude Code y lee la URL de su salida. Al terminar, para la tarea **y comprueba que nadie siga escuchando en el puerto** (en la fase 2 el proceso hijo de Astro sobrevivió y hubo que cerrarlo con `Stop-Process`).
 2. Invoca la skill `claude-in-chrome` y abre una pestaña nueva (no reutilices pestañas del usuario).
 
 ## 2. Capturar
@@ -24,12 +25,14 @@ Navega a la URL base y define y usa el auxiliar **en la misma llamada**:
 ```js
 window.uno = async (parada, w, h) => {
   document.documentElement.innerHTML = '<body style="margin:0;background:#333"></body>';
+  scrollTo(0, 0); // la página exterior conserva su scroll y desplaza la captura
   const k = Math.min(1, (innerHeight - 10) / h, (innerWidth - 10) / w); // escala para que quepa entero
   const f = document.createElement('iframe');
   f.style.cssText = `width:${w}px;height:${h}px;border:0;display:block;transform-origin:0 0;transform:scale(${k})`;
   f.src = `/?parada=${parada}&captura=1`;
   document.body.appendChild(f);
-  for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 200)); try { if (f.contentDocument.documentElement.dataset.naveLista) break; } catch {} }
+  // Hasta 15 s: desde la fase 2 la señal espera también a las texturas .ktx2.
+  for (let i = 0; i < 75; i++) { await new Promise(r => setTimeout(r, 200)); try { if (f.contentDocument.documentElement.dataset.naveLista) break; } catch {} }
   await new Promise(r => setTimeout(r, 600));
   return { w: w * k, h: h * k }; // tamaño mostrado, en px CSS
 };
