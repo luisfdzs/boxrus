@@ -22,7 +22,7 @@ export const LUZ = {
     posicion: [JAULA.centro[0], 3, JAULA.centro[2]] as Vec3,
     resolucion: 128,
     intensidad: 1,
-    materiales: { tatami: 0.3, juntaTatami: 0.3, malla: 0.6, lona: 0.5, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
+    materiales: { tatami: 0.3, juntaTatami: 0.3, hormigon: 0.4, malla: 0.6, lona: 0.5, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
   },
   /**
    * Sol de mañana: entra por los ventanales del fondo y del muro derecho (este),
@@ -45,7 +45,8 @@ export const LUZ = {
   /**
    * Refuerzo cenital sobre la jaula: foco hacia la lona, con caída hasta la malla.
    * Sin sombra: desde el centro, la de la malla y los postes cae hacia fuera (nunca
-   * sobre la lona) y en la prueba casi duplicaba el tiempo de fotograma (docs/09).
+   * sobre la lona); en la prueba solo añadía ~10 llamadas de dibujo y ~16.000
+   * triángulos, sin nada visible a cambio (docs/09).
    */
   refuerzoJaula: {
     color: '#e6f2ff',

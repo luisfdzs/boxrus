@@ -240,8 +240,9 @@ const emisivo = (color: string, intensidad: number, extra: ConstructorParameters
 export const MATERIALES = {
   // Ladrillo: color, normal y arm llegan con TexturasNave (blanco para no teñir el mapa de color).
   muro: material('#ffffff', { roughness: 1 }),
-  // Hormigón pulido: oscurecido y con brillo (Concrete 034 es encofrado claro).
-  hormigon: material('#6c6c6a', { roughness: 0.4 }),
+  // Hormigón pulido: oscurecido y con brillo (Concrete 034 es encofrado claro). Más oscuro desde la
+  // exposición 1,8: con #6c6c6a la franja de la entrada salía casi blanca al pie del prólogo en móvil.
+  hormigon: material('#4e4f50', { roughness: 0.4 }),
   juntaTatami: material('#15181b'),
   // Tatami satinado: el tono por placa va en el color de cada instancia (Envolvente).
   // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,60–0,70. Algo más que el 0,6 de partida:
