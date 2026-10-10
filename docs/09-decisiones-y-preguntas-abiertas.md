@@ -60,6 +60,8 @@
 | 2026-10-10 | Oclusión en pantalla con **SSAO** de `postprocessing` en vez de N8AO | N8AO añadía ~80 KB con gzip al trozo diferido; con SSAO el trozo pesa ~29 KB |
 | 2026-10-10 | En modo captura, «lista» espera también al postproceso | Si no, las capturas salían a veces sin postproceso y no eran comparables |
 | 2026-10-10 | Fase 3 terminada; Luis pidió fusionar en `test` y `prod` al acabarla | Petición explícita de Luis |
+| 2026-10-10 | Rótulos BOXRUS de los postes de la jaula, en la **fase 4** | Decisión de Luis |
+| 2026-10-10 | HDRI Empty Warehouse 01 **retirado del repo** | Decisión de Luis: ya no se cargaba (entorno capturado de la nave) |
 
 ## Preguntas abiertas
 

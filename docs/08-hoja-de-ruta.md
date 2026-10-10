@@ -79,13 +79,15 @@ Pendientes heredados de la fase 2:
 - Pendientes heredados resueltos (HDRI sustituido por entorno capturado de la nave, ladrillo, costuras).
 - Luz en tiempo real (sol por huecos reales, AgX, foco de la jaula), materiales con la paleta y luz precalculada en Blender (suelo, muros, cubierta; proceso en `03`).
 - Atmósfera (neblina, haces, polvo) y postproceso en trozo diferido.
-- Pendiente para más adelante: profundidad de campo y ajuste fino (fase 6); rótulos BOXRUS en los postes de la jaula (escena, sin fase asignada); reflejos de los tubos en el tatami.
+- Pendiente para más adelante: profundidad de campo y ajuste fino (fase 6); rótulos BOXRUS en los postes de la jaula (fase 4, decidido por Luis); reflejos de los tubos en el tatami.
+- HDRI de `public/entorno/` retirado del repo (decisión de Luis).
 
 ## Fase 4 · Interfaz y contenido
 - Contenido ficticio completo en `src/content/`: horario semanal, 6 disciplinas, 4–6 premios inventados, 12–18 imágenes de galería (capturas de la escena), ubicación ficticia.
 - Interfaz de cada parada con resúmenes del contenido.
 - Páginas `/horario`, `/clases`, `/galeria` (con visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda).
 - Cabecera, «Saltar recorrido», indicador de progreso, secciones finales y pie.
+- Rótulos **BOXRUS** verticales en los 8 acolchados de los postes de la jaula, en blanco con detalle rojo (`02`, `03`, `04`). Asignado a esta fase por Luis el 2026-10-10.
 - Agente: `interfaz`.
 
 **Criterios de aceptación:**
