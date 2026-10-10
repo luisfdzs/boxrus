@@ -74,13 +74,14 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 ## Contenido determinista
 - Toda variación (tono de placas, balanceo de sacos, polvo, posición de detalles) sale del generador con semilla.
 - **Detalles de vida** (aprobados por Luis el 2026-10-10, **sin saturar**): la nave debe parecer usada, no decorada. Lista cerrada, como máximo estos seis, repartidos en pocos puntos y nunca tapando al protagonista de un plano:
-  1. Un par de guantes colgados del gancho del primer saco del bastidor derecho (visible en la parada 3).
-  2. Una comba enrollada sobre el borde de la plataforma de la jaula, junto a un poste.
-  3. Un banco bajo de madera y acero junto al muro izquierdo, entre bastidor y portón, con una toalla doblada y una botella de agua sin etiqueta.
+  1. Un par de guantes colgados del gancho de un saco del bastidor derecho, a un lado del saco, visibles en la parada 3. *(Fase 2: del saco de z = −20, no del primero: el de z = −8 queda detrás de la cámara de la parada 3.)*
+  2. Una comba enrollada sobre el borde de la plataforma de la jaula, junto a un poste *(fase 2: sobre la lona, por dentro de la malla, junto al poste de 67,5°, en la cara frontal sin puerta; se ve en el picado de la parada 4)*.
+  3. Un banco bajo de madera y acero junto al muro izquierdo, con una toalla doblada y una botella de agua sin etiqueta *(fase 2: pasado el extremo del bastidor, en z = −38; entre bastidor y portón no salía en ningún plano)*.
   4. Un par de vendas enrolladas sobre el banco.
-  5. Dos o tres balones medicinales en el suelo, junto al extremo del bastidor derecho.
+  5. Dos o tres balones medicinales en el suelo, junto al extremo del bastidor derecho *(fase 2: tres, de Ø 0,30–0,36 m, en z ≈ −33,5)*.
   6. Unas espinilleras apoyadas en el banco.
   Sin marcas en ningún objeto (solo BOXRUS si hiciera falta). Posiciones en `src/datos/nave.ts`; variación de giro o color con el generador con semilla.
+  Hechos por código con primitivas (`src/lib/detalles.ts`, componente `Detalles`), en cinco mallas fusionadas con color por vértice. Banco movido a z = −38 (ver `09`).
 
 ## Iluminación (estrategia)
 A diferencia de Billaron, la escena es **estática y cerrada**, con pocos objetos repetidos; eso permite más luz real y hace muy rentable la luz precalculada.

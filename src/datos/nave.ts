@@ -191,3 +191,68 @@ export const MARCADOR = {
   alto: 0.5,
   fondo: 0.12,
 } as const;
+
+/**
+ * Detalles de vida (docs/03, «Contenido determinista»): lista cerrada de seis,
+ * hechos por código con primitivas. Posiciones absolutas en metros salvo donde
+ * se indica; la variación de giro y tono sale de `semilla`.
+ */
+export const DETALLES = {
+  semilla: 3109,
+  /** Variación de luminosidad de cada pieza (fracción, ±). */
+  variacionTono: 0.06,
+  guantes: {
+    /**
+     * Saco del bastidor derecho del que cuelgan (índice en `sacosBastidorZ()`): el de z = −20.
+     * El primero (z = −8) queda detrás de la cámara en la parada 3; este es el que se ve de frente.
+     */
+    indiceSaco: 4,
+    /** Distancia en z del gancho al eje del saco, hacia la entrada (lado que mira a la cámara de la parada 3). */
+    separacion: 0.38,
+    /** Gancho bajo la viga del bastidor. */
+    yGancho: BASTIDORES.alto - BASTIDORES.seccion / 2,
+    /** Largo de los cordones de cada guante (distintos para que no cuelguen a la par). */
+    cordones: [0.42, 0.5],
+    /** Separación en x entre los dos guantes. */
+    separacionPar: 0.12,
+    puno: { ancho: 0.15, largo: 0.19, grueso: 0.13 },
+    muneca: { diametro: 0.11, largo: 0.12 },
+    /** Ribete de la muñeca, en el rojo de marca (#d4382a). */
+    ribete: 0.025,
+  },
+  comba: {
+    /** Rollo sobre la lona, por dentro de la malla, junto al poste de 67,5° (cara frontal, sin puerta). */
+    angulo: 70,
+    /** Distancia del centro del rollo al centro de la jaula (la cara frontal está a 4,53 m). */
+    radio: 4.45,
+    radioRollo: 0.15,
+    vueltas: 3,
+    /** Radio de la cuerda (algo más gruesa que la real para que no parpadee a distancia). */
+    grosor: 0.006,
+    mango: { largo: 0.16, diametro: 0.03 },
+  },
+  banco: {
+    /** Centro del banco a ras de suelo, a lo largo de Z junto al muro izquierdo, pasado el extremo del bastidor (en z = −2 no salía en ningún plano). */
+    centro: [-17.2, 0, -38] as Vec3,
+    largo: 1.5,
+    fondo: 0.36,
+    alto: 0.45,
+    grosorAsiento: 0.04,
+    /** Sección de los perfiles de acero de las patas. */
+    perfil: 0.04,
+    /** Objetos encima: dz a lo largo del banco desde su centro (+ hacia la entrada), dx hacia el pasillo. */
+    toalla: { dz: -0.42, dx: 0.0, ancho: 0.24, largo: 0.3, grueso: 0.06 },
+    botella: { dz: 0.08, dx: 0.06, diametro: 0.075, alto: 0.24 },
+    vendas: { dz: 0.42, dx: -0.04, diametro: 0.065, ancho: 0.05 },
+    /** Apoyadas en el canto del asiento que da al pasillo, de pie sobre el suelo. */
+    espinilleras: { dz: [0.12, 0.3], ancho: 0.13, largo: 0.4, grueso: 0.06, pie: 0.2 },
+  },
+  balones: {
+    /** En el suelo junto al extremo del bastidor derecho (z = BASTIDORES.zFin − 1,5): x, z y radio. */
+    lista: [
+      [16.1, -33.3, 0.17],
+      [15.78, -33.52, 0.15],
+      [16.3, -33.95, 0.18],
+    ] as [number, number, number][],
+  },
+} as const;

@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · **Fase 2 en curso**: texturas por código hechas; propuestas de recursos externos pendientes de aprobación de Luis.
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · **Siguiente: fase 3** (punto de partida abajo, en la fase 3).
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -40,15 +40,31 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 - Agente `buscador-assets`: propuestas según `07`, con licencias. Incluye los **detalles de vida** de `03` (lista cerrada, sin saturar).
 - Texturas por código: malla de eslabones, chapa, variación del tatami. ✅ (`src/lib/texturas.ts`, 2026-10-10)
 - Compresión a `.glb`/`.ktx2`. Herramientas ya instaladas y cadena probada (ver `07`, «Herramientas»). El transcodificador Basis, alojado en `public/basis/`.
-- Vigilar el JS de la isla (~302 KB de 350, ver `06`): los cargadores añaden peso.
+- Vigilar el JS de la isla (ver `06`): los cargadores añaden peso.
 
 Punto de partida en una sesión nueva: leer `07` (inventario y herramientas), `03` (medidas y detalles de vida), `06` (presupuestos y estado del peso) y la memoria local del proyecto (capturas y entorno).
 
 **Criterios de aceptación:**
-- [ ] Registro de licencias completo.
-- [ ] Peso dentro del presupuesto de `06`.
+- [x] Registro de licencias completo (`07`).
+- [x] Peso dentro del presupuesto de `06`: descarga 3D ~2 MB de 10 / 5; JS de la isla ~340 de 350 KB (justo: ver el riesgo en la fase 3).
+
+**✅ Fase 2 cerrada el 2026-10-10.** Luis aprobó todos los recursos propuestos y delegó el criterio en Claude. Resultado:
+- Por código: malla, chapa (con mipmaps propios contra el moiré), desgaste del tatami, grano del cuero y los seis detalles de vida (`src/lib/texturas.ts`, `src/lib/detalles.ts`).
+- Externos en `.ktx2`: ladrillo, hormigón y relieve del caucho, cargados con `TexturasNave` y UV en coordenadas del mundo.
+- Desviaciones: Leather 011 descartado (capitoné), guantes en el saco de z = −20 y banco en z = −38 (ver `09`). El HDRI queda descargable pero sin procesar: pasa a la fase 3.
 
 ## Fase 3 · Ambiente
+Punto de partida en una sesión nueva: leer `02` (paleta, lista de comprobación, «Evitar»), `03` (iluminación y atmósfera), `06` (estado del peso: la isla está a ~340 de 350 KB), `07` (registro y cómo se generaron las texturas), `09` (preguntas 4 y 5) y la memoria local (`arranque-fase-3` y `entorno-local`).
+
+Pendientes heredados de la fase 2:
+- **JS de la isla:** quedan ~10 KB. Antes de añadir el postproceso, separarlo en un trozo diferido (y valorar lo mismo con `TexturasNave` + `KTX2Loader`) o pedir a Luis que revise el presupuesto.
+- **HDRI** Empty Warehouse 01: reducirlo a 512 × 256 (`herramientas/reducir_hdr.py`, que necesita numpy) y llevarlo a `public/entorno/`. El clasificador de permisos bloqueó a Claude ejecutarlo sobre el fichero descargado: que lo ejecute Luis con `!` o que lo autorice.
+- **Ladrillo:** chispas blancas en las juntas a distancia (aliasing especular de la normal; muy visible en móvil). Bajar `normalScale` o reducir el relieve en los mipmaps, como en la chapa.
+- **Ladrillo, color:** más saturado que la paleta (`#7d4430`–`#a85a3c`); desaturar con el color del material o en el sombreador.
+- **Hormigón:** Concrete 034 es encofrado claro con agujeros de latiguillos; comprobar que se lee como pulido (está detrás de la cámara en casi todo el recorrido).
+- **Sacos:** faltan las costuras; el grano de cuero ya está.
+- **Chapa:** con la luz de la maqueta apenas se ven las ondas; con el sol y los fluorescentes deberían aparecer los reflejos lineales de `02`.
+
 - Materiales: ladrillo, acero, chapa, tatami, cuero, malla, lona.
 - Sol, fluorescentes, refuerzo de la jaula, entorno, neblina, haces de luz, polvo, postproceso.
 - Decidir y, si procede, aplicar luz precalculada en Blender (ver `09`).

@@ -3,12 +3,14 @@ import { Suspense, lazy, useCallback } from 'react';
 import { leerModo } from '../../lib/modo';
 import { ControladorCamara } from './camara/ControladorCamara';
 import { Bastidores } from './escena/Bastidores';
+import { Detalles } from './escena/Detalles';
 import { Envolvente } from './escena/Envolvente';
 import { Estructura } from './escena/Estructura';
 import { Fluorescentes } from './escena/Fluorescentes';
 import { Jaula } from './escena/Jaula';
 import { Marcador } from './escena/Marcador';
 import { Sacos } from './escena/Sacos';
+import { TexturasNave } from './escena/TexturasNave';
 import { IluminacionMaqueta } from './luz/IluminacionMaqueta';
 
 const Depuracion = lazy(() => import('./depuracion/Depuracion').then((m) => ({ default: m.Depuracion })));
@@ -29,15 +31,20 @@ export default function Nave() {
       aria-hidden="true"
     >
       <color attach="background" args={['#0d0e10']} />
-      <IluminacionMaqueta />
-      <Envolvente />
-      <Estructura />
-      <Fluorescentes />
-      <Jaula />
-      <Sacos animar={!modo.captura} />
-      <Bastidores />
-      <Marcador />
-      <ControladorCamara alPrimerFotograma={marcarLista} />
+      {/* Todo espera a las texturas: ni se pinta a medias ni se marca «lista» antes de tiempo. */}
+      <Suspense fallback={null}>
+        <TexturasNave />
+        <IluminacionMaqueta />
+        <Envolvente />
+        <Estructura />
+        <Fluorescentes />
+        <Jaula />
+        <Sacos animar={!modo.captura} />
+        <Bastidores />
+        <Marcador />
+        <Detalles />
+        <ControladorCamara alPrimerFotograma={marcarLista} />
+      </Suspense>
       {modo.depuracion && (
         <Suspense fallback={null}>
           <Depuracion />

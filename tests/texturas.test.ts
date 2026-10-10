@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CHAPA, JAULA, SUELO } from '../src/datos/nave';
-import { pixelesChapa, pixelesDesgaste, pixelesMalla } from '../src/lib/texturas';
+import { CUERO } from '../src/datos/texturas';
+import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesMalla } from '../src/lib/texturas';
 
 const canal = (datos: Uint8Array, c: number) => datos.filter((_, i) => i % 4 === c);
 
@@ -41,6 +42,19 @@ describe('texturas por código', () => {
     }
     const inclinaciones = canal(datos, 1);
     expect(Math.max(...inclinaciones) - Math.min(...inclinaciones)).toBeGreaterThan(100);
+  });
+
+  it('cuero: normales unitarias hacia fuera, deterministas y con relieve', () => {
+    const { resolucion, semilla, relieve } = CUERO;
+    const datos = pixelesCuero(resolucion, semilla, relieve);
+    expect(pixelesCuero(resolucion, semilla, relieve)).toEqual(datos);
+    for (let i = 0; i < datos.length; i += 4) {
+      const n = [0, 1, 2].map((c) => datos[i + c] / 127.5 - 1);
+      expect(Math.hypot(...n)).toBeCloseTo(1, 1);
+      expect(n[2]).toBeGreaterThan(0.5);
+    }
+    const x = canal(datos, 0);
+    expect(Math.max(...x) - Math.min(...x)).toBeGreaterThan(20);
   });
 
   it('desgaste del tatami: determinista con la semilla y dentro del rango de intensidad', () => {

@@ -84,6 +84,37 @@ function ruidoValor(res: number, celdas: number, azar: () => number): Float32Arr
 }
 
 /**
+ * Normal map de cuero granulado: alturas de ruido repetible (grano fino y algo
+ * de ondulación) convertidas a normales por diferencias centrales con vuelta.
+ * `relieve` escala la pendiente.
+ */
+export function pixelesCuero(res: number, semilla: number, relieve: number): Uint8Array {
+  const azar = crearAzar(semilla);
+  const capas = [
+    { celdas: 64, peso: 0.6 },
+    { celdas: 32, peso: 0.3 },
+    { celdas: 8, peso: 0.1 },
+  ].map((c) => ({ ...c, ruido: ruidoValor(res, c.celdas, azar) }));
+  const altura = new Float32Array(res * res);
+  for (let p = 0; p < res * res; p++) altura[p] = capas.reduce((s, c) => s + c.peso * c.ruido[p], 0);
+  const h = (x: number, y: number) => altura[((y + res) % res) * res + ((x + res) % res)];
+  const datos = new Uint8Array(res * res * 4);
+  for (let y = 0; y < res; y++) {
+    for (let x = 0; x < res; x++) {
+      const dx = ((h(x + 1, y) - h(x - 1, y)) / 2) * res * relieve * 0.05;
+      const dy = ((h(x, y + 1) - h(x, y - 1)) / 2) * res * relieve * 0.05;
+      const l = Math.hypot(dx, dy, 1);
+      const i = (y * res + x) * 4;
+      datos[i] = Math.round((-dx / l) * 127.5 + 127.5);
+      datos[i + 1] = Math.round((-dy / l) * 127.5 + 127.5);
+      datos[i + 2] = Math.round((1 / l) * 127.5 + 127.5);
+      datos[i + 3] = 255;
+    }
+  }
+  return datos;
+}
+
+/**
  * Desgaste del tatami: manchas amplias de roce (más claras y mates) y grano
  * fino. Gris en RGB, en [1 − intensidad, 1]: sirve a la vez de multiplicador
  * de color y de rugosidad (canal G).

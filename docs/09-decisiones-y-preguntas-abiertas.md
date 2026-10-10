@@ -33,6 +33,14 @@
 | 2026-10-10 | Chapa: tesela cuadrada repetida en los dos ejes y **mipmaps propios** que aplanan la onda (`CHAPA.relieveMipmaps`) | Con la tesela de 4 × 64 px y los mipmaps automáticos, la cubierta mostraba moiré en anillos al verse en ángulo rasante |
 | 2026-10-10 | Malla: paños planos con UV en teselas medidas desde el inicio de cada cara, en lugar de cajas instanciadas | El rombo tiene el mismo tamaño en todos los paños, también en los partidos por las puertas |
 | 2026-10-10 | Desgaste del tatami en coordenadas del mundo (UV calculadas en el sombreador de las instancias) | Con las UV de la caja unidad, cada placa repetía la misma mancha |
+| 2026-10-10 | Detalles de vida **por código** (primitivas fusionadas por grupo, color por vértice, 5 llamadas de dibujo, ~3.400 triángulos). Guantes en el saco de z = −20 del bastidor derecho, no en el primero | Aprobado por Luis sin modelos externos. El saco de z = −8 queda detrás de la cámara en la parada 3; el de −20 se ve en escritorio y en vertical |
+| 2026-10-10 | Banco de los detalles de vida en z = −38 (muro izquierdo, pasado el bastidor) en vez de entre bastidor y portón | Ahí no salía en ningún plano (la cámara nunca mira hacia atrás); en −38 se ve en la transición P → 1, en una esquina de la parada 1 y entre las paradas 4 y 5. Decidido por Claude con la confianza delegada de Luis; revisable |
+| 2026-10-10 | Recursos externos de la fase 2: **todos aprobados** por Luis («me fío de ti»), con criterio delegado en Claude | Luis aprobó la lista completa del `buscador-assets` |
+| 2026-10-10 | Leather 011 descartado; grano de cuero **por código** (`pixelesCuero`) | La vista previa mostró cuero capitoné (de sofá), absurdo en un saco. Era el plan B documentado |
+| 2026-10-10 | Marcador: dígitos con **geometría propia** de 7 segmentos; DSEG (OFL) queda de reserva | Recomendación aceptada; no añade descarga |
+| 2026-10-10 | Normales `.ktx2` a 512 px (UASTC + zstd); color y rugosidad a 1K (ETC1S). Sin la rugosidad del caucho (el tatami usa el desgaste por código) | A 1K cada normal pesaba ~1,3 MB y RDO apenas ahorraba; a 512 son ~0,3 MB. Total texturas: 1,39 MB |
+| 2026-10-10 | UV en coordenadas del mundo para muros, hormigón y tatami (`usarUvMundo` en `materiales.ts`); escena y cámara dentro de un `Suspense` que espera a las texturas | Las cajas unidad escaladas estiraban las texturas; el modo captura no debe marcar «lista» con la escena a medias |
+| 2026-10-10 | Transcodificador Basis en `public/basis/` (excluido de `tsconfig`) | Regla de `07`: nada de CDN. `astro check` analizaba el JS minificado y fallaba |
 
 ## Preguntas abiertas
 

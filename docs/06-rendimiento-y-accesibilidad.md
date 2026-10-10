@@ -28,9 +28,20 @@ El presupuesto de descarga es algo mayor que en Billaron porque los mapas de luz
 | Capa de depuración (`Depuracion.*.js`) | carga solo con `?depuracion=1` | — |
 | Llamadas de dibujo / triángulos | ~27 / ~30.000 | presupuesto de 150 / — |
 
-**Fase 2 (2026-10-10):** las texturas por código (malla, chapa, desgaste del tatami) suman ~1,3 KB y 0 MB de descarga: total **~311 KB**.
+### Estado medido (fin de la fase 2, 2026-10-10)
+| Pieza (gzip) | Peso | Cuenta en |
+|---|---|---|
+| `ControladorCamara.*.js` | ~239 KB | JS de la isla |
+| `client.*.js` | ~64 KB | JS de la isla |
+| `Nave.*.js`: escena + `KTX2Loader` (con `ktx-parse` y `zstddec`, ~30 KB) + detalles de vida (~5 KB) + texturas por código (~1 KB) | ~37 KB | JS de la isla |
+| **Total JS de la isla** | **~340 KB de 350** | |
+| Texturas `.ktx2` (`public/texturas/`, 7 ficheros) | 1,39 MB | descarga 3D |
+| Transcodificador Basis (`public/basis/`) | 0,58 MB (~0,26 MB con gzip) | descarga 3D |
+| **Total descarga 3D** | **~1,7–2,0 MB de 10 / 5** | |
 
-Margen: **~39 KB** para todo lo que falta en la isla. Lo que más pesará: `@react-three/postprocessing` + `postprocessing` (fase 3; del orden de 40–60 KB gzip según los efectos) y los cargadores de la fase 2 (`KTX2Loader`, decodificador Meshopt). Los modelos y texturas **no** cuentan aquí, sino en la descarga 3D (10 MB / 5 MB).
+No hace falta cargador de modelos ni Meshopt: no se descarga ningún `.glb`. `vite build` emite además en `_astro/` una copia del transcodificador por defecto de `KTX2Loader` (`basis_transcoder.*.{js,wasm}`) porque el cargador la referencia por URL; no se descarga nunca (usamos `setTranscoderPath('/basis/')`).
+
+**Margen: ~10 KB.** El postproceso de la fase 3 (`@react-three/postprocessing` + `postprocessing`, ~40–60 KB) **no cabe** sin aplicar alguna palanca de abajo; la primera candidata es cargar en un trozo diferido el postproceso (y quizá `TexturasNave` + `KTX2Loader`). Los modelos y texturas **no** cuentan aquí, sino en la descarga 3D (10 MB / 5 MB).
 
 Palancas si no cabe, de menor a mayor esfuerzo: importar de drei solo lo usado (ya se hace; vigilar que no entren `Text`, `Environment` con presets remotos, etc.); cargar el postproceso en diferido tras el primer fotograma; partir la isla en dos trozos (escena base + postproceso/atmósfera); revisar el presupuesto con Luis si la calidad lo justifica.
 
