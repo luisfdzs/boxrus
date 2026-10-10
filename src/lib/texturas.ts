@@ -115,6 +115,59 @@ export function pixelesCuero(res: number, semilla: number, relieve: number): Uin
 }
 
 /**
+ * Desgaste de la lona de la jaula, en la planta del octógono (UV de la tapa del
+ * cilindro: centro en (0,5; 0,5) y radio 0,5): un anillo de más roce donde se
+ * mueve la gente, manchas irregulares, `marcas` rozaduras cortas de pisadas en
+ * dirección casi tangente y grano. Gris en [1 − intensidad, 1], como el desgaste
+ * del tatami (multiplicador de color y de rugosidad). No se repite: es un mapa único.
+ */
+export function pixelesLona(res: number, semilla: number, intensidad: number, marcas: number): Uint8Array {
+  const azar = crearAzar(semilla);
+  const manchas = [
+    { celdas: 4, peso: 0.6 },
+    { celdas: 16, peso: 0.4 },
+  ].map((o) => ({ ...o, ruido: ruidoValor(res, o.celdas, azar) }));
+  const valor = new Float32Array(res * res);
+  for (let y = 0; y < res; y++) {
+    for (let x = 0; x < res; x++) {
+      const p = y * res + x;
+      const r = Math.hypot((x + 0.5) / res - 0.5, (y + 0.5) / res - 0.5) / 0.5;
+      const fbm = manchas.reduce((s, o) => s + o.peso * o.ruido[p], 0);
+      const anillo = Math.exp(-(((r - 0.6) / 0.25) ** 2));
+      const centro = Math.exp(-((r / 0.3) ** 2));
+      valor[p] = 0.45 * anillo * (0.4 + fbm) + 0.15 * centro + 0.25 * suave(0.45, 0.75, fbm);
+    }
+  }
+  // Rozaduras: trazos gaussianos cortos, casi tangentes al anillo.
+  for (let m = 0; m < marcas; m++) {
+    const rm = 0.15 + 0.7 * azar();
+    const theta = azar() * Math.PI * 2;
+    const giro = theta + Math.PI / 2 + (azar() - 0.5) * 0.8;
+    const largo = (0.015 + 0.03 * azar()) * res;
+    const ancho = 0.003 * res;
+    const fuerza = 0.25 + 0.35 * azar();
+    const cx = (0.5 + 0.5 * rm * Math.cos(theta)) * res;
+    const cy = (0.5 + 0.5 * rm * Math.sin(theta)) * res;
+    const [dx, dy] = [Math.cos(giro), Math.sin(giro)];
+    const alcance = Math.ceil(largo + 3 * ancho);
+    for (let y = Math.max(0, Math.floor(cy - alcance)); y < Math.min(res, cy + alcance); y++) {
+      for (let x = Math.max(0, Math.floor(cx - alcance)); x < Math.min(res, cx + alcance); x++) {
+        const a = (x + 0.5 - cx) * dx + (y + 0.5 - cy) * dy;
+        const b = -(x + 0.5 - cx) * dy + (y + 0.5 - cy) * dx;
+        valor[y * res + x] += fuerza * Math.exp(-((a / largo) ** 2) * 2 - (b / ancho) ** 2);
+      }
+    }
+  }
+  const datos = new Uint8Array(res * res * 4);
+  for (let p = 0; p < res * res; p++) {
+    const v = Math.min(1, Math.max(0, valor[p] + 0.12 * (azar() - 0.5)));
+    datos[p * 4] = datos[p * 4 + 1] = datos[p * 4 + 2] = Math.round(255 * (1 - intensidad + intensidad * v));
+    datos[p * 4 + 3] = 255;
+  }
+  return datos;
+}
+
+/**
  * Desgaste del tatami: manchas amplias de roce (más claras y mates) y grano
  * fino. Gris en RGB, en [1 − intensidad, 1]: sirve a la vez de multiplicador
  * de color y de rugosidad (canal G).

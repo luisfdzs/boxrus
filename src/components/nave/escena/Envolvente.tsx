@@ -11,6 +11,7 @@ import {
   ventanalesLateralesZ,
   type Vec3,
 } from '../../../datos/nave';
+import { LUZ } from '../../../datos/luz';
 import { crearAzar, entre } from '../../../lib/azar';
 import { Cajas, type Caja } from './Cajas';
 import { MATERIALES } from './materiales';
@@ -22,7 +23,7 @@ function placasTatami(): Caja[] {
   const azar = crearAzar(SUELO.semillaTatami);
   const { ancho, largo } = SUELO.placaTatami;
   const j = SUELO.juntaTatami;
-  const base = new Color('#23272b');
+  const base = new Color(SUELO.colorPlaca);
   const placas: Caja[] = [];
   for (let z0 = SUELO.zFinHormigon; z0 > zFondo + 1e-6; z0 -= largo) {
     const l = Math.min(largo, z0 - zFondo);
@@ -78,13 +79,17 @@ function muros(): Caja[] {
   ];
 }
 
-/** Vidrio (emisivo) y perfilería de un ventanal: marco y cuarterones en cruz. */
-function ventanal(centro: Vec3, ancho: number, alto: number, enX: boolean) {
+/** Vidrio (emisivo) y perfilería de un ventanal: marco y cuarterones en cruz. `brillo`: variación entre hojas. */
+function ventanal(centro: Vec3, ancho: number, alto: number, enX: boolean, brillo: number) {
   const p = VENTANALES.perfil;
   const [cx, cy, cz] = centro;
   const pos = (u: number, v: number): Vec3 => (enX ? [cx + u, cy + v, cz] : [cx, cy + v, cz + u]);
   const tam = (tu: number, tv: number): Vec3 => (enX ? [tu, tv, p] : [p, tv, tu]);
-  const vidrio: Caja = { posicion: centro, tamano: enX ? [ancho, alto, 0.02] : [0.02, alto, ancho] };
+  const vidrio: Caja = {
+    posicion: centro,
+    tamano: enX ? [ancho, alto, 0.02] : [0.02, alto, ancho],
+    color: new Color(brillo, brillo, brillo),
+  };
   const perfiles: Caja[] = [
     { posicion: pos(0, alto / 2), tamano: tam(ancho, p) },
     { posicion: pos(0, -alto / 2), tamano: tam(ancho, p) },
@@ -104,13 +109,17 @@ function ventanales() {
     vidrios.push(v.vidrio);
     perfiles.push(...v.perfiles);
   };
-  const { fondo, laterales } = VENTANALES;
-  const zInteriorFondo = zFondo + g / 2 + 0.02;
-  for (const x of ventanalesFondoX()) anadir(ventanal([x, fondo.alfeizar + fondo.alto / 2, zInteriorFondo], fondo.ancho, fondo.alto, true));
+  const { fondo, laterales, retranqueo } = VENTANALES;
+  const azar = crearAzar(LUZ.vidrio.semilla);
+  const brillo = () => 1 + entre(azar, -LUZ.vidrio.variacion, LUZ.vidrio.variacion);
+  // Vidrio y perfiles retranqueados dentro del hueco: se ve el canto del muro.
+  const zFondoVidrio = zFondo + g / 2 - retranqueo;
+  for (const x of ventanalesFondoX())
+    anadir(ventanal([x, fondo.alfeizar + fondo.alto / 2, zFondoVidrio], fondo.ancho, fondo.alto, true, brillo()));
   for (const lado of [-1, 1]) {
-    const x = lado * (xMax - g / 2 - 0.02);
+    const x = lado * (xMax - g / 2 + retranqueo);
     for (const z of ventanalesLateralesZ())
-      anadir(ventanal([x, laterales.alfeizar + laterales.alto / 2, z], laterales.ancho, laterales.alto, false));
+      anadir(ventanal([x, laterales.alfeizar + laterales.alto / 2, z], laterales.ancho, laterales.alto, false, brillo()));
   }
   return { vidrios, perfiles };
 }

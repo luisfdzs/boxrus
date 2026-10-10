@@ -28,6 +28,8 @@ export const SUELO = {
   /** Franja de hormigón pulido junto a la entrada. */
   zFinHormigon: 1,
   placaTatami: { ancho: 1, largo: 2 },
+  /** Gris base de las placas (paleta de docs/02: #1b1f22–#2a2f33), antes de la variación de tono. */
+  colorPlaca: '#1e2225',
   juntaTatami: 0.012,
   /** Variación de tono entre placas (fracción del gris base). */
   variacionTono: 0.08,
@@ -59,6 +61,8 @@ export const VENTANALES = {
   fondo: { cantidad: 10, ancho: 2.4, alto: 2.2, alfeizar: 3.4 },
   laterales: { ancho: 2.4, alto: 1.6, alfeizar: 4.2 },
   perfil: 0.06,
+  /** Distancia de la cara interior del muro al vidrio (m): se ve el canto del hueco. */
+  retranqueo: 0.18,
 } as const;
 
 /** Centros x de los ventanales del muro del fondo, repartidos en el ancho. */

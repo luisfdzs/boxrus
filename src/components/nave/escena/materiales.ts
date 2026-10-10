@@ -2,8 +2,11 @@
 // código (malla, chapa, tatami, cuero) o externas en .ktx2 (ladrillo, hormigón,
 // relieve del caucho; ver TexturasNave).
 import {
+  ClampToEdgeWrapping,
+  Color,
   DataTexture,
   DoubleSide,
+  FrontSide,
   LinearFilter,
   LinearMipmapLinearFilter,
   MeshStandardMaterial,
@@ -15,8 +18,8 @@ import {
 } from 'three';
 import { CHAPA, ENVOLVENTE, JAULA, PROFUNDIDAD, SACOS, SUELO } from '../../../datos/nave';
 import { LUZ } from '../../../datos/luz';
-import { CUERO, TEXTURAS } from '../../../datos/texturas';
-import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesMalla } from '../../../lib/texturas';
+import { CUERO, LONA, TEXTURAS } from '../../../datos/texturas';
+import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesLona, pixelesMalla } from '../../../lib/texturas';
 
 const material = (color: string, extra: ConstructorParameters<typeof MeshStandardMaterial>[0] = {}) =>
   new MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...extra });
@@ -63,7 +66,9 @@ function usarUvMundo(material: MeshStandardMaterial, plano: 'suelo' | 'pared', t
   const asignaciones = (Object.entries(teselas) as [Mapa, readonly [number, number]][])
     .map(([m, t]) => `#ifdef ${define[m]}\n ${varying[m]} = uvMundo / ${vec2(t)};\n#endif`)
     .join('\n');
-  const proyeccion = plano === 'suelo' ? 'pMundo.xz' : '(nMundo.x > nMundo.z ? pMundo.zy : pMundo.xy)';
+  // En «pared», las caras horizontales (dinteles y alféizares de los huecos) proyectan en XZ: si no, la textura se estira.
+  const proyeccion =
+    plano === 'suelo' ? 'pMundo.xz' : '(nMundo.y > max(nMundo.x, nMundo.z) ? pMundo.xz : nMundo.x > nMundo.z ? pMundo.zy : pMundo.xy)';
   alCompilar(material, `uv-mundo-${plano}-${JSON.stringify(teselas)}`, (shader) => {
     shader.vertexShader = shader.vertexShader.replace(
       '#include <uv_vertex>',
@@ -82,11 +87,11 @@ function usarUvMundo(material: MeshStandardMaterial, plano: 'suelo' | 'pared', t
 }
 
 /**
- * Ladrillo: saturación del color y, a distancia (muchas teselas por píxel), relieve
- * apagado y rugosidad 1. Sin esto, la normal de las juntas da chispas especulares.
+ * Ladrillo: saturación y brillo del color y, a distancia (muchas teselas por píxel),
+ * relieve apagado y rugosidad 1. Sin esto, la normal de las juntas da chispas especulares.
  */
 function ajustarLadrillo(material: MeshStandardMaterial) {
-  const { saturacion, lejania } = TEXTURAS.ladrillo;
+  const { saturacion, brillo, lejania } = TEXTURAS.ladrillo;
   alCompilar(material, 'ladrillo', (shader) => {
     shader.fragmentShader = shader.fragmentShader
       .replace(
@@ -96,6 +101,7 @@ function ajustarLadrillo(material: MeshStandardMaterial) {
         #ifdef USE_MAP
           lejania = smoothstep(${f(lejania[0])}, ${f(lejania[1])}, length(fwidth(vMapUv)));
           diffuseColor.rgb = mix(vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), diffuseColor.rgb, ${f(saturacion)});
+          diffuseColor.rgb = clamp(diffuseColor.rgb * ${f(brillo)}, 0.0, 1.0);
         #endif`,
       )
       .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 1.0, lejania);')
@@ -147,6 +153,48 @@ function coserSaco(material: MeshStandardMaterial) {
   });
 }
 
+/**
+ * Vidrio de los ventanales (LUZ.vidrio): degradado vertical en cada hoja (frío
+ * arriba, cálido abajo), con la altura de la caja unidad instanciada, y variación
+ * de brillo entre hojas con el color de cada instancia (ver Envolvente).
+ */
+function degradarVidrio(material: MeshStandardMaterial) {
+  const vec3 = (hexa: string) => {
+    const c = new Color(hexa);
+    return `vec3(${f(c.r)}, ${f(c.g)}, ${f(c.b)})`;
+  };
+  const { arriba, abajo } = LUZ.vidrio;
+  alCompilar(material, 'vidrio', (shader) => {
+    const declarar = 'varying float vAlturaVidrio;\n';
+    shader.vertexShader = declarar + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvAlturaVidrio = position.y + 0.5;');
+    shader.fragmentShader = declarar + shader.fragmentShader.replace(
+      '#include <emissivemap_fragment>',
+      `#include <emissivemap_fragment>
+      totalEmissiveRadiance *= mix(${vec3(abajo)}, ${vec3(arriba)}, smoothstep(0.0, 1.0, vAlturaVidrio));
+      #ifdef USE_COLOR
+        totalEmissiveRadiance *= vColor.rgb;
+      #endif`,
+    );
+  });
+}
+
+/**
+ * Malla de eslabones vista de lado: los alambres se solapan y tapan más. La
+ * cobertura del alfa (media de los mipmaps a distancia) crece con la inclinación
+ * de la vista, c' = 1 − (1 − c)^(1/cos θ): de frente la malla deja ver la jaula y
+ * en los paños oblicuos se lee como un velo gris, no como un vidrio uniforme.
+ */
+function espesarMallaDeLado(material: MeshStandardMaterial) {
+  alCompilar(material, 'malla-lado', (shader) => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <map_fragment>',
+      `#include <map_fragment>
+      float cosVista = max(abs(dot(normalize(vNormal), normalize(vViewPosition))), 0.12);
+      diffuseColor.a = 1.0 - pow(1.0 - diffuseColor.a, 1.0 / cosVista);`,
+    );
+  });
+}
+
 // Malla: las UV de la geometría ya van en teselas (una por rombo), ver Jaula.tsx.
 const { paso, radioAlambre, resolucion } = JAULA.malla;
 const texturaMalla = textura(pixelesMalla(resolucion, radioAlambre / paso), resolucion, resolucion, SRGBColorSpace);
@@ -182,41 +230,60 @@ normalCuero.repeat.set(
   Math.max(1, Math.round(SACOS.alto / CUERO.tamano)),
 );
 
+// Lona: desgaste en la planta del octógono; las UV de la tapa del cilindro ya son una proyección en planta.
+const desgasteLona = textura(pixelesLona(LONA.resolucion, LONA.semilla, LONA.intensidad, LONA.marcas), LONA.resolucion, LONA.resolucion);
+desgasteLona.wrapS = desgasteLona.wrapT = ClampToEdgeWrapping;
+
+const emisivo = (color: string, intensidad: number, extra: ConstructorParameters<typeof MeshStandardMaterial>[0] = {}) =>
+  new MeshStandardMaterial({ color: '#000000', emissive: color, emissiveIntensity: intensidad, ...extra });
+
 export const MATERIALES = {
   // Ladrillo: color, normal y arm llegan con TexturasNave (blanco para no teñir el mapa de color).
   muro: material('#ffffff', { roughness: 1 }),
   // Hormigón pulido: oscurecido y con brillo (Concrete 034 es encofrado claro).
   hormigon: material('#6c6c6a', { roughness: 0.4 }),
-  juntaTatami: material('#0e0f10'),
+  juntaTatami: material('#15181b'),
   // Tatami satinado: el tono por placa va en el color de cada instancia (Envolvente).
-  tatami: material('#ffffff', { roughness: 0.42, map: desgaste, roughnessMap: desgaste }),
+  // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,60–0,70. Algo más que el 0,6 de partida:
+  // con menos, el reflejo del sol rasante convertía sus manchas en placas blancas.
+  tatami: material('#ffffff', { roughness: 0.7, map: desgaste, roughnessMap: desgaste }),
   // Acero estructural negro mate (pintado, no metálico).
   acero: material('#16181b', { roughness: 0.6 }),
   correa: material('#6e2a22', { roughness: 0.65 }),
+  // Chapa galvanizada envejecida: poco metálica, para que tome el gris de su color y no el del entorno.
   chapa: material('#8a9096', {
     side: DoubleSide,
-    roughness: 0.38,
-    metalness: 0.65,
+    roughness: 0.5,
+    metalness: 0.3,
     normalMap: normalChapa,
     normalScale: new Vector2(1, 1),
   }),
   porton: material('#3a3d40', { roughness: 0.6, metalness: 0.3 }),
-  lona: material('#3a3c3f', { roughness: 0.92 }),
+  lona: material('#3a3c3f', { roughness: 0.92, map: desgasteLona, roughnessMap: desgasteLona }),
   faldon: material('#121314', { roughness: 0.7 }),
   // Vinilo de los acolchados: negro con algo de brillo.
   acolchado: material('#141517', { roughness: 0.45 }),
-  malla: material('#a7adb3', {
+  // Malla: acero galvanizado medio mate; a distancia, un velo gris (la cobertura media del alfa ronda el 22 %).
+  malla: material('#8a9096', {
     map: texturaMalla,
     transparent: true,
     side: DoubleSide,
     depthWrite: false,
-    roughness: 0.35,
-    metalness: 0.85,
+    roughness: 0.55,
+    metalness: 0.5,
   }),
-  saco: material('#1b1b1d', { roughness: 0.42, normalMap: normalCuero, normalScale: new Vector2(0.6, 0.6) }),
+  saco: material('#1b1b1d', {
+    roughness: CUERO.rugosidad,
+    normalMap: normalCuero,
+    normalScale: new Vector2(CUERO.escalaNormal, CUERO.escalaNormal),
+  }),
   cadena: material('#7a7e83', { metalness: 0.9, roughness: 0.35 }),
-  vidrio: new MeshStandardMaterial({ color: '#000000', emissive: '#fff4e2', emissiveIntensity: LUZ.emisivos.vidrio }),
-  fluorescente: new MeshStandardMaterial({ color: '#000000', emissive: '#e6f2ff', emissiveIntensity: LUZ.emisivos.fluorescente }),
+  vidrio: emisivo('#ffffff', LUZ.emisivos.vidrio),
+  fluorescente: emisivo('#e6f2ff', LUZ.emisivos.fluorescente),
+  // Marcador: carcasa negra mate y dígitos LED, encendidos y apagados (estos, apenas visibles tras el frontal ahumado).
+  carcasa: material('#0e0f10', { roughness: 0.9 }),
+  digito: emisivo('#ff2a1a', LUZ.emisivos.digitos),
+  digitoApagado: emisivo('#ff2a1a', LUZ.emisivos.digitosApagados, { color: '#060303', roughness: 0.9 }),
 } as const;
 
 // Nombres: los usa ?exportar=1 para reconocer cada material al hornear la luz en Blender.
@@ -236,4 +303,10 @@ usarUvMundo(MATERIALES.hormigon, 'suelo', {
 });
 usarUvMundo(MATERIALES.tatami, 'suelo', { map: [tamano, tamano], roughnessMap: [tamano, tamano], normalMap: TEXTURAS.caucho.tamano });
 ajustarLadrillo(MATERIALES.muro);
+// Sombra del sol con las caras exteriores de los muros (por defecto three usa las traseras, aquí las
+// interiores): con la interior, el suelo a 1–2 cm del pie del muro quedaba por delante de ella con el
+// sesgo y se encendía una línea clara a lo largo del muro (parada 3).
+MATERIALES.muro.shadowSide = FrontSide;
 coserSaco(MATERIALES.saco);
+degradarVidrio(MATERIALES.vidrio);
+espesarMallaDeLado(MATERIALES.malla);

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CHAPA, JAULA, SUELO } from '../src/datos/nave';
-import { CUERO } from '../src/datos/texturas';
-import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesMalla } from '../src/lib/texturas';
+import { CUERO, LONA } from '../src/datos/texturas';
+import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesLona, pixelesMalla } from '../src/lib/texturas';
 
 const canal = (datos: Uint8Array, c: number) => datos.filter((_, i) => i % 4 === c);
 
@@ -55,6 +55,29 @@ describe('texturas por código', () => {
     }
     const x = canal(datos, 0);
     expect(Math.max(...x) - Math.min(...x)).toBeGreaterThan(20);
+  });
+
+  it('lona: determinista, dentro del rango y con más roce en el anillo que en el borde', () => {
+    const { semilla, intensidad, marcas } = LONA;
+    const res = 128;
+    const a = pixelesLona(res, semilla, intensidad, marcas);
+    expect(pixelesLona(res, semilla, intensidad, marcas)).toEqual(a);
+    expect(pixelesLona(res, semilla + 1, intensidad, marcas)).not.toEqual(a);
+    const grises = canal(a, 0);
+    expect(Math.min(...grises)).toBeGreaterThanOrEqual(Math.floor(255 * (1 - intensidad)));
+    // Media en una corona a r ≈ 0,6 frente a la esquina (fuera del octógono).
+    const media = (dentro: (r: number) => boolean) => {
+      let suma = 0;
+      let n = 0;
+      for (let y = 0; y < res; y++)
+        for (let x = 0; x < res; x++)
+          if (dentro(Math.hypot((x + 0.5) / res - 0.5, (y + 0.5) / res - 0.5) / 0.5)) {
+            suma += a[(y * res + x) * 4];
+            n++;
+          }
+      return suma / n;
+    };
+    expect(media((r) => r > 0.5 && r < 0.7)).toBeGreaterThan(media((r) => r > 1.2));
   });
 
   it('desgaste del tatami: determinista con la semilla y dentro del rango de intensidad', () => {

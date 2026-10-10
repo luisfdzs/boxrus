@@ -9,7 +9,8 @@ export const TEXTURAS = {
   transcodificador: '/basis/',
   /**
    * Red Brick 03 (Poly Haven, CC0). arm = oclusión (R), rugosidad (G), metal (B). Tesela de 1 × 1 m.
-   * `saturacion` ajusta el color en el sombreador para acercarlo a la paleta de docs/02.
+   * `saturacion` y `brillo` ajustan el color en el sombreador para acercarlo a la
+   * paleta de docs/02 (#7d4430–#a85a3c; con la luz base se quedaba en #4d3a33).
    * `lejania`: teselas por píxel en pantalla entre las que el relieve se apaga y la
    * rugosidad sube a 1 (quita las chispas especulares de las juntas a distancia).
    */
@@ -19,7 +20,8 @@ export const TEXTURAS = {
     arm: 'ladrillo_arm.ktx2',
     tamano: [1, 1],
     relieve: 0.8,
-    saturacion: 1,
+    saturacion: 2.1,
+    brillo: 1.35,
     lejania: [1 / 512, 1 / 128],
   },
   /** Concrete 034 (ambientCG, CC0). Tesela 2:1 del tamaño de un panel de encofrado. */
@@ -37,8 +39,12 @@ export const TEXTURAS = {
 export const CUERO = {
   semilla: 3109,
   resolucion: 256,
-  tamano: 0.25,
-  relieve: 0.3,
+  /** Lado de la tesela (m) y relieve del grano: con 0,25 y 0,3 el grano se leía grueso. */
+  tamano: 0.12,
+  relieve: 0.15,
+  /** normalScale del material y rugosidad del cuero. */
+  escalaNormal: 0.35,
+  rugosidad: 0.5,
   /**
    * Costuras en el sombreador (sin textura): `paneles` costuras verticales repartidas
    * alrededor y dos horizontales a `arriba` y `abajo` m de los extremos. Surco de
@@ -47,5 +53,9 @@ export const CUERO = {
   costuras: { paneles: 4, arriba: 0.09, abajo: 0.07, ancho: 0.006, profundidad: 0.003, oscurecer: 0.45 },
 } as const;
 
-/** Mapa de entorno: Empty Warehouse 01 (Poly Haven, CC0) reducido a 512 × 256 con herramientas/reducir_hdr.py. */
-export const ENTORNO = { fichero: '/entorno/empty_warehouse_01_512.hdr' } as const;
+/**
+ * Desgaste de la lona de la jaula, por código (pixelesLona): se proyecta en la planta
+ * del octógono (UV de la tapa del cilindro). `intensidad`: cuánto aclara el roce;
+ * `marcas`: número de rozaduras cortas de pisadas.
+ */
+export const LONA = { semilla: 5153, resolucion: 512, intensidad: 0.5, marcas: 90 } as const;
