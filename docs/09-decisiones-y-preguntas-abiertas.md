@@ -54,6 +54,8 @@
 | 2026-10-10 | Refuerzo de la jaula **sin sombra** (foco de 200 cd, ángulo 0,75, penumbra 0,6) | Desde un foco central, la sombra de malla y postes cae hacia fuera, nunca sobre la lona. Probada a 1024 px: +10 llamadas de dibujo y +16.000 triángulos sin nada visible a cambio (los FPS siguieron topados a 60 en producción). Para ver la sombra de la malla en la lona haría falta un foco rasante desde fuera de la jaula: propuesta abierta, no aplicada |
 | 2026-10-10 | Malla: la cobertura del alfa crece con la inclinación de la vista (`espesarMallaDeLado`) | Con metal 0,5 y la cobertura plana (~22 %), la malla desaparecía a distancia; así los paños oblicuos se leen como velo y el frontal sigue transparente |
 | 2026-10-10 | Tatami a rugosidad 0,7 × desgaste (≈ 0,60–0,70) en vez de 0,58–0,62; ladrillo a saturación 2,1 en vez de 1,3 | Con 0,6 el reflejo del sol rasante convertía sus manchas en placas blancas; con 1,3 el ladrillo seguía en `#5b4840`. Cifras del revisor ajustadas mirando el resultado |
+| 2026-10-10 | **Luz precalculada sin segundas UV**: mapas de suelo, cubierta y muros proyectados en coordenadas del mundo (muros desplegados por el perímetro), horneados en Blender en dos pasadas (fluorescentes; día solo indirecta) y mezclados después | La geometría se genera por código y no tiene UV de mapa de luz. Separar las pasadas permite reajustar el equilibrio sin volver a hornear. Proceso en `03` |
+| 2026-10-10 | Con la luz horneada, el ladrillo baja a saturación 1,4 y brillo 1,05, y los mapas a intensidad 0,85; el hemisferio pesa un 40 % en los materiales con mapa | Con los valores de la iteración 2 (sin horneado) el ladrillo se iba a naranja |
 
 ## Preguntas abiertas
 

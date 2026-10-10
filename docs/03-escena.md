@@ -88,7 +88,7 @@ A diferencia de Billaron, la escena es **estática y cerrada**, con pocos objeto
 1. **Sol**: una luz direccional desde los ventanales del fondo, con una sola sombra de calidad.
 2. **Fluorescentes**: caras emisivas en todas las regletas + 4–6 `RectAreaLight` representativas (más las 4 del refuerzo de la jaula en nivel alto).
 3. **Entorno**: mapa de entorno **capturado de la propia nave** (fase 3, iteración 2): una cámara cúbica de 128 px en (0, 3, −20) pinta la escena en el primer fotograma, ya con texturas, y pasa a PMREM (`luz/Entorno.tsx`). Sustituye al HDRI genérico, cuyas ventanas y cielo, multiplicados por el Fresnel, ponían gris el tatami a ángulo rasante. Intensidad general 1; por material: tatami y juntas 0,3, hormigón 0,4, lona 0,5, malla 0,6 (`LUZ.entorno.materiales`).
-4. **Luz precalculada (recomendada para fase 3, ver `09`)**: *baking* en Blender de la arquitectura (ladrillo, techo, suelo) para luz indirecta y oclusión ambiental creíbles; los objetos con brillo (sacos, jaula) mantienen luz en tiempo real.
+4. **Luz precalculada** ✅ (aprobada por Luis, fase 3): horneada en Blender en suelo, muros y cubierta, con la luz de las regletas y el rebote del día. Los objetos con brillo (sacos, jaula) mantienen luz en tiempo real. Proceso abajo, en «Luz precalculada».
 5. Postproceso: bloom selectivo (fluorescentes, ventanales, dígitos), profundidad de campo en planos cercanos, viñeteado, grano sutil, mapeo tonal ACES/AgX con gradación fría.
 
 ### Luz en tiempo real: valores actuales (fase 3, iteración 2)
@@ -100,6 +100,28 @@ Todo en `src/datos/luz.ts`. La luz de los fluorescentes en suelo, muros y techo 
 | Relleno (hemisferio) | cielo `#cfdcea`, suelo `#2a2b2d`, intensidad 0,45 |
 | Refuerzo de la jaula | foco `#e6f2ff` de 200 cd en (0, 6,3, −20), ángulo 0,75, penumbra 0,6, alcance 14 m, **sin sombra** (ver `09`) |
 | Emisivos | fluorescentes 4, vidrio 7 (con degradado), dígitos 0,9 |
-| Ladrillo | saturación 2,1 y brillo 1,35 en el sombreador (`TEXTURAS.ladrillo`): AgX y el relleno frío lo apagaban |
+| Ladrillo | saturación 1,4 y brillo 1,05 en el sombreador (`TEXTURAS.ladrillo`). Sin luz horneada hacían falta 2,1 y 1,35; con ella se iba a naranja |
 | Chapa | metal 0,3, rugosidad 0,5 (con 0,65 de metal salía oliva) |
 | Sacos | grano de 0,12 m, relieve 0,15, `normalScale` 0,35, rugosidad 0,5 (`CUERO`) |
+
+## Luz precalculada (Blender)
+Tres mapas de luz, proyectados en coordenadas del mundo, **sin segundas UV** (la geometría se genera por código):
+| Mapa | Proyección (coordenadas de three) | Resolución | Materiales |
+|---|---|---|---|
+| `public/luz/luz_suelo.ktx2` | u = (x − xMin) / 36, v = (z − zFondo) / 48 | 384 × 512 (~9 cm/px) | tatami, juntas, hormigón |
+| `public/luz/luz_techo.ktx2` | igual que el suelo, en planta | 192 × 256 | chapa |
+| `public/luz/luz_muros.ktx2` | u = s / 168 (s: recorrido por el perímetro: izquierdo desde la entrada, fondo, derecho, frente), v = y / 9 | 2048 × 112 (~8 cm/px) | muro (ladrillo y piñones) |
+
+El muro de cada caja se elige por el centro de la instancia (`usarLuzHorneada` en `materiales.ts`). En los materiales con mapa, el relleno indirecto del hemisferio se multiplica por `LUZ.horneado.mapas.relleno` (0,4) para no contar dos veces la luz difusa. El sol directo, con su sombra, sigue en tiempo real.
+
+**Proceso** (Blender 5.2.2 LTS portátil, Cycles en CPU; parámetros en `LUZ.horneado`):
+1. `node herramientas/blender/recibir.mjs <carpeta>` (receptor local en el puerto 4400).
+2. Abrir `/?parada=P&captura=1&exportar=1`: fusiona la geometría por material (sin la malla) y envía `nave.glb` y `parametros.json`. La página marca `data-nave-exportada` al terminar.
+3. `blender -b --factory-startup -P herramientas/blender/hornear.py -- <carpeta> 256`: planos destino a 1 cm por delante de cada superficie (invisibles para los rayos, salvo para la cámara: sin ella Cycles hornea a negro) y dos pasadas DIFFUSE sin color:
+   - «fluorescentes»: regletas emisivas (fuerza 30), directa + indirecta;
+   - «día»: sol (fuerza 4, 2° de diámetro, la dirección de `LUZ.sol`) y cielo emisivo en los vidrios (fuerza 6, con transparencia para que pase el sol), solo indirecta.
+   Unos 4 minutos a 256 muestras en un Ryzen 7 7730U.
+4. `blender -b --factory-startup -P herramientas/blender/combinar.py -- <carpeta>`: mezcla con `LUZ.horneado.mezcla`, desenfoque de 3 px y división por una escala común (percentil 99,5; se copia a `LUZ.horneado.mapas.escala`). Escribe PNG con curva sRGB.
+5. `toktx --t2 --encode uastc --uastc_quality 2 --zcmp 19 --genmipmap --assign_oetf srgb public/luz/luz_<superficie>.ktx2 <superficie>.png` (510 KB los tres).
+
+Hay que volver a hornear si cambian la geometría, la dirección del sol o los albedos (`LUZ.horneado.albedos`). Las texturas `.ktx2` no se voltean: v = 0 es la fila de arriba de la imagen (por eso `hornear.py` usa 1 − v en las UV de Blender).
