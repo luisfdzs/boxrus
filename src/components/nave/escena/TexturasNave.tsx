@@ -36,6 +36,7 @@ export function TexturasNave() {
     const [lColor, lNormal, lArm, hColor, hNormal, hRugosidad, cNormal] = texturas;
 
     Object.assign(MATERIALES.muro, { map: lColor, normalMap: lNormal, roughnessMap: lArm, aoMap: lArm });
+    MATERIALES.muro.normalScale.setScalar(ladrillo.relieve);
     Object.assign(MATERIALES.hormigon, { map: hColor, normalMap: hNormal, roughnessMap: hRugosidad });
     MATERIALES.hormigon.normalScale.set(0.5, 0.5);
     MATERIALES.tatami.normalMap = cNormal;

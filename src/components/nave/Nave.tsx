@@ -11,6 +11,7 @@ import { Jaula } from './escena/Jaula';
 import { Marcador } from './escena/Marcador';
 import { Sacos } from './escena/Sacos';
 import { TexturasNave } from './escena/TexturasNave';
+import { Entorno } from './luz/Entorno';
 import { IluminacionMaqueta } from './luz/IluminacionMaqueta';
 
 const Depuracion = lazy(() => import('./depuracion/Depuracion').then((m) => ({ default: m.Depuracion })));
@@ -34,6 +35,7 @@ export default function Nave() {
       {/* Todo espera a las texturas: ni se pinta a medias ni se marca «lista» antes de tiempo. */}
       <Suspense fallback={null}>
         <TexturasNave />
+        <Entorno />
         <IluminacionMaqueta />
         <Envolvente />
         <Estructura />

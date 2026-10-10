@@ -10,6 +10,7 @@ import {
   MeshStandardMaterial,
   RepeatWrapping,
   SRGBColorSpace,
+  ShaderChunk,
   Vector2,
   type ColorSpace,
 } from 'three';
@@ -33,6 +34,21 @@ function textura(datos: Uint8Array, ancho: number, alto: number, espacio?: Color
   return t;
 }
 
+type Sombreador = Parameters<MeshStandardMaterial['onBeforeCompile']>[0];
+
+/** Encadena una modificación del sombreador a las que ya tenga el material. */
+function alCompilar(material: MeshStandardMaterial, clave: string, modificar: (shader: Sombreador) => void) {
+  const previo = material.onBeforeCompile;
+  const clavePrevia = material.customProgramCacheKey();
+  material.onBeforeCompile = (shader, renderer) => {
+    previo.call(material, shader, renderer);
+    modificar(shader);
+  };
+  material.customProgramCacheKey = () => `${clavePrevia}|${clave}`;
+}
+
+const f = (n: number) => n.toFixed(5);
+
 type Mapa = 'map' | 'normalMap' | 'roughnessMap' | 'aoMap';
 
 /**
@@ -48,7 +64,7 @@ function usarUvMundo(material: MeshStandardMaterial, plano: 'suelo' | 'pared', t
     .map(([m, t]) => `#ifdef ${define[m]}\n ${varying[m]} = uvMundo / ${vec2(t)};\n#endif`)
     .join('\n');
   const proyeccion = plano === 'suelo' ? 'pMundo.xz' : '(nMundo.x > nMundo.z ? pMundo.zy : pMundo.xy)';
-  material.onBeforeCompile = (shader) => {
+  alCompilar(material, `uv-mundo-${plano}-${JSON.stringify(teselas)}`, (shader) => {
     shader.vertexShader = shader.vertexShader.replace(
       '#include <uv_vertex>',
       `#include <uv_vertex>
@@ -62,9 +78,73 @@ function usarUvMundo(material: MeshStandardMaterial, plano: 'suelo' | 'pared', t
       vec2 uvMundo = ${proyeccion};
       ${asignaciones}`,
     );
-  };
-  const clave = `uv-mundo-${plano}-${JSON.stringify(teselas)}`;
-  material.customProgramCacheKey = () => clave;
+  });
+}
+
+/**
+ * Ladrillo: saturación del color y, a distancia (muchas teselas por píxel), relieve
+ * apagado y rugosidad 1. Sin esto, la normal de las juntas da chispas especulares.
+ */
+function ajustarLadrillo(material: MeshStandardMaterial) {
+  const { saturacion, lejania } = TEXTURAS.ladrillo;
+  alCompilar(material, 'ladrillo', (shader) => {
+    shader.fragmentShader = shader.fragmentShader
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+        float lejania = 0.0;
+        #ifdef USE_MAP
+          lejania = smoothstep(${f(lejania[0])}, ${f(lejania[1])}, length(fwidth(vMapUv)));
+          diffuseColor.rgb = mix(vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))), diffuseColor.rgb, ${f(saturacion)});
+        #endif`,
+      )
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor, 1.0, lejania);')
+      .replace(
+        '#include <normal_fragment_maps>',
+        ShaderChunk.normal_fragment_maps.replace('mapN.xy *= normalScale;', 'mapN.xy *= normalScale * (1.0 - lejania);'),
+      );
+  });
+}
+
+/**
+ * Costuras de los sacos (CUERO.costuras): surcos verticales entre paneles y dos
+ * horizontales cerca de los extremos, calculados con las UV del cilindro unidad
+ * (u alrededor, v a lo alto). El surco inclina la normal y oscurece una línea fina;
+ * a distancia se promedia con fwidth para que no parpadee.
+ */
+function coserSaco(material: MeshStandardMaterial) {
+  const { paneles, arriba, abajo, ancho, profundidad, oscurecer } = CUERO.costuras;
+  const perimetro = 2 * Math.PI * SACOS.radio;
+  alCompilar(material, 'costuras', (shader) => {
+    const declarar = 'varying vec2 vUvSaco;\nvarying float vLateral;\n';
+    shader.vertexShader = declarar + shader.vertexShader.replace(
+      '#include <uv_vertex>',
+      '#include <uv_vertex>\nvUvSaco = uv;\nvLateral = step(abs(normal.y), 0.5);',
+    );
+    shader.fragmentShader = declarar + shader.fragmentShader
+      .replace(
+        '#include <map_fragment>',
+        `#include <map_fragment>
+        // Distancias con signo (m) a la costura vertical más cercana y a las horizontales.
+        float dU = (fract(vUvSaco.x * ${f(paneles)} + 0.5) - 0.5) * ${f(perimetro / paneles)};
+        float yS = vUvSaco.y * ${f(SACOS.alto)};
+        float dArriba = yS - ${f(SACOS.alto - arriba)};
+        float dAbajo = yS - ${f(abajo)};
+        float dV = abs(dArriba) < abs(dAbajo) ? dArriba : dAbajo;
+        float w = ${f(ancho)};
+        float aaU = min(1.0, w / max(fwidth(dU), 1e-6));
+        float aaV = min(1.0, w / max(fwidth(dV), 1e-6));
+        float gU = exp(-dU * dU / (w * w));
+        float gV = exp(-dV * dV / (w * w));
+        float linea = max(gU * aaU, gV * aaV) * vLateral;
+        diffuseColor.rgb *= 1.0 - ${f(oscurecer)} * linea;
+        vec2 inclinacion = vec2(dU * gU * aaU * aaU, dV * gV * aaV * aaV) * (-2.0 * ${f(profundidad)} / (w * w)) * vLateral;`,
+      )
+      .replace(
+        '#include <normal_fragment_maps>',
+        ShaderChunk.normal_fragment_maps.replace('mapN.xy *= normalScale;', 'mapN.xy *= normalScale;\n\tmapN.xy += inclinacion;'),
+      );
+  });
 }
 
 // Malla: las UV de la geometría ya van en teselas (una por rombo), ver Jaula.tsx.
@@ -142,3 +222,5 @@ usarUvMundo(MATERIALES.hormigon, 'suelo', {
   roughnessMap: TEXTURAS.hormigon.tamano,
 });
 usarUvMundo(MATERIALES.tatami, 'suelo', { map: [tamano, tamano], roughnessMap: [tamano, tamano], normalMap: TEXTURAS.caucho.tamano });
+ajustarLadrillo(MATERIALES.muro);
+coserSaco(MATERIALES.saco);
