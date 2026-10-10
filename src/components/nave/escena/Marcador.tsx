@@ -1,43 +1,39 @@
 import { useMemo } from 'react';
-import { CanvasTexture, MeshStandardMaterial, SRGBColorSpace } from 'three';
+import { BufferGeometry, Float32BufferAttribute } from 'three';
 import { MARCADOR } from '../../../datos/nave';
+import { trazarMarcador } from '../../../lib/marcador';
 import { MATERIALES } from './materiales';
 
-// Provisional (fase 1): dígitos con una fuente monoespaciada del sistema.
-// En la fase 3 se sustituye por dígitos LED de 7 segmentos (docs/02).
-function texturaDigitos() {
-  const lienzo = document.createElement('canvas');
-  lienzo.width = 512;
-  lienzo.height = Math.round((512 * MARCADOR.alto) / MARCADOR.ancho);
-  const ctx = lienzo.getContext('2d')!;
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, lienzo.width, lienzo.height);
-  ctx.fillStyle = '#ff2a1a';
-  ctx.textBaseline = 'middle';
-  ctx.font = `bold ${lienzo.height * 0.72}px monospace`;
-  ctx.fillText('05:00', lienzo.width * 0.06, lienzo.height / 2);
-  ctx.font = `bold ${lienzo.height * 0.4}px monospace`;
-  ctx.fillText('R1', lienzo.width * 0.76, lienzo.height / 2);
-  const textura = new CanvasTexture(lienzo);
-  textura.colorSpace = SRGBColorSpace;
-  return textura;
+/** Triángulos planos (x, y) del frontal a geometría con normal +Z. */
+function geometria(triangulos: number[]) {
+  const posiciones: number[] = [];
+  for (let i = 0; i < triangulos.length; i += 2) posiciones.push(triangulos[i], triangulos[i + 1], 0);
+  const g = new BufferGeometry();
+  g.setAttribute('position', new Float32BufferAttribute(posiciones, 3));
+  g.setAttribute('normal', new Float32BufferAttribute(posiciones.map((_, i) => (i % 3 === 2 ? 1 : 0)), 3));
+  return g;
 }
 
+/** Marcador de asaltos: caja negra y dígitos LED de 7 segmentos (encendidos y apagados), mirando a +X. */
 export function Marcador() {
-  const pantalla = useMemo(() => {
-    const mapa = texturaDigitos();
-    return new MeshStandardMaterial({ color: '#000', emissive: '#ffffff', emissiveMap: mapa, emissiveIntensity: 1.4 });
+  const { encendidos, apagados } = useMemo(() => {
+    const { tiempo, asalto } = trazarMarcador(MARCADOR.digitos);
+    return {
+      encendidos: geometria([...tiempo.encendidos, ...asalto.encendidos]),
+      apagados: geometria([...tiempo.apagados, ...asalto.apagados]),
+    };
   }, []);
   const [x, y, z] = MARCADOR.centro;
   return (
     <group position={[x, y, z]}>
-      <mesh material={MATERIALES.acolchado}>
+      <mesh material={MATERIALES.carcasa}>
         <boxGeometry args={[MARCADOR.fondo, MARCADOR.alto, MARCADOR.ancho]} />
       </mesh>
-      {/* Mira a +X, hacia la jaula. */}
-      <mesh position={[MARCADOR.fondo / 2 + 0.002, 0, 0]} rotation-y={Math.PI / 2} material={pantalla}>
-        <planeGeometry args={[MARCADOR.ancho * 0.94, MARCADOR.alto * 0.86]} />
-      </mesh>
+      {/* Frontal hacia +X (hacia la jaula): con el giro, la x del frontal va hacia −Z. */}
+      <group position={[MARCADOR.fondo / 2 + 0.002, 0, 0]} rotation-y={Math.PI / 2}>
+        <mesh geometry={apagados} material={MATERIALES.digitoApagado} />
+        <mesh geometry={encendidos} material={MATERIALES.digito} />
+      </group>
     </group>
   );
 }

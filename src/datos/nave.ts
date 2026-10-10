@@ -190,10 +190,30 @@ export const regletasRefuerzo = (): { x: number; z: number; aLoLargoX: boolean }
 
 export const MARCADOR = {
   // z = −22: pared limpia entre ventanales, postes del bastidor y cadenas (en −20 quedaba encajonado).
-  centro: [-17.9, 3.6, -22] as Vec3,
+  // y = 3,8 (fase 3; antes 3,6): en la parada 1 el borde inferior de la caja rozaba la viga del bastidor.
+  centro: [-17.9, 3.8, -22] as Vec3,
   ancho: 1.2,
   alto: 0.5,
   fondo: 0.12,
+  /**
+   * Dígitos LED de 7 segmentos por geometría propia (docs/09), en metros sobre el
+   * frontal: `alto` y `ancho` de cada cifra, `grosor` del segmento, `hueco` entre
+   * segmentos, `separacion` entre cifras e `inclinacion` (cursiva, desplazamiento
+   * en x por metro de alto). El asalto va a la derecha, a escala `escalaAsalto` y
+   * separado `separacionAsalto`, alineado por abajo con el tiempo.
+   */
+  digitos: {
+    tiempo: '05:00',
+    asalto: 'R1',
+    alto: 0.3,
+    ancho: 0.14,
+    grosor: 0.03,
+    hueco: 0.008,
+    separacion: 0.045,
+    inclinacion: 0.08,
+    escalaAsalto: 0.55,
+    separacionAsalto: 0.08,
+  },
 } as const;
 
 /**
