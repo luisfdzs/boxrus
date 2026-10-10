@@ -1,6 +1,7 @@
 // Modos de URL (docs/04): ?parada=N, ?captura=1, ?depuracion=1, ?ajuste=1
 // (ajuste a paradas al dejar de hacer scroll, pregunta abierta 6) y ?paginado=1
-// (fuerza el scroll por paradas del móvil, para probarlo en escritorio).
+// (fuerza el scroll por paradas del móvil, para probarlo en escritorio) y
+// ?exportar=1 (envía la geometría a Blender para hornear la luz, docs/03).
 import { PARADAS, type IdParada } from '../datos/paradas';
 
 export interface Modo {
@@ -9,6 +10,7 @@ export interface Modo {
   depuracion: boolean;
   ajuste: boolean;
   paginado: boolean;
+  exportar: boolean;
 }
 
 export function leerModo(busqueda = typeof location === 'undefined' ? '' : location.search): Modo {
@@ -21,5 +23,6 @@ export function leerModo(busqueda = typeof location === 'undefined' ? '' : locat
     depuracion: activo('depuracion'),
     ajuste: activo('ajuste'),
     paginado: activo('paginado'),
+    exportar: activo('exportar'),
   };
 }

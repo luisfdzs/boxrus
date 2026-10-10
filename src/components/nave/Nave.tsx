@@ -16,6 +16,7 @@ import { TexturasNave } from './escena/TexturasNave';
 import { Entorno } from './luz/Entorno';
 import { Iluminacion } from './luz/Iluminacion';
 
+const Exportar = lazy(() => import('./depuracion/Exportar').then((m) => ({ default: m.Exportar })));
 const Depuracion = lazy(() => import('./depuracion/Depuracion').then((m) => ({ default: m.Depuracion })));
 
 /** Isla 3D: la nave, su luz y la cámara del recorrido. */
@@ -50,6 +51,11 @@ export default function Nave() {
         <Detalles />
         <ControladorCamara alPrimerFotograma={marcarLista} />
       </Suspense>
+      {modo.exportar && (
+        <Suspense fallback={null}>
+          <Exportar />
+        </Suspense>
+      )}
       {modo.depuracion && (
         <Suspense fallback={null}>
           <Depuracion />

@@ -34,4 +34,38 @@ export const LUZ = {
   },
   /** Brillo de los emisivos (fluorescentes y vidrio de los ventanales). */
   emisivos: { fluorescente: 4, vidrio: 2.4 },
+  /**
+   * Luz precalculada en Blender (herramientas/blender/, docs/03). Lo leen los
+   * scripts a través de parametros.json (?exportar=1). Pasada «fluorescentes»:
+   * directa + indirecta de las regletas; pasada «dia»: solo la indirecta del sol
+   * y del cielo de los ventanales. `mezcla` pondera las dos al combinarlas.
+   */
+  horneado: {
+    resoluciones: { suelo: [384, 512], techo: [192, 256], muros: [2048, 112] },
+    /** Altura del plano de horneado del suelo (encima de las placas de tatami). */
+    alturaSuelo: 0.025,
+    fuerzaFluorescente: 30,
+    fuerzaCielo: 6,
+    fuerzaSol: 4,
+    /** Diámetro aparente del sol (grados): sombras suaves en la luz rebotada. */
+    solAngulo: 2,
+    /** Albedo difuso por material para la luz rebotada (los texturizados, con su color medio). */
+    albedos: {
+      muro: '#76615a',
+      tatami: '#23272b',
+      juntaTatami: '#0e0f10',
+      hormigon: '#6c6c6a',
+      acero: '#16181b',
+      correa: '#6e2a22',
+      chapa: '#8a9096',
+      porton: '#3a3d40',
+      lona: '#3a3c3f',
+      faldon: '#121314',
+      acolchado: '#141517',
+      saco: '#1b1b1d',
+      cadena: '#7a7e83',
+      otros: '#3a3a3a',
+    },
+    mezcla: { fluorescentes: 1, dia: 1 },
+  },
 } as const;

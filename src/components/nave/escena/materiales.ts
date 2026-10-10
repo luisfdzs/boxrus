@@ -219,6 +219,9 @@ export const MATERIALES = {
   fluorescente: new MeshStandardMaterial({ color: '#000000', emissive: '#e6f2ff', emissiveIntensity: LUZ.emisivos.fluorescente }),
 } as const;
 
+// Nombres: los usa ?exportar=1 para reconocer cada material al hornear la luz en Blender.
+for (const [nombre, m] of Object.entries(MATERIALES)) m.name = nombre;
+
 // UV en el mundo. Los mapas que aún no estén asignados se ignoran (#ifdef) hasta que TexturasNave los cargue.
 usarUvMundo(MATERIALES.muro, 'pared', {
   map: TEXTURAS.ladrillo.tamano,
