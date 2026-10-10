@@ -1,0 +1,44 @@
+---
+// Logotipo (texto BOXRUS) arriba y centrado: vuelve al inicio y recarga la página.
+---
+
+<a class="logo" href="/" aria-label="Boxrus, volver al inicio">BOXRUS</a>
+
+<script>
+  const logo = document.querySelector<HTMLAnchorElement>('.logo')!;
+  logo.addEventListener('click', (e) => {
+    e.preventDefault();
+    // Que el navegador no restaure la posición: la recarga empieza en el prólogo.
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+    location.assign('/');
+  });
+</script>
+
+<style>
+  .logo {
+    position: fixed;
+    top: calc(0.9rem + env(safe-area-inset-top));
+    left: 50%;
+    z-index: 3;
+    transform: translateX(-50%);
+    padding: 0.35rem 1.1rem 0.3rem;
+    font-family: var(--fuente-titulares);
+    font-size: 1.35rem;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: var(--color-luz);
+    text-decoration: none;
+    background: rgb(13 14 16 / 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 2px solid var(--color-acento);
+    border-radius: 999px;
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  }
+
+  .logo:focus-visible {
+    outline: 2px solid var(--color-luz);
+    outline-offset: 3px;
+  }
+</style>

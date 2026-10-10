@@ -2,6 +2,7 @@
 import '@fontsource/anton/latin-400.css';
 import '@fontsource-variable/inter/wght.css';
 import '../estilos/global.css';
+import Logo from '../components/ui/Logo.astro';
 
 interface Props {
   titulo: string;
@@ -29,6 +30,7 @@ const canonica = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : und
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
+    <Logo />
     <slot />
   </body>
 </html>

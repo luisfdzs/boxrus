@@ -24,6 +24,7 @@
 | 2026-10-10 | **Móvil: scroll por paradas.** Cada gesto lleva a la parada siguiente o anterior, sin posiciones intermedias, a ritmo constante (2,2 s por transición) | Decisión de Luis: scroll totalmente controlado en móvil. Resuelve la pregunta 6 para móvil; en escritorio sigue abierta |
 | 2026-10-10 | **Móvil: menú de píldora** abajo y centrado, un icono por sección, que lleva directo a la parada. Iconos SVG propios | Decisión de Luis: llegar a cualquier sección con un toque. Se adelanta a la fase 4 solo en móvil; la navegación de escritorio (cabecera, indicador «01 / 05») sigue en la fase 4 |
 | 2026-10-10 | Saltos del menú: tramo real si la sección es vecina; si no, medio tramo de salida, fundido a negro, corte y medio tramo de llegada. Todos duran 1,5 s | Decisión de Luis: que ningún salto dure más que uno entre vecinas |
+| 2026-10-10 | Logotipo arriba y centrado (texto BOXRUS en Anton, en píldora oscura) en `Base.astro`; al pulsarlo recarga `/` desde el prólogo | Decisión de Luis. Es texto provisional hasta que haya logotipo gráfico |
 
 ## Preguntas abiertas
 
