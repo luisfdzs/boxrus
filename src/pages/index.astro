@@ -15,6 +15,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     <Nave client:only="react" />
   </div>
   <div class="fundido" aria-hidden="true"></div>
+  <div class="corte" aria-hidden="true"></div>
   <MenuParadas />
 
   <main>
@@ -73,6 +74,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
   const botones = [...document.querySelectorAll<HTMLButtonElement>('.menu button')];
   let controlador: ControladorPaginado | undefined;
   const fundido = document.querySelector<HTMLElement>('.fundido')!;
+  const corte = document.querySelector<HTMLElement>('.corte')!;
   const epilogo = pausas.at(-1)!;
 
   if (modo.captura) document.documentElement.dataset.captura = 'si';
@@ -97,7 +99,7 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     botones.forEach((b) => b.setAttribute('aria-current', String(b.dataset.indice === actual)));
   });
 
-  controlador = iniciarScroll(document.getElementById('pista')!, modo);
+  controlador = iniciarScroll(document.getElementById('pista')!, modo, (opacidad) => (corte.style.opacity = String(opacidad)));
   botones.forEach((boton) => boton.addEventListener('click', () => controlador?.irA(Number(boton.dataset.indice))));
 </script>
 
@@ -113,6 +115,16 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     inset: 0;
     z-index: 1;
     background: #fff;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Fundido a negro de los saltos del menú entre secciones no vecinas. */
+  .corte {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: #0d0e10;
     opacity: 0;
     pointer-events: none;
   }

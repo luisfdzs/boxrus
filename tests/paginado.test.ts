@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { destinoPaginado, indiceFraccional, indiceMasCercano } from '../src/lib/paginado';
+import { destinoPaginado, indiceFraccional, indiceMasCercano, opacidadCorte, posicionSalto } from '../src/lib/paginado';
 
 describe('scroll por paradas (móvil)', () => {
   const posiciones = [0, 1000, 2000, 3000];
@@ -26,5 +26,26 @@ describe('viaje directo del menú', () => {
     expect(indiceFraccional(1500, posiciones)).toBe(1.5);
     expect(indiceFraccional(3000, posiciones)).toBe(3);
     expect(indiceFraccional(5000, posiciones)).toBe(3);
+  });
+});
+
+describe('salto del menú entre secciones no vecinas', () => {
+  it('recorre medio tramo de salida, corta y termina medio tramo de llegada', () => {
+    // Salida 0 → 1000, llegada 3000 → 4000.
+    expect(posicionSalto(0, 0, 1000, 3000, 4000)).toBe(0);
+    expect(posicionSalto(0.25, 0, 1000, 3000, 4000)).toBe(250);
+    expect(posicionSalto(0.5, 0, 1000, 3000, 4000)).toBe(3500);
+    expect(posicionSalto(1, 0, 1000, 3000, 4000)).toBe(4000);
+  });
+
+  it('el corte ocurre en negro total y el fundido no toca los extremos', () => {
+    const op = (s: number) => opacidadCorte(s, 0.4, 0.16);
+    expect(op(0)).toBe(0);
+    expect(op(0.29)).toBe(0);
+    expect(op(0.5)).toBe(1);
+    expect(op(0.45)).toBe(1);
+    expect(op(0.36)).toBeGreaterThan(0);
+    expect(op(0.36)).toBeLessThan(1);
+    expect(op(1)).toBe(0);
   });
 });

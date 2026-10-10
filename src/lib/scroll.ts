@@ -9,7 +9,11 @@ import { iniciarPaginado, usarPaginado, type ControladorPaginado } from './pagin
 import { calcularPausas, progresoDeParada } from './pausas';
 
 /** Devuelve el controlador del scroll por paradas si está activo (móvil). */
-export function iniciarScroll(pista: HTMLElement, modo: Modo): ControladorPaginado | undefined {
+export function iniciarScroll(
+  pista: HTMLElement,
+  modo: Modo,
+  fundirANegro: (opacidad: number) => void = () => {},
+): ControladorPaginado | undefined {
   gsap.registerPlugin(ScrollTrigger);
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const paginado = !modo.captura && usarPaginado(modo.paginado);
@@ -46,6 +50,7 @@ export function iniciarScroll(pista: HTMLElement, modo: Modo): ControladorPagina
     const pausas = calcularPausas();
     return iniciarPaginado({
       reducido,
+      fundirANegro,
       posiciones: () => {
         const { start, end } = disparador;
         const maximo = document.documentElement.scrollHeight - innerHeight;

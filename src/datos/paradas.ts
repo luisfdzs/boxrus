@@ -56,8 +56,15 @@ export const RECORRIDO = {
    */
   paginadoMovil: {
     segundosPorTransicion: 2.2,
-    /** Duración de cada tramo cuando se viaja directo desde el menú de píldora. */
+    /**
+     * Duración de un salto del menú de píldora. Entre secciones vecinas es el
+     * tramo real; si están a más de un paso, se recorre la primera mitad del
+     * primer tramo, se funde a negro, se corta a la mitad del último tramo y se
+     * funde desde negro hasta el destino: dura lo mismo que un salto vecino.
+     */
     segundosPorTramoMenu: 1.5,
+    /** Fracción central del salto con fundido y, dentro de ella, la de negro total. */
+    corte: { fraccionFundido: 0.4, fraccionNegro: 0.16 },
     /** Desplazamiento mínimo del dedo (px) para contar como gesto. */
     umbralGesto: 30,
   },
