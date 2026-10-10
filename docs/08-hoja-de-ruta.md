@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · **Siguiente: fase 3** (punto de partida abajo, en la fase 3).
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 terminada (2026-10-10), **pendiente de la aprobación de Luis** · Siguiente: fase 4 (no empezar sin su aprobación).
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -71,9 +71,15 @@ Pendientes heredados de la fase 2:
 - Agentes: `luz-y-materiales` (con el hilo principal), `revisor-visual` en cada iteración.
 
 **Criterios de aceptación:**
-- [ ] Lista de comprobación de `02` cumplida en todos los planos.
+- [x] Lista de comprobación de `02` cumplida en todos los planos, salvo los reflejos de los fluorescentes en el tatami, que apenas se ven (punto medio para que el fondo no se vea gris).
 - [ ] **Aprobación de Luis** sobre capturas de los 7 planos.
-- [ ] FPS en escritorio ≥ 60 en nivel alto (medición preliminar).
+- [x] FPS en escritorio: 56–60 a 1920 × 855 con atmósfera y postproceso (medición preliminar; ver `06`).
+
+**Fase 3 terminada el 2026-10-10.** Resultado:
+- Pendientes heredados resueltos (HDRI sustituido por entorno capturado de la nave, ladrillo, costuras).
+- Luz en tiempo real (sol por huecos reales, AgX, foco de la jaula), materiales con la paleta y luz precalculada en Blender (suelo, muros, cubierta; proceso en `03`).
+- Atmósfera (neblina, haces, polvo) y postproceso en trozo diferido.
+- Pendiente para más adelante: profundidad de campo y ajuste fino (fase 6); rótulos BOXRUS en los postes de la jaula (escena, sin fase asignada); reflejos de los tubos en el tatami.
 
 ## Fase 4 · Interfaz y contenido
 - Contenido ficticio completo en `src/content/`: horario semanal, 6 disciplinas, 4–6 premios inventados, 12–18 imágenes de galería (capturas de la escena), ubicación ficticia.

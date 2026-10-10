@@ -71,6 +71,12 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 - **Haces de luz** desde los ventanales del fondo y laterales hacia +Z y hacia abajo (~30°): geometría de volúmenes con material aditivo y ruido, o postproceso de rayos de luz, según rendimiento.
 - Neblina muy ligera en toda la nave para dar aire y profundidad.
 
+**Fase 3 (hecho, `luz/Atmosfera.tsx`, valores en `LUZ.atmosfera`):**
+- Neblina exponencial `#2a2f35`, densidad 0,012.
+- Haces: prismas desde el hueco de cada ventanal soleado (fondo y muro derecho) a lo largo de la luz del sol hasta el suelo o el muro opuesto (`src/lib/haces.ts`, con pruebas). Material aditivo `#fff1d9` a 0,055, que se apaga a lo largo del haz y en las caras vistas de canto. Guarda contra NaN en el sombreador: un solo píxel NaN se extendía con el bloom a toda la imagen.
+- Polvo: 2.000 puntos con semilla, el 75 % dentro de los haces; tope de 3 px en pantalla y apagado a menos de 1,5–4 m de la cámara (de cerca parecían copos). Quieto en `?captura=1`.
+- Postproceso en trozo diferido (`luz/Postproceso.tsx`, `LUZ.postproceso`): SSAO, bloom por umbral (1,4, radio 0,55), AgX, viñeteado y grano al 7 %. N8AO se descartó: ~80 KB más con gzip. Profundidad de campo: pendiente (fase 6, ajuste fino).
+
 ## Contenido determinista
 - Toda variación (tono de placas, balanceo de sacos, polvo, posición de detalles) sale del generador con semilla.
 - **Detalles de vida** (aprobados por Luis el 2026-10-10, **sin saturar**): la nave debe parecer usada, no decorada. Lista cerrada, como máximo estos seis, repartidos en pocos puntos y nunca tapando al protagonista de un plano:
@@ -89,7 +95,7 @@ A diferencia de Billaron, la escena es **estática y cerrada**, con pocos objeto
 2. **Fluorescentes**: caras emisivas en todas las regletas + 4–6 `RectAreaLight` representativas (más las 4 del refuerzo de la jaula en nivel alto).
 3. **Entorno**: mapa de entorno **capturado de la propia nave** (fase 3, iteración 2): una cámara cúbica de 128 px en (0, 3, −20) pinta la escena en el primer fotograma, ya con texturas, y pasa a PMREM (`luz/Entorno.tsx`). Sustituye al HDRI genérico, cuyas ventanas y cielo, multiplicados por el Fresnel, ponían gris el tatami a ángulo rasante. Intensidad general 1; por material: tatami y juntas 0,3, hormigón 0,4, lona 0,5, malla 0,6 (`LUZ.entorno.materiales`).
 4. **Luz precalculada** ✅ (aprobada por Luis, fase 3): horneada en Blender en suelo, muros y cubierta, con la luz de las regletas y el rebote del día. Los objetos con brillo (sacos, jaula) mantienen luz en tiempo real. Proceso abajo, en «Luz precalculada».
-5. Postproceso: bloom selectivo (fluorescentes, ventanales, dígitos), profundidad de campo en planos cercanos, viñeteado, grano sutil, mapeo tonal ACES/AgX con gradación fría.
+5. Postproceso ✅ (fase 3, trozo diferido): SSAO, bloom por umbral (fluorescentes, ventanales, dígitos), AgX, viñeteado y grano. Profundidad de campo pendiente para la fase 6.
 
 ### Luz en tiempo real: valores actuales (fase 3, iteración 3, con luz horneada)
 Todo en `src/datos/luz.ts`. La luz de los fluorescentes en suelo, muros y techo y la oclusión de contacto llegan horneadas: aquí no se persiguen.

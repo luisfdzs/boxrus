@@ -65,6 +65,43 @@ export const LUZ = {
   /** Colores del degradado (con su luminancia: abajo, más tenue y cálido) y variación de brillo entre hojas. */
   vidrio: { arriba: '#dce8f8', abajo: '#a8865f', variacion: 0.04, semilla: 4409 },
   /**
+   * Atmósfera (docs/03): neblina muy ligera, haces de luz por los ventanales
+   * soleados (volúmenes aditivos, src/lib/haces.ts) y polvo en suspensión, más
+   * denso dentro de los haces. Contenidos: es el recurso principal, no humo.
+   */
+  atmosfera: {
+    /** Neblina exponencial: ~10 % a 20 m, ~30 % en el fondo de la nave visto desde la entrada. */
+    niebla: { color: '#2a2f35', densidad: 0.012 },
+    /**
+     * Haces: `intensidad` del color aditivo; `caida`, exponente del apagado a lo
+     * largo del haz; `bordes`, exponente del apagado de las caras vistas de canto
+     * (oculta la silueta del volumen).
+     */
+    haces: { color: '#fff1d9', intensidad: 0.055, caida: 1.4, bordes: 2.6 },
+    /**
+     * Polvo: `cantidad` de partículas (nivel alto de docs/06), fracción `enHaces`
+     * dentro de los haces, `tamano` en metros, brillo dentro y fuera de los haces,
+     * deriva (m) y velocidad (rad/s) del movimiento, desactivado en ?captura=1; tope de
+     * tamaño en pantalla (px) y distancias (m) entre las que se enciende al alejarse de la cámara.
+     */
+    polvo: { cantidad: 2000, enHaces: 0.75, tamano: 0.014, brillo: 0.9, brilloFuera: 0.12, deriva: 0.15, velocidad: 0.08, semilla: 6113, maximoPx: 3, cerca: [1.5, 4] as [number, number] },
+  },
+  /**
+   * Postproceso (trozo diferido, luz/Postproceso.tsx). `ao`: oclusión en pantalla. `bloom`: umbral de luminancia (solo los
+   * emisivos lo superan), suavidad, intensidad y radio (con radio y umbral bajos el
+   * halo levantaba los negros de toda la imagen). Viñeteado y grano, sutiles.
+   */
+  postproceso: {
+    /**
+     * SSAO de postprocessing (N8AO pesaba ~80 KB más con gzip). `radio` en
+     * fracción de pantalla; distancias y proximidades del mundo en metros.
+     */
+    ao: { muestras: 16, radio: 0.08, intensidad: 20, luminancia: 0.6, distancia: 20, caidaDistancia: 5, proximidad: 0.6, caidaProximidad: 0.3 },
+    bloom: { umbral: 1.4, suavidad: 0.3, intensidad: 0.4, radio: 0.55 },
+    vineteado: { desplazamiento: 0.35, oscuridad: 0.55 },
+    grano: { opacidad: 0.07 },
+  },
+  /**
    * Luz precalculada en Blender (herramientas/blender/, docs/03). Lo leen los
    * scripts a través de parametros.json (?exportar=1). Pasada «fluorescentes»:
    * directa + indirecta de las regletas; pasada «dia»: solo la indirecta del sol

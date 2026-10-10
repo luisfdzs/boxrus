@@ -56,6 +56,10 @@
 | 2026-10-10 | Tatami a rugosidad 0,7 × desgaste (≈ 0,60–0,70) en vez de 0,58–0,62; ladrillo a saturación 2,1 en vez de 1,3 | Con 0,6 el reflejo del sol rasante convertía sus manchas en placas blancas; con 1,3 el ladrillo seguía en `#5b4840`. Cifras del revisor ajustadas mirando el resultado |
 | 2026-10-10 | **Luz precalculada sin segundas UV**: mapas de suelo, cubierta y muros proyectados en coordenadas del mundo (muros desplegados por el perímetro), horneados en Blender en dos pasadas (fluorescentes; día solo indirecta) y mezclados después | La geometría se genera por código y no tiene UV de mapa de luz. Separar las pasadas permite reajustar el equilibrio sin volver a hornear. Proceso en `03` |
 | 2026-10-10 | Con la luz horneada, el ladrillo baja a saturación 1,4 y brillo 1,05, y los mapas a intensidad 0,85; el hemisferio pesa un 40 % en los materiales con mapa | Con los valores de la iteración 2 (sin horneado) el ladrillo se iba a naranja |
+| 2026-10-10 | Haces de luz por **geometría aditiva** (prismas desde cada ventanal soleado) en vez de rayos en postproceso | Coste mínimo, deterministas y coherentes con las manchas de sol; el polvo se reparte dentro de ellos |
+| 2026-10-10 | Oclusión en pantalla con **SSAO** de `postprocessing` en vez de N8AO | N8AO añadía ~80 KB con gzip al trozo diferido; con SSAO el trozo pesa ~29 KB |
+| 2026-10-10 | En modo captura, «lista» espera también al postproceso | Si no, las capturas salían a veces sin postproceso y no eran comparables |
+| 2026-10-10 | Fase 3 terminada; Luis pidió fusionar en `test` y `prod` al acabarla | Petición explícita de Luis |
 
 ## Preguntas abiertas
 

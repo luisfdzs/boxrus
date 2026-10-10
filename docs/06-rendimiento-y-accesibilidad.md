@@ -48,6 +48,18 @@ No hace falta cargador de modelos ni Meshopt: no se descarga ningún `.glb`. `vi
 - Descarga 3D: texturas `.ktx2` 1,39 MB + transcodificador Basis ~0,26 MB (gzip) + mapas de luz `public/luz/` 1,1 MB ≈ **2,8 MB de 10 / 5**. El HDRI de `public/entorno/` ya no se descarga.
 - FPS (escritorio, GPU integrada, 1440 × 900, DPR 1, compilación de producción): 60 en todos los planos salvo la parada 4 (56,7), medido en la iteración 2.
 
+### Estado medido (cierre de la fase 3, 2026-10-10)
+| Pieza (gzip) | Peso | Cuenta en |
+|---|---|---|
+| `events-*.esm.js` (Three, R3F, drei, escena y cámara) | ~238 KB | isla inicial |
+| `client.*.js` | ~64,5 KB | isla inicial |
+| `Nave.*.js` (escena, `KTX2Loader`, atmósfera, haces) | ~42,3 KB | isla inicial |
+| **Total isla inicial** | **~344,7 KB de 350** | |
+| `Postproceso.*.js` (postprocessing: SSAO, bloom, AgX, viñeteado, grano) | ~29,2 KB | trozo diferido, tope ~80 KB |
+| Descarga 3D | ~2,8 MB de 10 / 5 | |
+
+FPS con atmósfera y postproceso (compilación de producción, 1920 × 855, DPR 1, GPU integrada AMD): 56 en el prólogo, 60 en la parada 4. Móvil real: sin medir.
+
 **Decisión (2026-10-10, Luis):** el postproceso se carga en un **trozo diferido** tras el primer fotograma y se mide aparte, con tope propio de ~80 KB (gzip). Los 350 KB siguen siendo el presupuesto de la isla inicial.
 
 ### Estado medido (fase 3, iteración 2 de luz, 2026-10-10)
