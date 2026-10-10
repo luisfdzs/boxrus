@@ -1,9 +1,9 @@
-// Scroll por paradas en móvil: cada gesto lleva a la parada siguiente o
-// anterior y nunca deja la cámara a medio camino. Las posiciones son los
-// centros de las pausas (la del epílogo es el cierre). El menú
-// de píldora usa el mismo controlador para viajar directo a una parada.
+// Viajes directos a una parada (menú de píldora y logotipo, en escritorio y
+// móvil) y scroll por paradas en móvil: cada gesto lleva a la parada siguiente
+// o anterior y nunca deja la cámara a medio camino. Las posiciones son los
+// centros de las pausas (la del epílogo es el cierre).
 import gsap from 'gsap';
-import { RECORRIDO } from '../datos/paradas';
+import { PARADAS, RECORRIDO } from '../datos/paradas';
 
 /** Índice de la posición más cercana a un valor (progreso o píxeles). */
 export const indiceMasCercano = (valor: number, posiciones: number[]): number =>
@@ -37,38 +37,72 @@ export const opacidadCorte = (s: number, fraccionFundido: number, fraccionNegro:
 export const destinoPaginado = (actual: number, direccion: 1 | -1, total: number): number =>
   Math.min(total - 1, Math.max(0, actual + direccion));
 
+/**
+ * Dirección de un gesto (+1 avanza, −1 retrocede, null si no cuenta). Deslizar
+ * hacia arriba o hacia la derecha avanza; hacia abajo o hacia la izquierda,
+ * retrocede. En horizontal solo entre paradas del recorrido por la nave, hasta
+ * `ultimaHorizontal`: la salida por el ventanal y el cierre, solo en vertical.
+ */
+export const direccionGesto = (
+  dx: number,
+  dy: number,
+  umbral: number,
+  actual: number,
+  ultimaHorizontal: number,
+): 1 | -1 | null => {
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < umbral) return null;
+  if (Math.abs(dy) >= Math.abs(dx)) return dy > 0 ? 1 : -1;
+  const direccion = dx > 0 ? 1 : -1;
+  return actual + direccion > ultimaHorizontal || actual > ultimaHorizontal ? null : direccion;
+};
+
 /** ¿Se usa el scroll por paradas? Pantalla táctil y vertical, como el encuadre móvil. */
 export const usarPaginado = (forzado: boolean): boolean =>
   forzado || (matchMedia('(pointer: coarse)').matches && innerWidth / innerHeight < RECORRIDO.aspectoMovil);
 
-interface Opciones {
+interface OpcionesViajes {
   /** Posiciones de scroll (px) de cada parada, en orden. Se recalculan en cada uso. */
   posiciones: () => number[];
   reducido: boolean;
   /** Pinta el fundido a negro de los saltos del menú (0 = transparente, 1 = negro). */
   fundirANegro: (opacidad: number) => void;
+  /** Avisos al empezar y acabar cada animación (p. ej. para parar el scroll suave). */
+  alEmpezar?: () => void;
+  alTerminar?: () => void;
 }
 
-export interface ControladorPaginado {
+export interface ControladorViajes {
   /** Lleva a una parada: tramo real si es vecina; si no, salto con fundido a negro. Siempre dura un tramo. */
   irA: (indice: number) => void;
-  /** Parada de destino mientras dura un viaje del menú; null si no hay viaje. */
+  /** Parada de destino mientras dura un viaje; null si no hay viaje. */
   destinoViaje: () => number | null;
 }
 
-export function iniciarPaginado({ posiciones, reducido, fundirANegro }: Opciones): ControladorPaginado {
-  const { segundosPorTransicion, segundosPorTramoMenu, umbralGesto, corte } = RECORRIDO.paginadoMovil;
+interface Viajes extends ControladorViajes {
+  /** Recorre los tramos reales hasta una parada, a `segundosPorTramo` por tramo. */
+  animar: (indice: number, segundosPorTramo: number, esViaje: boolean) => void;
+  ocupado: () => boolean;
+}
+
+export function crearViajes({ posiciones, reducido, fundirANegro, alEmpezar, alTerminar }: OpcionesViajes): Viajes {
+  const { segundosPorTramoMenu, corte } = RECORRIDO.paginadoMovil;
   let animacion: gsap.core.Tween | null = null;
   let viaje: number | null = null;
-  let inicioY: number | null = null;
+
+  const terminar = () => {
+    animacion = null;
+    viaje = null;
+    alTerminar?.();
+  };
 
   const animar = (indice: number, segundosPorTramo: number, esViaje: boolean) => {
     const lista = posiciones();
     const destino = lista[indice];
     const desde = window.scrollY;
-    animacion?.kill();
-    animacion = null;
-    viaje = null;
+    if (animacion) {
+      animacion.kill();
+      terminar();
+    }
     if (Math.abs(destino - desde) < 1) return;
     const tramos = Math.abs(indice - indiceFraccional(desde, lista));
     // Sin recorrido que animar (p. ej. al encajar antes de la primera parada), se coloca
@@ -78,26 +112,28 @@ export function iniciarPaginado({ posiciones, reducido, fundirANegro }: Opciones
       return;
     }
     viaje = esViaje ? indice : null;
+    alEmpezar?.();
     const proxy = { y: desde };
     animacion = gsap.to(proxy, {
       y: destino,
       duration: tramos * segundosPorTramo,
       ease: 'none',
       onUpdate: () => window.scrollTo(0, proxy.y),
-      onComplete: () => {
-        animacion = null;
-        viaje = null;
-      },
+      onComplete: terminar,
     });
   };
 
-  /** Salto a una sección a más de un paso: medio tramo, fundido, corte y medio tramo. */
+  /**
+   * Salto a una sección a más de un paso: medio tramo, fundido, corte y medio tramo.
+   * Sale de la posición actual, que en escritorio puede estar entre dos paradas.
+   */
   const saltar = (destino: number) => {
     const lista = posiciones();
     const origen = indiceMasCercano(window.scrollY, lista);
     const dir = Math.sign(destino - origen);
-    const [a0, a1, b0, b1] = [lista[origen], lista[origen + dir], lista[destino - dir], lista[destino]];
+    const [a0, a1, b0, b1] = [window.scrollY, lista[origen + dir], lista[destino - dir], lista[destino]];
     viaje = destino;
+    alEmpezar?.();
     const proxy = { s: 0 };
     animacion = gsap.to(proxy, {
       s: 1,
@@ -109,8 +145,7 @@ export function iniciarPaginado({ posiciones, reducido, fundirANegro }: Opciones
       },
       onComplete: () => {
         fundirANegro(0);
-        animacion = null;
-        viaje = null;
+        terminar();
       },
     });
   };
@@ -123,30 +158,37 @@ export function iniciarPaginado({ posiciones, reducido, fundirANegro }: Opciones
     else animar(indice, segundosPorTramoMenu, true);
   };
 
+  return { irA, animar, destinoViaje: () => viaje, ocupado: () => animacion !== null };
+}
+
+/** Scroll por paradas (móvil): los gestos táctiles mueven de parada en parada. */
+export function iniciarPaginado(viajes: Viajes, posiciones: () => number[]): void {
+  const { segundosPorTransicion, umbralGesto } = RECORRIDO.paginadoMovil;
+  // Última parada a la que se llega deslizando en horizontal: la anterior al epílogo.
+  const ultimaHorizontal = PARADAS.findIndex((p) => p.id === 'E') - 1;
+  let inicio: { x: number; y: number } | null = null;
+
   // El dedo no desplaza la página: solo cuenta el gesto completo.
   document.documentElement.dataset.paginado = 'si';
   document.documentElement.style.overscrollBehavior = 'none';
-  addEventListener('touchstart', (e) => (inicioY = e.touches[0].clientY), { passive: true });
+  addEventListener('touchstart', (e) => (inicio = { x: e.touches[0].clientX, y: e.touches[0].clientY }), { passive: true });
   addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
   addEventListener('touchend', (e) => {
-    if (inicioY === null) return;
-    const delta = inicioY - e.changedTouches[0].clientY;
-    inicioY = null;
-    if (animacion || Math.abs(delta) < umbralGesto) return;
+    if (inicio === null) return;
+    const { clientX, clientY } = e.changedTouches[0];
+    const [dx, dy] = [clientX - inicio.x, inicio.y - clientY];
+    inicio = null;
+    if (viajes.ocupado()) return;
     const lista = posiciones();
     const actual = indiceMasCercano(window.scrollY, lista);
-    animar(destinoPaginado(actual, delta > 0 ? 1 : -1, lista.length), segundosPorTransicion, false);
+    const direccion = direccionGesto(dx, dy, umbralGesto, actual, ultimaHorizontal);
+    if (direccion) viajes.animar(destinoPaginado(actual, direccion, lista.length), segundosPorTransicion, false);
   });
 
   // Al cargar o al girar la pantalla, quedarse en la posición más cercana.
   const encajar = () => {
-    if (!animacion) animar(indiceMasCercano(window.scrollY, posiciones()), segundosPorTransicion, false);
+    if (!viajes.ocupado()) viajes.animar(indiceMasCercano(window.scrollY, posiciones()), segundosPorTransicion, false);
   };
   addEventListener('resize', encajar);
   encajar();
-
-  return {
-    irA,
-    destinoViaje: () => viaje,
-  };
 }

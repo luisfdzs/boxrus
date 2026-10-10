@@ -64,6 +64,8 @@
 | 2026-10-10 | **Fase 3 aprobada** | Aprobación de Luis |
 | 2026-10-10 | HDRI Empty Warehouse 01 **retirado del repo** | Decisión de Luis: ya no se cargaba (entorno capturado de la nave) |
 | 2026-10-10 | **Final en una sola transición**: Ubicación → cierre «Boxrus. Tu primera clase te espera.», con el avance al ventanal y el fundido a blanco dentro del tramo; se elimina la parada en el ventanal y el scroll extra del cierre (ahora capa fija en la pausa del epílogo) | Petición de Luis: las dos transiciones finales se hacían largas y pesadas. Dura lo mismo que las demás (un tramo; 2,2 s por gesto en móvil) |
+| 2026-10-10 | **Volver al inicio con un viaje**: el logotipo y un nuevo botón de Inicio en la píldora llevan al prólogo con la misma animación que los saltos del menú, sin recargar; los viajes pasan a funcionar también en escritorio (`crearViajes` en `paginado.ts`) | Petición de Luis |
+| 2026-10-10 | **Deslizamiento horizontal en móvil**: derecha avanza, izquierda retrocede, como el vertical; solo del prólogo a Ubicación (no hacia ni desde el cierre) | Petición de Luis |
 
 ## Preguntas abiertas
 

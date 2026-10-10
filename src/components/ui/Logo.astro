@@ -1,5 +1,7 @@
 ---
-// Logotipo (texto BOXRUS) arriba y centrado: vuelve al inicio y recarga la página.
+// Logotipo (texto BOXRUS) arriba y centrado: vuelve al inicio. En el recorrido
+// lo anima la página (evento `ir-al-inicio`, cancelado por quien lo atiende);
+// en el resto, va a `/` y empieza en el prólogo.
 ---
 
 <a class="logo" href="/" aria-label="Boxrus, volver al inicio">BOXRUS</a>
@@ -8,6 +10,7 @@
   const logo = document.querySelector<HTMLAnchorElement>('.logo')!;
   logo.addEventListener('click', (e) => {
     e.preventDefault();
+    if (!dispatchEvent(new Event('ir-al-inicio', { cancelable: true }))) return;
     // Que el navegador no restaure la posición: la recarga empieza en el prólogo.
     history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);

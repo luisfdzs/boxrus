@@ -1,10 +1,12 @@
 ---
-// Menú de píldora del móvil: un icono por sección que lleva directo a su
-// parada (el viaje lo hace paginado.ts). Solo se muestra con el scroll por
+// Menú de píldora del móvil: un icono para volver al inicio y uno por sección
+// que lleva directo a su parada (el viaje lo hace paginado.ts). Solo se muestra con el scroll por
 // paradas activo. Iconos SVG propios, sin recursos externos.
 import { PARADAS, type IdParada } from '../../datos/paradas';
 
 const ICONOS: Partial<Record<IdParada, string>> = {
+  // Inicio (prólogo): casa.
+  P: '<path d="M3.5 11 12 4l8.5 7"/><path d="M6 9.5V20h4.5v-5.5h3V20H18V9.5"/>',
   // Horario: reloj.
   '1': '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   // Clases: el octógono.
@@ -17,13 +19,15 @@ const ICONOS: Partial<Record<IdParada, string>> = {
   '5': '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
 };
 
+// El prólogo se anuncia como «Inicio».
+const etiqueta = (parada: (typeof PARADAS)[number]) => (parada.id === 'P' ? 'Inicio' : parada.nombre);
 const entradas = PARADAS.map((parada, indice) => ({ parada, indice })).filter(({ parada }) => ICONOS[parada.id]);
 ---
 
 <nav class="menu" aria-label="Secciones del recorrido">
   {
     entradas.map(({ parada, indice }) => (
-      <button type="button" data-indice={indice} aria-label={parada.nombre} title={parada.nombre}>
+      <button type="button" data-indice={indice} aria-label={etiqueta(parada)} title={etiqueta(parada)}>
         <svg viewBox="0 0 24 24" aria-hidden="true" set:html={ICONOS[parada.id]} />
       </button>
     ))

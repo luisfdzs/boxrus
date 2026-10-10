@@ -1,19 +1,20 @@
 // Scroll suave (Lenis) + ScrollTrigger → progreso global de la pista.
-// En móvil, scroll por paradas (paginado.ts) en lugar de scroll libre.
+// En móvil, scroll por paradas (paginado.ts) en lugar de scroll libre. En los
+// dos, viajes directos a una parada desde el menú y el logotipo.
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { fijarProgreso } from './progreso';
 import type { Modo } from './modo';
-import { iniciarPaginado, usarPaginado, type ControladorPaginado } from './paginado';
+import { crearViajes, iniciarPaginado, usarPaginado, type ControladorViajes } from './paginado';
 import { calcularPausas, progresoDeParada } from './pausas';
 
-/** Devuelve el controlador del scroll por paradas si está activo (móvil). */
+/** Devuelve el controlador de los viajes directos a una parada (menú y logotipo). */
 export function iniciarScroll(
   pista: HTMLElement,
   modo: Modo,
   fundirANegro: (opacidad: number) => void = () => {},
-): ControladorPaginado | undefined {
+): ControladorViajes {
   gsap.registerPlugin(ScrollTrigger);
   const reducido = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const paginado = !modo.captura && usarPaginado(modo.paginado);
@@ -46,16 +47,20 @@ export function iniciarScroll(
     fijarProgreso(disparador.progress);
   }
 
-  if (paginado) {
-    const pausas = calcularPausas();
-    return iniciarPaginado({
-      reducido,
-      fundirANegro,
-      posiciones: () => {
-        const { start, end } = disparador;
-        // Centros de las pausas; la del epílogo es el cierre.
-        return pausas.map((p) => start + p.centro * (end - start));
-      },
-    });
-  }
+  const pausas = calcularPausas();
+  // Centros de las pausas; la del epílogo es el cierre.
+  const posiciones = () => {
+    const { start, end } = disparador;
+    return pausas.map((p) => start + p.centro * (end - start));
+  };
+  const viajes = crearViajes({
+    reducido,
+    fundirANegro,
+    posiciones,
+    // Durante un viaje la rueda no mueve la página ni pelea con la animación.
+    alEmpezar: () => lenis?.stop(),
+    alTerminar: () => lenis?.start(),
+  });
+  if (paginado) iniciarPaginado(viajes, posiciones);
+  return { irA: viajes.irA, destinoViaje: viajes.destinoViaje };
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { destinoPaginado, indiceFraccional, indiceMasCercano, opacidadCorte, posicionSalto } from '../src/lib/paginado';
+import { destinoPaginado, direccionGesto, indiceFraccional, indiceMasCercano, opacidadCorte, posicionSalto } from '../src/lib/paginado';
 
 describe('scroll por paradas (móvil)', () => {
   const posiciones = [0, 1000, 2000, 3000];
@@ -15,6 +15,21 @@ describe('scroll por paradas (móvil)', () => {
     expect(destinoPaginado(1, -1, 4)).toBe(0);
     expect(destinoPaginado(3, 1, 4)).toBe(3);
     expect(destinoPaginado(0, -1, 4)).toBe(0);
+  });
+
+  it('deslizar a la derecha avanza y a la izquierda retrocede, solo antes del epílogo', () => {
+    // Paradas 0–5 en horizontal; la 6 (epílogo) solo en vertical.
+    expect(direccionGesto(80, 10, 30, 2, 5)).toBe(1);
+    expect(direccionGesto(-80, 10, 30, 2, 5)).toBe(-1);
+    expect(direccionGesto(80, 0, 30, 5, 5)).toBeNull();
+    expect(direccionGesto(-80, 0, 30, 6, 5)).toBeNull();
+    expect(direccionGesto(20, 10, 30, 2, 5)).toBeNull();
+  });
+
+  it('en vertical, arriba avanza y abajo retrocede, también hacia y desde el epílogo', () => {
+    expect(direccionGesto(10, 80, 30, 5, 5)).toBe(1);
+    expect(direccionGesto(10, -80, 30, 6, 5)).toBe(-1);
+    expect(direccionGesto(60, 70, 30, 2, 5)).toBe(1);
   });
 });
 
