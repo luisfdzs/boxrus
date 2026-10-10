@@ -113,7 +113,7 @@ escena.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0
 # ---------- Superficies destino con UV proyectadas ----------
 xMin, xMax, zF, zB = E['xMin'], E['xMax'], E['zFrente'], E['zFondo']
 ancho, prof, cumbrera, alero = xMax - xMin, zF - zB, E['alturaCumbrera'], E['alturaAlero']
-g = E['grosorMuro'] / 2 - 0.01  # un centímetro por delante de la cara interior
+g = E['grosorMuro'] / 2 + 0.01  # un centímetro por delante de la cara interior
 perimetro = 2 * (ancho + prof)
 
 
@@ -135,7 +135,8 @@ def plano(nombre, vertices, uvs, ancho_px, alto_px):
     obj = bpy.data.objects.new(nombre, malla)
     escena.collection.objects.link(obj)
     # No interviene en la luz de la escena: solo recibe.
-    for r in ('visible_camera', 'visible_diffuse', 'visible_glossy', 'visible_transmission', 'visible_volume_scatter', 'visible_shadow'):
+    # visible_camera se queda activo: sin él, Cycles hornea a negro.
+    for r in ('visible_diffuse', 'visible_glossy', 'visible_transmission', 'visible_volume_scatter', 'visible_shadow'):
         setattr(obj, r, False)
     mat = material_difuso(f'{nombre}_blanco', '#ffffff', 1.0)
     obj.data.materials.append(mat)
