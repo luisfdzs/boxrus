@@ -51,15 +51,15 @@ export function TexturasNave() {
 
     // Mapas de luz: sin repetir (las UV van de 0 a 1 en toda la nave; ver usarLuzHorneada).
     const [luzSuelo, luzTecho, luzMuros] = mapasLuz;
-    const intensidad = LUZ_MAPAS.escala * LUZ_MAPAS.intensidad;
-    const asignar = (mapa: Texture, materiales: typeof MATERIALES.muro[]) => {
+    const asignar = (mapa: Texture, materiales: typeof MATERIALES.muro[], superficie: keyof typeof LUZ_MAPAS.intensidad) => {
+      const intensidad = LUZ_MAPAS.escala * LUZ_MAPAS.intensidad[superficie];
       mapa.wrapS = mapa.wrapT = ClampToEdgeWrapping;
       mapa.needsUpdate = true;
       for (const m of materiales) Object.assign(m, { lightMap: mapa, lightMapIntensity: intensidad, needsUpdate: true });
     };
-    asignar(luzSuelo, [MATERIALES.tatami, MATERIALES.juntaTatami, MATERIALES.hormigon]);
-    asignar(luzTecho, [MATERIALES.chapa]);
-    asignar(luzMuros, [MATERIALES.muro]);
+    asignar(luzSuelo, [MATERIALES.tatami, MATERIALES.juntaTatami, MATERIALES.hormigon], 'suelo');
+    asignar(luzTecho, [MATERIALES.chapa], 'techo');
+    asignar(luzMuros, [MATERIALES.muro], 'muros');
   }, [todas]);
 
   return null;

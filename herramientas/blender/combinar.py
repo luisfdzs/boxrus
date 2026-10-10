@@ -5,7 +5,7 @@
 # y escribe <superficie>.png: irradiancia relativa en 8 bits con curva sRGB,
 # dividida por una escala común a las tres superficies (escala.json), para que
 # en three baste con lightMapIntensity = escala. Un desenfoque leve quita el ruido
-# de pocas muestras (la luz horneada es de baja frecuencia).
+# de pocas muestras en muros y techo; el suelo va sin él (oclusión de contacto).
 import json
 import os
 import sys
@@ -29,13 +29,19 @@ def leer(nombre):
 
 def desenfocar(img, radio=1):
     """Caja separable de (2·radio + 1) px, con bordes replicados."""
+    if radio <= 0:
+        return img
     for eje in (0, 1):
         relleno = np.pad(img, [(radio, radio) if a == eje else (0, 0) for a in range(3)], mode='edge')
         img = sum(np.take(relleno, range(i, i + img.shape[eje]), axis=eje) for i in range(2 * radio + 1)) / (2 * radio + 1)
     return img
 
 
-luz = {s: desenfocar(mezcla['fluorescentes'] * leer(f'{s}_fluorescentes.exr') + mezcla['dia'] * leer(f'{s}_dia.exr')) for s in SUPERFICIES}
+# Radio por superficie (H['desenfoque']): 0 en el suelo para conservar la oclusión de contacto.
+luz = {
+    s: desenfocar(mezcla['fluorescentes'] * leer(f'{s}_fluorescentes.exr') + mezcla['dia'] * leer(f'{s}_dia.exr'), H['desenfoque'][s])
+    for s in SUPERFICIES
+}
 # Escala común: el percentil 99,5 de todas, para no quemar casi nada.
 escala = float(np.percentile(np.concatenate([l.reshape(-1, 3) for l in luz.values()]), 99.5))
 

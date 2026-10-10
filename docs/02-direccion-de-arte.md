@@ -62,7 +62,7 @@ Gradación general: **fría y algo desaturada**, con el ladrillo y el rojo de ma
 ### Personas y objetos
 - **Ninguna persona.**
 - Sin objetos sueltos: nada de cajas, bancos, botellas, mochilas.
-- Excepciones a validar (ver `09`): unos guantes colgados en un gancho del bastidor y una comba sobre el borde de la plataforma, como detalles de vida.
+- Excepción aprobada (ver `09`): los seis detalles de vida de la lista cerrada de `03` (guantes, comba, banco con toalla y botella, vendas, espinilleras, balones medicinales), sin saturar.
 
 ## Luz y atmósfera
 - Tres fuentes: **fluorescentes fríos** (relleno general desde arriba), **luz natural** por los ventanales (dirección y haces volumétricos) y un **ligero refuerzo cenital sobre la jaula** que la separa del resto.

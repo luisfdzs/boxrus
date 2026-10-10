@@ -292,14 +292,14 @@ export const MATERIALES = {
   hormigon: material('#4e4f50', { roughness: 0.4 }),
   juntaTatami: material('#15181b'),
   // Tatami satinado: el tono por placa va en el color de cada instancia (Envolvente).
-  // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,60–0,70. Algo más que el 0,6 de partida:
-  // con menos, el reflejo del sol rasante convertía sus manchas en placas blancas.
-  tatami: material('#ffffff', { roughness: 0.7, map: desgaste, roughnessMap: desgaste }),
+  // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,47–0,55, con reflejo del entorno 0,6
+  // (iteración 3: sin ellos no se veía ningún reflejo de los fluorescentes).
+  tatami: material('#ffffff', { roughness: 0.55, map: desgaste, roughnessMap: desgaste }),
   // Acero estructural negro mate (pintado, no metálico).
   acero: material('#16181b', { roughness: 0.6 }),
   correa: material('#6e2a22', { roughness: 0.65 }),
   // Chapa galvanizada envejecida: poco metálica, para que tome el gris de su color y no el del entorno.
-  chapa: material('#8a9096', {
+  chapa: material('#767a7e', {
     side: DoubleSide,
     roughness: 0.5,
     metalness: 0.3,
@@ -330,7 +330,7 @@ export const MATERIALES = {
   fluorescente: emisivo('#e6f2ff', LUZ.emisivos.fluorescente),
   // Marcador: carcasa negra mate y dígitos LED, encendidos y apagados (estos, apenas visibles tras el frontal ahumado).
   carcasa: material('#0e0f10', { roughness: 0.9 }),
-  digito: emisivo('#ff2a1a', LUZ.emisivos.digitos),
+  digito: emisivo('#ff1a0a', LUZ.emisivos.digitos),
   digitoApagado: emisivo('#ff2a1a', LUZ.emisivos.digitosApagados, { color: '#060303', roughness: 0.9 }),
 } as const;
 

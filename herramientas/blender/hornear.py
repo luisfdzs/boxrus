@@ -86,7 +86,15 @@ for o in list(escena.objects):
         continue
     nombre = o.name.split('.')[0]
     if nombre == 'fluorescente':
-        m = material_emisivo('fluorescente', '#e6f2ff', False)
+        # Solo emite la cara inferior de cada regleta: con la caja entera encendida,
+        # la chapa (a menos de 1 m) salía más clara que los muros.
+        m = material_emisivo('fluorescente', H['colorFluorescente'], False)
+        o.data.materials.clear()
+        o.data.materials.append(m)
+        o.data.materials.append(material_difuso('regleta', '#d8dadc', 0.5))
+        for pol in o.data.polygons:
+            pol.material_index = 0 if pol.normal.z < -0.5 else 1
+        continue
     elif nombre == 'vidrio':
         m = material_emisivo('vidrio', '#fff4e2', True)
     else:

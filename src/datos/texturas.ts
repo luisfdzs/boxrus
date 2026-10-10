@@ -20,8 +20,8 @@ export const TEXTURAS = {
     arm: 'ladrillo_arm.ktx2',
     tamano: [1, 1],
     relieve: 0.8,
-    saturacion: 1.4,
-    brillo: 1.05,
+    saturacion: 1.8,
+    brillo: 1.2,
     lejania: [1 / 512, 1 / 128],
   },
   /** Concrete 034 (ambientCG, CC0). Tesela 2:1 del tamaño de un panel de encofrado. */
@@ -58,4 +58,4 @@ export const CUERO = {
  * del octógono (UV de la tapa del cilindro). `intensidad`: cuánto aclara el roce;
  * `marcas`: número de rozaduras cortas de pisadas.
  */
-export const LONA = { semilla: 5153, resolucion: 512, intensidad: 0.5, marcas: 90 } as const;
+export const LONA = { semilla: 5153, resolucion: 512, intensidad: 0.8, marcas: 90 } as const;

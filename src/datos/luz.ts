@@ -22,7 +22,7 @@ export const LUZ = {
     posicion: [JAULA.centro[0], 3, JAULA.centro[2]] as Vec3,
     resolucion: 128,
     intensidad: 1,
-    materiales: { tatami: 0.3, juntaTatami: 0.3, hormigon: 0.4, malla: 0.6, lona: 0.5, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
+    materiales: { tatami: 0.6, juntaTatami: 0.3, hormigon: 0.4, malla: 0.6, lona: 0.3, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
   },
   /**
    * Sol de mañana: entra por los ventanales del fondo y del muro derecho (este),
@@ -41,7 +41,7 @@ export const LUZ = {
     sombra: { resolucion: 2048, lado: 34, radio: 1, sesgo: -0.0004, sesgoNormal: 0.015 },
   },
   /** Relleno frío de los fluorescentes (hasta tener la luz precalculada): cielo y suelo del hemisferio. */
-  relleno: { cielo: '#cfdcea', suelo: '#2a2b2d', intensidad: 0.45 },
+  relleno: { cielo: '#cfdcea', suelo: '#2a2b2d', intensidad: 0.3 },
   /**
    * Refuerzo cenital sobre la jaula: foco hacia la lona, con caída hasta la malla.
    * Sin sombra: desde el centro, la de la malla y los postes cae hacia fuera (nunca
@@ -50,7 +50,7 @@ export const LUZ = {
    */
   refuerzoJaula: {
     color: '#e6f2ff',
-    intensidad: 200,
+    intensidad: 130,
     posicion: [JAULA.centro[0], 6.3, JAULA.centro[2]] as Vec3,
     angulo: 0.75,
     penumbra: 0.6,
@@ -61,7 +61,7 @@ export const LUZ = {
    * marcador). El vidrio lleva además un degradado vertical por hoja (frío arriba,
    * cálido abajo) y una variación de brillo entre hojas, con semilla.
    */
-  emisivos: { fluorescente: 4, vidrio: 7, digitos: 0.9, digitosApagados: 0.04 },
+  emisivos: { fluorescente: 4, vidrio: 4.5, digitos: 0.6, digitosApagados: 0.04 },
   /** Colores del degradado (con su luminancia: abajo, más tenue y cálido) y variación de brillo entre hojas. */
   vidrio: { arriba: '#dce8f8', abajo: '#a8865f', variacion: 0.04, semilla: 4409 },
   /**
@@ -71,24 +71,28 @@ export const LUZ = {
    * y del cielo de los ventanales. `mezcla` pondera las dos al combinarlas.
    */
   horneado: {
-    resoluciones: { suelo: [384, 512], techo: [192, 256], muros: [2048, 112] },
+    resoluciones: { suelo: [768, 1024], techo: [192, 256], muros: [2048, 112] },
+    /** Radio (px) del desenfoque de combinar.py por superficie. */
+    desenfoque: { suelo: 0, techo: 1, muros: 1 },
     /** Altura del plano de horneado del suelo (encima de las placas de tatami). */
     alturaSuelo: 0.025,
     fuerzaFluorescente: 30,
-    fuerzaCielo: 6,
+    /** Blanco algo menos frío que el emisivo visible: con #e6f2ff el rebote desaturaba el ladrillo. */
+    colorFluorescente: '#f2f6fb',
+    fuerzaCielo: 9,
     fuerzaSol: 4,
     /** Diámetro aparente del sol (grados): sombras suaves en la luz rebotada. */
     solAngulo: 2,
     /** Albedo difuso por material para la luz rebotada (los texturizados, con su color medio). */
     albedos: {
       // Ladrillo: color medio de Red Brick 03 con la saturación y el brillo de TEXTURAS.ladrillo.
-      muro: '#a8705c',
+      muro: '#b07260',
       tatami: '#1e2225',
       juntaTatami: '#15181b',
       hormigon: '#4e4f50',
       acero: '#16181b',
       correa: '#6e2a22',
-      chapa: '#8a9096',
+      chapa: '#767a7e',
       porton: '#3a3d40',
       lona: '#3a3c3f',
       faldon: '#121314',
@@ -111,8 +115,8 @@ export const LUZ = {
       techo: 'luz_techo.ktx2',
       muros: 'luz_muros.ktx2',
       escala: 1.15,
-      intensidad: 0.85,
-      relleno: 0.4,
+      intensidad: { suelo: 0.85, techo: 0.5, muros: 0.85 },
+      relleno: 0.6,
     },
   },
 } as const;
