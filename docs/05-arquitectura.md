@@ -105,6 +105,14 @@ tests/                       # Vitest
 
 ## Despliegue en Vercel
 - Salida **estática** de Astro.
-- Proyecto de Vercel conectado al repositorio remoto: previsualización por rama o PR, producción desde `main`.
-- Producción solo con aprobación explícita.
+- Repositorio: `github.com/luisfdzs/boxrus` (público). Proyecto de Vercel `boxrus` (equipo `luis-fernandez`) conectado al repositorio.
+- Tres ramas:
+
+| Rama | Uso | Dónde se ve |
+|---|---|---|
+| `dev` | Desarrollo diario; rama por defecto | Previsualización con URL propia por cada push (requiere sesión de Vercel) |
+| `test` | Versión para revisar, fusionando `dev` | `https://boxrustest.vercel.app` (dominio fijado a la rama) |
+| `prod` | Producción; rama de producción de Vercel | `https://boxrus.vercel.app` |
+
+- Flujo: `dev` → `test` → `prod`. Fusionar en `prod` **publica**, así que solo se hace con aprobación explícita de Luis.
 - Caché larga para `/_astro/`, `modelos/`, `texturas/`, `fuentes/`.

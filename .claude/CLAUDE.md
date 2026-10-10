@@ -25,7 +25,7 @@ Los documentos son **vivos**: si una cifra cambia al verla renderizada, actualiz
 - **Licencias:** ningún recurso externo sin anotarlo antes en `docs/07-assets-y-licencias.md`. Solo CC0 o CC BY (y ODbL para OpenStreetMap, con atribución).
 - **Por fases:** sigue `docs/08-hoja-de-ruta.md`. No pases de fase sin la aprobación de Luis.
 - **Verificación visual:** tras cambios en escena, cámara o interfaz, usa la skill `verificar-visual` y enseña las capturas.
-- **Despliegue:** previsualizaciones en Vercel sin problema; **producción solo con aprobación explícita**.
+- **Ramas y despliegue:** se trabaja en `dev` (previsualizaciones). Fusionar en `test` publica en `boxrustest.vercel.app`, sin problema. Fusionar en `prod` publica en producción (`boxrus.vercel.app`): **solo con aprobación explícita**.
 - **Commits:** mensajes breves en inglés, sin atribución a Claude ni `Co-Authored-By`.
 
 ## Agentes (`.claude/agents/`)
