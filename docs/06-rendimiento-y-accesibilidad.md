@@ -43,6 +43,11 @@ No hace falta cargador de modelos ni Meshopt: no se descarga ningún `.glb`. `vi
 
 **Margen: ~10 KB.** El postproceso de la fase 3 (`@react-three/postprocessing` + `postprocessing`, ~40–60 KB) **no cabe** sin aplicar alguna palanca de abajo; la primera candidata es cargar en un trozo diferido el postproceso (y quizá `TexturasNave` + `KTX2Loader`). Los modelos y texturas **no** cuentan aquí, sino en la descarga 3D (10 MB / 5 MB).
 
+### Estado medido (fase 3, iteración 3, 2026-10-10)
+- JS de la isla: ~341,6 KB de 350 (el `HDRLoader` salió al sustituir el HDRI por el entorno capturado de la nave).
+- Descarga 3D: texturas `.ktx2` 1,39 MB + transcodificador Basis ~0,26 MB (gzip) + mapas de luz `public/luz/` 1,1 MB ≈ **2,8 MB de 10 / 5**. El HDRI de `public/entorno/` ya no se descarga.
+- FPS (escritorio, GPU integrada, 1440 × 900, DPR 1, compilación de producción): 60 en todos los planos salvo la parada 4 (56,7), medido en la iteración 2.
+
 **Decisión (2026-10-10, Luis):** el postproceso se carga en un **trozo diferido** tras el primer fotograma y se mide aparte, con tope propio de ~80 KB (gzip). Los 350 KB siguen siendo el presupuesto de la isla inicial.
 
 ### Estado medido (fase 3, iteración 2 de luz, 2026-10-10)
