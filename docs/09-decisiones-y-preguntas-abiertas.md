@@ -29,6 +29,10 @@
 | 2026-10-10 | **Detalles de vida, sin saturar**: lista cerrada de seis en `03` (guantes, comba, banco con toalla y botella, vendas, espinilleras, balones medicinales). Responde a la pregunta 3 | Decisión de Luis: que la nave parezca usada, no decorada |
 | 2026-10-10 | Se admite **SIL OFL** para tipografías | Autorización de Luis; ya era la licencia de Anton e Inter |
 | 2026-10-10 | Herramientas de compresión: `@gltf-transform/cli` (npm, desarrollo) y KTX-Software 4.4.2 (usuario, en el `PATH`) | Necesarias para `.glb`/`.ktx2` en la fase 2. `npm audit` avisa de 3 vulnerabilidades «altas» en `braces` (dependencia del CLI): denegación de servicio solo con patrones de archivo maliciosos, en una herramienta local; no se aplica `audit fix --force` porque bajaría el CLI a la versión 2 |
+| 2026-10-10 | Texturas por código como píxeles generados en `src/lib/texturas.ts` (probados con Vitest) y convertidos a `DataTexture` en `materiales.ts`; parámetros en `datos/nave.ts` | Cero descarga, deterministas y ajustables sin herramientas externas |
+| 2026-10-10 | Chapa: tesela cuadrada repetida en los dos ejes y **mipmaps propios** que aplanan la onda (`CHAPA.relieveMipmaps`) | Con la tesela de 4 × 64 px y los mipmaps automáticos, la cubierta mostraba moiré en anillos al verse en ángulo rasante |
+| 2026-10-10 | Malla: paños planos con UV en teselas medidas desde el inicio de cada cara, en lugar de cajas instanciadas | El rombo tiene el mismo tamaño en todos los paños, también en los partidos por las puertas |
+| 2026-10-10 | Desgaste del tatami en coordenadas del mundo (UV calculadas en el sombreador de las instancias) | Con las UV de la caja unidad, cada placa repetía la misma mancha |
 
 ## Preguntas abiertas
 

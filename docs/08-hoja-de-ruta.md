@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · **Siguiente: fase 2**.
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · **Fase 2 en curso**: texturas por código hechas; propuestas de recursos externos pendientes de aprobación de Luis.
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -38,7 +38,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 
 ## Fase 2 · Assets
 - Agente `buscador-assets`: propuestas según `07`, con licencias. Incluye los **detalles de vida** de `03` (lista cerrada, sin saturar).
-- Texturas por código: malla de eslabones, chapa, variación del tatami.
+- Texturas por código: malla de eslabones, chapa, variación del tatami. ✅ (`src/lib/texturas.ts`, 2026-10-10)
 - Compresión a `.glb`/`.ktx2`. Herramientas ya instaladas y cadena probada (ver `07`, «Herramientas»). El transcodificador Basis, alojado en `public/basis/`.
 - Vigilar el JS de la isla (~302 KB de 350, ver `06`): los cargadores añaden peso.
 

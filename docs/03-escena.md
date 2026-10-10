@@ -33,7 +33,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 | Plataforma | octógono regular, radio a vértices 4,9 m (~9 m entre caras), altura 0,6 m |
 | Faldón | negro, de la plataforma al suelo, ligeramente retranqueado |
 | Postes | 8, en los vértices; acolchado negro de Ø 0,3 m hasta `y = 2,5` |
-| Malla | eslabones de acero (textura con alfa), de `y = 0,75` a `y = 2,35` |
+| Malla | eslabones de acero (textura con alfa por código, rombo de 6 cm y alambre de Ø 5 mm), de `y = 0,75` a `y = 2,35` |
 | Cable superior | acolchado negro a `y = 2,45` |
 | Puertas | 2, en las caras que miran a la diagonal delantera izquierda (−X, +Z) y trasera derecha (+X, −Z); hueco libre de 1,2 m centrado en la cara. Los vértices están a 22,5° + k·45° para que haya caras mirando a las diagonales |
 | Lona | gris muy oscuro, mate |
@@ -53,7 +53,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 ## Techo
 - Cerchas de acero negro en cada pórtico.
 - Correas rojo óxido cada 1,5 m, paralelas a la cumbrera.
-- Chapa ondulada gris (geometría o normal map ondulado).
+- Chapa ondulada gris: normal map senoidal por código, onda de 18 cm de paso y 4 cm de profundidad, bajando por la pendiente. Mipmaps propios que aplanan la onda a distancia (sin ellos, moiré).
 - **Fluorescentes**: regletas dobles de 1,5 m colgadas a `y = 6,2`, en 6 filas longitudinales (`x = −13, −8, −3, +3, +8, +13`), una regleta cada 3 m.
 - **Refuerzo sobre la jaula**: 4 regletas adicionales formando un cuadrado de 4 m sobre el octógono, a `y = 4,4` (fase 1: a 5,2 se confundían con los ventanales en el picado).
 
@@ -64,6 +64,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 ## Suelo
 - Tatami negro en placas de 1 × 2 m, juntas finas, satinado (rugosidad media-baja).
 - Una ligera variación de tono entre placas (determinista, con semilla).
+- Desgaste por código: manchas amplias de roce y grano fino (tono y rugosidad, ±14 %), en coordenadas del mundo con tesela de 8 m, para que no se repita placa a placa.
 
 ## Atmósfera
 - **Polvo en suspensión**: partículas instanciadas muy pequeñas, con movimiento lento y determinista; más densas en los haces de luz. ~2.000 en nivel alto, ~500 en bajo.

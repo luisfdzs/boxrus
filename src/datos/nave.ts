@@ -32,6 +32,17 @@ export const SUELO = {
   /** Variación de tono entre placas (fracción del gris base). */
   variacionTono: 0.08,
   semillaTatami: 1701,
+  /** Desgaste del tatami por código (rugosidad y tono), en coordenadas del mundo. */
+  desgaste: { semilla: 2203, tamano: 8, resolucion: 512, intensidad: 0.14 },
+} as const;
+
+/** Chapa ondulada de la cubierta: normal map por código; las ondas bajan por la pendiente. */
+export const CHAPA = {
+  paso: 0.18,
+  profundidad: 0.04,
+  resolucion: 64,
+  /** Relieve que conserva cada nivel de mipmap (0 en los siguientes): evita el moiré de la cubierta vista de lejos. */
+  relieveMipmaps: [1, 1, 0.6, 0.25],
 } as const;
 
 export const ESTRUCTURA = {
@@ -69,7 +80,8 @@ export const JAULA = {
   altoPlataforma: 0.6,
   retranqueoFaldon: 0.15,
   poste: { radio: 0.15, alto: 2.5 },
-  malla: { yMin: 0.75, yMax: 2.35 },
+  /** Malla de eslabones: rombo de `paso` m de diagonal, alambre de `radioAlambre` m; textura con alfa por código. */
+  malla: { yMin: 0.75, yMax: 2.35, paso: 0.06, radioAlambre: 0.0025, resolucion: 64 },
   cable: { y: 2.45, radio: 0.08 },
   /** Hueco libre de cada puerta, centrado en su cara. */
   anchoPuerta: 1.2,

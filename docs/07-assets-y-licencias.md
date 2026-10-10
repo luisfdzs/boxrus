@@ -11,12 +11,12 @@
 | Recurso | Origen previsto | Alternativa |
 |---|---|---|
 | Estructura de la nave (muros, cerchas, correas, pilares, ventanales) | Por código | — |
-| Chapa ondulada | Geometría o normal map generados por código | Textura CC0 de metal ondulado |
+| Chapa ondulada | Normal map **generado por código** ✅ (fase 2) | Textura CC0 de metal ondulado |
 | Ladrillo visto | Textura CC0 (ambientCG / Poly Haven) | — |
-| Tatami | Material por código + textura CC0 de caucho/goma para el relieve | Totalmente por código |
+| Tatami | Material por código (tono por placa y desgaste ✅, fase 2) + textura CC0 de caucho/goma para el relieve | Totalmente por código |
 | Hormigón pulido (entrada) | Textura CC0 | — |
 | Jaula: plataforma, faldón, postes, cable | Por código | Modelo CC0 de octógono si mejora mucho |
-| Malla de eslabones | Textura con alfa **generada por código** | — |
+| Malla de eslabones | Textura con alfa **generada por código** ✅ (fase 2) | — |
 | Saco pesado | Por código (cilindro con costuras en normal map) + textura CC0 de cuero | Modelo CC0 |
 | Cadenas | Eslabones instanciados por código | — |
 | Bastidores y peras | Por código | Modelo CC0 de pera de velocidad |
