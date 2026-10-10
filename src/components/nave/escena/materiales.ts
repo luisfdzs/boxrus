@@ -1,7 +1,6 @@
-// Materiales provisionales de la maqueta en bloques (fase 1): grises que
-// separan volúmenes. Los definitivos son de la fase 3 (luz-y-materiales).
-// Fase 2: llevan ya sus texturas, por código (malla, chapa, tatami, cuero) o
-// externas en .ktx2 (ladrillo, hormigón, relieve del caucho; ver TexturasNave).
+// Materiales de la nave (fase 3, paleta de docs/02), con sus texturas por
+// código (malla, chapa, tatami, cuero) o externas en .ktx2 (ladrillo, hormigón,
+// relieve del caucho; ver TexturasNave).
 import {
   DataTexture,
   DoubleSide,
@@ -15,10 +14,11 @@ import {
   type ColorSpace,
 } from 'three';
 import { CHAPA, ENVOLVENTE, JAULA, PROFUNDIDAD, SACOS, SUELO } from '../../../datos/nave';
+import { LUZ } from '../../../datos/luz';
 import { CUERO, TEXTURAS } from '../../../datos/texturas';
 import { pixelesChapa, pixelesCuero, pixelesDesgaste, pixelesMalla } from '../../../lib/texturas';
 
-const gris = (color: string, extra: ConstructorParameters<typeof MeshStandardMaterial>[0] = {}) =>
+const material = (color: string, extra: ConstructorParameters<typeof MeshStandardMaterial>[0] = {}) =>
   new MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...extra });
 
 /** Textura repetible con mipmaps a partir de píxeles RGBA (lado potencia de dos). */
@@ -184,29 +184,39 @@ normalCuero.repeat.set(
 
 export const MATERIALES = {
   // Ladrillo: color, normal y arm llegan con TexturasNave (blanco para no teñir el mapa de color).
-  muro: gris('#ffffff', { roughness: 1 }),
-  hormigon: gris('#8a8a88', { roughness: 0.7 }),
-  juntaTatami: gris('#141516'),
-  tatami: gris('#ffffff', { roughness: 0.7, map: desgaste, roughnessMap: desgaste }),
-  acero: gris('#2c2e31', { roughness: 0.7 }),
-  correa: gris('#5a504d'),
-  chapa: gris('#6f7377', { side: DoubleSide, roughness: 0.6, normalMap: normalChapa, normalScale: new Vector2(1, 1) }),
-  porton: gris('#4a4d50'),
-  lona: gris('#4b4c4e'),
-  faldon: gris('#18191a'),
-  acolchado: gris('#1f2022'),
-  malla: gris('#9aa0a6', {
+  muro: material('#ffffff', { roughness: 1 }),
+  // Hormigón pulido: oscurecido y con brillo (Concrete 034 es encofrado claro).
+  hormigon: material('#6c6c6a', { roughness: 0.4 }),
+  juntaTatami: material('#0e0f10'),
+  // Tatami satinado: el tono por placa va en el color de cada instancia (Envolvente).
+  tatami: material('#ffffff', { roughness: 0.42, map: desgaste, roughnessMap: desgaste }),
+  // Acero estructural negro mate (pintado, no metálico).
+  acero: material('#16181b', { roughness: 0.6 }),
+  correa: material('#6e2a22', { roughness: 0.65 }),
+  chapa: material('#8a9096', {
+    side: DoubleSide,
+    roughness: 0.38,
+    metalness: 0.65,
+    normalMap: normalChapa,
+    normalScale: new Vector2(1, 1),
+  }),
+  porton: material('#3a3d40', { roughness: 0.6, metalness: 0.3 }),
+  lona: material('#3a3c3f', { roughness: 0.92 }),
+  faldon: material('#121314', { roughness: 0.7 }),
+  // Vinilo de los acolchados: negro con algo de brillo.
+  acolchado: material('#141517', { roughness: 0.45 }),
+  malla: material('#a7adb3', {
     map: texturaMalla,
     transparent: true,
     side: DoubleSide,
     depthWrite: false,
-    roughness: 0.5,
-    metalness: 0.4,
+    roughness: 0.35,
+    metalness: 0.85,
   }),
-  saco: gris('#2b2b2d', { roughness: 0.55, normalMap: normalCuero, normalScale: new Vector2(0.6, 0.6) }),
-  cadena: gris('#6d7175', { metalness: 0.6, roughness: 0.4 }),
-  vidrio: new MeshStandardMaterial({ color: '#000000', emissive: '#fff4e2', emissiveIntensity: 1.6 }),
-  fluorescente: new MeshStandardMaterial({ color: '#000000', emissive: '#e6f2ff', emissiveIntensity: 2.2 }),
+  saco: material('#1b1b1d', { roughness: 0.42, normalMap: normalCuero, normalScale: new Vector2(0.6, 0.6) }),
+  cadena: material('#7a7e83', { metalness: 0.9, roughness: 0.35 }),
+  vidrio: new MeshStandardMaterial({ color: '#000000', emissive: '#fff4e2', emissiveIntensity: LUZ.emisivos.vidrio }),
+  fluorescente: new MeshStandardMaterial({ color: '#000000', emissive: '#e6f2ff', emissiveIntensity: LUZ.emisivos.fluorescente }),
 } as const;
 
 // UV en el mundo. Los mapas que aún no estén asignados se ignoran (#ifdef) hasta que TexturasNave los cargue.

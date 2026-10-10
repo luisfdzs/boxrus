@@ -22,7 +22,7 @@ function placasTatami(): Caja[] {
   const azar = crearAzar(SUELO.semillaTatami);
   const { ancho, largo } = SUELO.placaTatami;
   const j = SUELO.juntaTatami;
-  const base = new Color('#2f3236');
+  const base = new Color('#23272b');
   const placas: Caja[] = [];
   for (let z0 = SUELO.zFinHormigon; z0 > zFondo + 1e-6; z0 -= largo) {
     const l = Math.min(largo, z0 - zFondo);
@@ -38,13 +38,36 @@ function placasTatami(): Caja[] {
   return placas;
 }
 
+/**
+ * Muro con huecos de ventanal (fase 3: el sol entra solo por ellos). `a`–`b` es el
+ * tramo a lo largo del muro; `fijo`, su coordenada perpendicular. Se parte en
+ * franja baja, franja alta y machones entre huecos.
+ */
+function muroConHuecos(enX: boolean, fijo: number, a: number, b: number, centros: number[], ancho: number, alfeizar: number, alto: number): Caja[] {
+  const caja = (u0: number, u1: number, y0: number, y1: number): Caja => {
+    const u = (u0 + u1) / 2;
+    const y = (y0 + y1) / 2;
+    return enX
+      ? { posicion: [u, y, fijo], tamano: [u1 - u0, y1 - y0, g] }
+      : { posicion: [fijo, y, u], tamano: [g, y1 - y0, u1 - u0] };
+  };
+  const dintel = alfeizar + alto;
+  const bordes = [a, ...[...centros].sort((p, q) => p - q).flatMap((c) => [c - ancho / 2, c + ancho / 2]), b];
+  const machones: Caja[] = [];
+  for (let i = 0; i < bordes.length; i += 2) if (bordes[i + 1] - bordes[i] > 1e-6) machones.push(caja(bordes[i], bordes[i + 1], alfeizar, dintel));
+  return [caja(a, b, 0, alfeizar), caja(a, b, dintel, alturaAlero), ...machones];
+}
+
 function muros(): Caja[] {
   const ladoPorton = (ANCHO - PORTON.ancho) / 2;
+  const { fondo, laterales } = VENTANALES;
+  const lateral = (x: number) =>
+    muroConHuecos(false, x, zFondo - g / 2, zFrente + g / 2, ventanalesLateralesZ(), laterales.ancho, laterales.alfeizar, laterales.alto);
   return [
-    // Laterales y fondo.
-    { posicion: [xMin, alturaAlero / 2, zCentro], tamano: [g, alturaAlero, PROFUNDIDAD + g] },
-    { posicion: [xMax, alturaAlero / 2, zCentro], tamano: [g, alturaAlero, PROFUNDIDAD + g] },
-    { posicion: [0, alturaAlero / 2, zFondo], tamano: [ANCHO, alturaAlero, g] },
+    // Laterales y fondo, con los huecos de los ventanales.
+    ...lateral(xMin),
+    ...lateral(xMax),
+    ...muroConHuecos(true, zFondo, xMin, xMax, ventanalesFondoX(), fondo.ancho, fondo.alfeizar, fondo.alto),
     // Muro de entrada con el hueco del portón.
     { posicion: [xMin + ladoPorton / 2, alturaAlero / 2, zFrente], tamano: [ladoPorton, alturaAlero, g] },
     { posicion: [xMax - ladoPorton / 2, alturaAlero / 2, zFrente], tamano: [ladoPorton, alturaAlero, g] },
@@ -128,8 +151,8 @@ export function Envolvente() {
       </mesh>
 
       <Cajas cajas={paredes} material={MATERIALES.muro} sombras />
-      <mesh geometry={pinon} position={[0, 0, zFrente]} material={MATERIALES.muro} />
-      <mesh geometry={pinon} position={[0, 0, zFondo]} material={MATERIALES.muro} />
+      <mesh geometry={pinon} position={[0, 0, zFrente]} material={MATERIALES.muro} castShadow />
+      <mesh geometry={pinon} position={[0, 0, zFondo]} material={MATERIALES.muro} castShadow />
 
       {/* Portón cerrado, enrasado con la cara interior del muro. */}
       <mesh position={[0, PORTON.alto / 2, zFrente + 0.05]} material={MATERIALES.porton}>
@@ -137,7 +160,7 @@ export function Envolvente() {
       </mesh>
 
       <Cajas cajas={vidrios} material={MATERIALES.vidrio} />
-      <Cajas cajas={perfiles} material={MATERIALES.acero} />
+      <Cajas cajas={perfiles} material={MATERIALES.acero} sombras />
 
       {/* Cubierta a dos aguas. */}
       {[-1, 1].map((lado) => (
@@ -146,6 +169,7 @@ export function Envolvente() {
           position={[(lado * xMax) / 2, (alturaAlero + alturaCumbrera) / 2 + 0.05, zCentro]}
           rotation-z={-lado * pendiente}
           material={MATERIALES.chapa}
+          castShadow
         >
           <boxGeometry args={[anchoFaldon, 0.06, PROFUNDIDAD + g]} />
         </mesh>
