@@ -22,7 +22,7 @@ export const LUZ = {
     posicion: [JAULA.centro[0], 3, JAULA.centro[2]] as Vec3,
     resolucion: 128,
     intensidad: 1,
-    materiales: { tatami: 0.6, juntaTatami: 0.3, hormigon: 0.4, malla: 0.6, lona: 0.3, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
+    materiales: { tatami: 0.35, juntaTatami: 0.3, hormigon: 0.4, malla: 0.6, lona: 0.3, carcasa: 0.1, digitoApagado: 0.1 } as Record<string, number>,
   },
   /**
    * Sol de mañana: entra por los ventanales del fondo y del muro derecho (este),

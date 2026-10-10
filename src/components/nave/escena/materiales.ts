@@ -292,9 +292,9 @@ export const MATERIALES = {
   hormigon: material('#4e4f50', { roughness: 0.4 }),
   juntaTatami: material('#15181b'),
   // Tatami satinado: el tono por placa va en el color de cada instancia (Envolvente).
-  // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,47–0,55, con reflejo del entorno 0,6
-  // (iteración 3: sin ellos no se veía ningún reflejo de los fluorescentes).
-  tatami: material('#ffffff', { roughness: 0.55, map: desgaste, roughnessMap: desgaste }),
+  // El desgaste multiplica la rugosidad (0,86–1): queda en ~0,56–0,65, con reflejo del entorno 0,35
+  // (con 0,55 y 0,6 el tatami lejano volvía a verse gris; con 0,7 y 0,3 no reflejaba nada).
+  tatami: material('#ffffff', { roughness: 0.65, map: desgaste, roughnessMap: desgaste }),
   // Acero estructural negro mate (pintado, no metálico).
   acero: material('#16181b', { roughness: 0.6 }),
   correa: material('#6e2a22', { roughness: 0.65 }),
