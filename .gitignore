@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# vercel
+.vercel/
+
+# claude code: local memory and settings
+.claude/memory/
+.claude/settings.local.json
