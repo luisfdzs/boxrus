@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 terminada (2026-10-10), **pendiente de la aprobación de Luis** · Siguiente: fase 4 (no empezar sin su aprobación).
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 ✅ (2026-10-10) · **Siguiente: fase 4** (punto de partida abajo, en la fase 4).
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -72,10 +72,10 @@ Pendientes heredados de la fase 2:
 
 **Criterios de aceptación:**
 - [x] Lista de comprobación de `02` cumplida en todos los planos, salvo los reflejos de los fluorescentes en el tatami, que apenas se ven (punto medio para que el fondo no se vea gris).
-- [ ] **Aprobación de Luis** sobre capturas de los 7 planos.
+- [x] **Aprobación de Luis** sobre capturas de los 7 planos.
 - [x] FPS en escritorio: 56–60 a 1920 × 855 con atmósfera y postproceso (medición preliminar; ver `06`).
 
-**Fase 3 terminada el 2026-10-10.** Resultado:
+**✅ Fase 3 aprobada por Luis el 2026-10-10** (publicada en `test` y `prod`, commit `f7a8ad1`). Resultado:
 - Pendientes heredados resueltos (HDRI sustituido por entorno capturado de la nave, ladrillo, costuras).
 - Luz en tiempo real (sol por huecos reales, AgX, foco de la jaula), materiales con la paleta y luz precalculada en Blender (suelo, muros, cubierta; proceso en `03`).
 - Atmósfera (neblina, haces, polvo) y postproceso en trozo diferido.
@@ -83,6 +83,20 @@ Pendientes heredados de la fase 2:
 - HDRI de `public/entorno/` retirado del repo (decisión de Luis).
 
 ## Fase 4 · Interfaz y contenido
+Punto de partida en una sesión nueva: leer `01` (principios), `02` («Tipografía e interfaz» y paleta), `04` (qué debe verse y decirse en cada plano), `05` (colecciones y contenido ficticio), `06` (accesibilidad, SEO y **peso**), `07` (política de licencias: Leaflet y teselas de OpenStreetMap deben registrarse **antes** de usarlas), `09` (preguntas 7, 8 y 9, y «Pendientes menores») y la memoria local (`arranque-fase-4` y `entorno-local`).
+
+Estado al empezar:
+- **Ya existe:** `index.astro` con las secciones superpuestas de cada parada (textos y enlaces desde `src/datos/paradas.ts`), cierre con la navegación a las 5 secciones, `Logo.astro` (arriba, recarga `/`) y `MenuParadas.astro` (píldora de móvil). Esquemas de las 5 colecciones en `src/lib/esquemas.ts` (con pruebas) conectados en `content.config.ts`. **Las colecciones están vacías** y **no existe ninguna de las 5 páginas** (los botones enlazan a rutas que dan 404).
+- **Escena 3D cerrada** en la fase 3: luz, materiales, luz horneada, atmósfera y postproceso. No se toca salvo los rótulos de los postes.
+- **Peso:** isla inicial ~344,7 KB de 350. Lo que se añada a la isla (rótulos) debe ser casi gratis: textura por código con `CanvasTexture` como `Marcador.tsx`, **nada de `Text` de drei** (trae troika y una fuente). Leaflet solo en `/ubicacion`, cargado bajo demanda, nunca en la landing.
+
+Orden propuesto:
+1. Preguntas a Luis antes de escribir contenido: 7 (ciudad ficticia), 8 (acento rojo), 9 (tono).
+2. Contenido ficticio en `src/content/` (clases, horario, premios, ubicación) y galería con capturas propias de la escena (modo `?captura=1`, como la skill `verificar-visual`; son recursos propios, sin licencia externa).
+3. Páginas `/horario` (tabla accesible), `/clases`, `/galeria` (visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda con atribución de OpenStreetMap), con un layout de página común.
+4. Resúmenes del contenido en las paradas de la landing, cabecera de escritorio, «Saltar recorrido», indicador «01 / 05» y pie.
+5. Rótulos BOXRUS en los postes (hilo principal o agente `escena-3d`: el agente `interfaz` no toca la isla 3D).
+6. Pendiente heredado: en el prólogo coinciden el logotipo de arriba y el titular grande «BOXRUS» (`09`).
 - Contenido ficticio completo en `src/content/`: horario semanal, 6 disciplinas, 4–6 premios inventados, 12–18 imágenes de galería (capturas de la escena), ubicación ficticia.
 - Interfaz de cada parada con resúmenes del contenido.
 - Páginas `/horario`, `/clases`, `/galeria` (con visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda).
