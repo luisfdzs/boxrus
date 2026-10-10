@@ -77,7 +77,8 @@
 | 9 | Tono de los textos (tú/usted, más agresivo o más cercano) | Interfaz | Fase 4 |
 
 ## Pendientes menores
-- Probar en un **teléfono real** (sobre todo iPhone/Safari) el scroll por paradas, el menú de píldora y los saltos con fundido; solo se han probado con gestos simulados.
+- Probar en un **teléfono real** (sobre todo iPhone/Safari) el scroll por paradas, el deslizamiento horizontal, el menú de píldora (con Inicio), la vuelta al inicio desde el logotipo y los saltos con fundido; solo se han probado con gestos simulados.
+- En el cierre en blanco del móvil sigue visible la píldora del menú: valorar ocultarla ahí (fase 4).
 - Rama **`main`** antigua en GitHub, sin uso (las ramas de trabajo son `dev`, `test` y `prod`): borrarla cuando Luis lo confirme.
 - `docs/02` **enlaza** la imagen de referencia de un tercero en un repositorio público (no la aloja). Valorar sustituir el enlace por una mención a la memoria local.
 - Duración de los saltos: gesto 2,2 s, menú 1,5 s (`RECORRIDO.paginadoMovil`). Revisar en el teléfono si conviene igualarlas.
