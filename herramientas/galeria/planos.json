@@ -1,0 +1,15 @@
+[
+  {"id": "01-jaula-picado", "camara": [-6, 5.5, -12, 0, 0.6, -20, 28], "alt": "La jaula vista desde lo alto, con el octógono recortado por la luz sobre el tatami negro.", "pie": "Ocho lados. Ninguna esquina donde esconderse."},
+  {"id": "02-sacos-izquierda", "camara": [-14.3, 1.5, -4, -16.5, 1.3, -34, 40], "alt": "Fila de sacos pesados colgados de cadenas a lo largo del muro de ladrillo.", "pie": "Nueve sacos por banda. Ninguno descansa."},
+  {"id": "03-sacos-derecha", "camara": [14.3, 1.5, -35, 16.5, 1.4, -6, 40], "alt": "Sacos colgados en fila hacia la entrada de la nave, con la luz de los ventanales detrás.", "pie": "La otra banda, mirando al portón."},
+  {"id": "04-guantes", "camara": [14, 2.1, -17.5, 16.5, 2.2, -19.8, 40], "alt": "Un par de guantes de boxeo colgados junto a un saco.", "pie": "Alguien volverá a por ellos.", "destacada": true},
+  {"id": "05-marcador", "camara": [-13.5, 2.6, -19.5, -17.9, 3.8, -22, 45], "alt": "Marcador de asaltos con dígitos rojos encendidos sobre la pared de ladrillo.", "pie": "Cinco minutos. Primer asalto.", "destacada": true},
+  {"id": "06-dentro-jaula", "camara": [0.5, 1.6, -21, -4, 1.3, -16, 18], "alt": "Interior de la jaula: la lona, los postes acolchados y la nave al otro lado de la malla.", "pie": "Aquí dentro se acaban las excusas."},
+  {"id": "07-malla", "camara": [3, 1.6, -15.2, 0, 1.4, -20, 55], "alt": "Detalle de la malla metálica de la jaula con el interior desenfocado detrás.", "pie": "La malla no perdona un mal paso.", "destacada": true},
+  {"id": "08-rotulo", "camara": [6.2, 1.5, -21.9, 4.53, 1.55, -21.88, 50], "alt": "Poste acolchado de la jaula con el rótulo BOXRUS en vertical, en blanco con una raya roja.", "pie": "Nuestro nombre, en cada poste."},
+  {"id": "09-ventanales", "camara": [-5, 1.3, -33, 1, 4.2, -44, 24], "alt": "Los ventanales del fondo a contraluz, con haces de luz cruzando el aire.", "pie": "La luz de la mañana entra por el fondo."},
+  {"id": "10-cerchas", "camara": [0, 1.4, -8, 0, 6.8, -30, 18], "alt": "Cerchas de acero y filas de fluorescentes fugando hacia el fondo de la nave.", "pie": "Luz de sobra. Aquí no se esconde nadie."},
+  {"id": "11-saco-entrada", "camara": [-4.5, 1.2, -1, -2.2, 1.6, -3, 35], "alt": "Saco pesado colgado de una cadena junto a la entrada, con la nave detrás.", "pie": "El primero que te recibe."},
+  {"id": "12-tatami-ras", "camara": [-6, 0.2, -30, 0, 0.6, -20, 24], "alt": "El tatami negro a ras de suelo con la jaula al fondo.", "pie": "El tatami, a la altura de quien acaba de caer."},
+  {"id": "13-nave-fondo", "camara": [0, 3, -41, 0, 1.6, -6, 20], "alt": "La nave entera vista desde el fondo, con la jaula en el centro y el portón al final.", "pie": "1.700 m² para entrenar."}
+]

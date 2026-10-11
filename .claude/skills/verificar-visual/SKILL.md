@@ -9,6 +9,7 @@ description: Captura los 7 planos del recorrido 3D de Boxrus (prólogo, 5 parada
 1. `astro dev status`; si no está en marcha, `astro dev --background`. **Usa la URL que devuelva** (puede no ser 4321: en las fases 1 y 2 fue 4322). O la URL de Vercel si te la indican.
    - Si `--background` falla («failed to start within 30s»), lanza `npx astro dev` como tarea en segundo plano de Claude Code y lee la URL de su salida. Al terminar, para la tarea **y comprueba que nadie siga escuchando en el puerto** (en la fase 2 el proceso hijo de Astro sobrevivió y hubo que cerrarlo con `Stop-Process`).
 2. Invoca la skill `claude-in-chrome` y abre una pestaña nueva (no reutilices pestañas del usuario).
+   - **Si la extensión no está conectada**, usa Chrome sin ventana: `node herramientas/verificar/capturar.mjs <url> <carpeta> [ruta…]` (`SOLO=escritorio` o `SOLO=movil`). Captura los 7 planos y las 5 páginas en 1440 × 900 y 390 × 844 y avisa de errores de consola. En móvil carga `?paginado=1` en lugar de `?captura=1` para ver la interfaz real (píldora); la escena no es determinista. Para revisarlas de un vistazo, monta una hoja de contactos con `sharp`.
 
 ## 2. Capturar
 

@@ -93,6 +93,34 @@ export const JAULA = {
   anguloVertice0: 22.5,
   /** Normales de las caras con puerta: delantera izquierda (−X, +Z) y trasera derecha (+X, −Z). */
   puertas: { delantera: 135, trasera: -45 },
+  /**
+   * Rótulo BOXRUS de los acolchados de los postes (docs/02 y 03): vertical, se lee
+   * de abajo arriba, dos veces por poste (hacia fuera y hacia dentro del octógono:
+   * el plano 2 ve los postes desde dentro). Medidas en metros sobre el acolchado:
+   * `centroY` y `largo` (máximo) a lo alto del poste; `alto`, la altura de las
+   * letras medida sobre la curva. `espaciado`, entre letras, en fracción del cuerpo.
+   * `detalle`: raya roja paralela a la palabra, al pie de las letras. `margen`:
+   * franja de fondo alrededor del rótulo en la textura. `pxPorMetro`: resolución.
+   * Letras en la tipografía de los titulares (Anton, ya cargada por la página);
+   * si no llega en `esperaFuente` ms, la primera condensada del sistema de `fuente`.
+   */
+  rotulo: {
+    texto: 'BOXRUS',
+    centroY: 1.55,
+    // Con Anton manda el alto: tinta de 0,875 em y BOXRUS de 2,86 em + espaciado → ~0,61 m de largo.
+    largo: 0.95,
+    alto: 0.16,
+    espaciado: 0.1,
+    detalle: { grosor: 0.014, separacion: 0.02 },
+    margen: 0.03,
+    pxPorMetro: 600,
+    /** Blanco roto: con blanco puro las letras se quemaban bajo el refuerzo y el bloom. */
+    colorLetras: '#e6e3dc',
+    /** Rojo de marca (docs/02). */
+    colorDetalle: '#d4382a',
+    fuente: '"Anton", "Arial Narrow", Impact, sans-serif',
+    esperaFuente: 3000,
+  },
 } as const;
 
 const rad = (grados: number) => (grados * Math.PI) / 180;

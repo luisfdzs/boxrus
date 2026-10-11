@@ -33,8 +33,12 @@ export interface Parada {
     subtitulo?: string;
     texto?: string;
     boton?: { texto: string; href: string };
+    /** Texto del botón de ruta («Cómo llegar»); el enlace sale de las coordenadas de `src/content/ubicacion/`. */
+    botonRuta?: string;
     /** Indicación sin enlace (p. ej. «Desliza para entrar»). */
     indicacion?: string;
+    /** Texto del botón que lleva directo al cierre («Saltar recorrido»). */
+    saltar?: string;
   };
 }
 
@@ -93,14 +97,16 @@ export const PARADAS: Parada[] = [
     id: 'P',
     nombre: 'La entrada',
     escritorio: { posicion: [0, 1.3, 3], mira: [0, 1.6, -30], focal: 27 },
-    movil: { posicion: [0, 1.4, 3.1], mira: [0, 0.6, -30], focal: 14 },
+    // Mira baja en vertical: la jaula sube ~70 px y su base queda sobre el panel.
+    movil: { posicion: [0, 1.4, 3.1], mira: [0, -4, -30], focal: 14 },
     deriva: [0, 0, -0.8],
     llegada: [],
     interfaz: {
       titular: 'Boxrus',
       subtitulo: 'Entrena donde se forjan los combates.',
-      texto: 'MMA, boxeo y deportes de contacto en una nave de 1.700 m².',
+      texto: 'MMA, boxeo y deportes de contacto en una nave de 1.700 m². Aquí no vienes a mirar. Vienes a entrenar.',
       indicacion: 'Desliza para entrar',
+      saltar: 'Saltar recorrido',
     },
   },
   {
@@ -113,6 +119,7 @@ export const PARADAS: Parada[] = [
     interfaz: {
       antetitulo: 'Horario',
       titular: 'Cada asalto empieza a su hora.',
+      texto: 'Abrimos temprano y cerramos tarde. Elige tu hora y no faltes.',
       boton: { texto: 'Ver horario completo', href: '/horario' },
     },
   },
@@ -120,9 +127,12 @@ export const PARADAS: Parada[] = [
     id: '2',
     nombre: 'Clases',
     // Mirando a la puerta trasera: sus dos postes anclan el plano y anticipan la salida.
-    escritorio: { posicion: [-0.6, 2.1, -19.4], mira: [3.2, 1.5, -23.2], focal: 20 },
-    // En vertical, un poste centrado (donde irá BOXRUS).
-    movil: { posicion: [-0.6, 2.1, -19.4], mira: [4.53, 1.4, -21.88], focal: 14 },
+    // Girada a la izquierda de la puerta para que los dos rótulos queden a la derecha
+    // del panel de la interfaz (abajo a la izquierda, x ≤ 464 px a 1440 × 900).
+    escritorio: { posicion: [-0.6, 2.1, -19.4], mira: [2.5, 1.5, -23.8], focal: 20 },
+    // En vertical, un poste centrado con su rótulo BOXRUS. Mira baja: el rótulo
+    // sube al 55 % superior (sobre el panel) y entra la lona al pie del poste.
+    movil: { posicion: [-0.6, 2.1, -19.4], mira: [4.53, 0.4, -21.88], focal: 14 },
     deriva: [0.15, 0, -0.15],
     llegada: [
       { posicion: [-7.2, 2.1, -14.2], mira: [-8, 1.8, -22.5] },
@@ -132,6 +142,7 @@ export const PARADAS: Parada[] = [
     interfaz: {
       antetitulo: 'Clases',
       titular: 'Seis disciplinas, un mismo tatami.',
+      texto: '¿Nunca has pisado un tatami? Mejor. Te enseñamos desde cero.',
       boton: { texto: 'Ver clases', href: '/clases' },
     },
   },
@@ -182,8 +193,9 @@ export const PARADAS: Parada[] = [
     ],
     interfaz: {
       antetitulo: 'Ubicación',
-      titular: 'Ven a conocernos.',
+      titular: 'Ven. La puerta está abierta.',
       boton: { texto: 'Ver ubicación', href: '/ubicacion' },
+      botonRuta: 'Cómo llegar',
     },
   },
   {
@@ -198,6 +210,8 @@ export const PARADAS: Parada[] = [
     llegada: [],
     interfaz: {
       titular: 'Boxrus. Tu primera clase te espera.',
+      subtitulo: 'No la hagas esperar.',
+      boton: { texto: 'Reserva tu primera clase', href: '/horario' },
     },
   },
 ];

@@ -5,6 +5,7 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://boxrus.vercel.app',
   integrations: [react()],
   // La barra de desarrollo se colaría en las capturas de verificación.
   devToolbar: { enabled: false },

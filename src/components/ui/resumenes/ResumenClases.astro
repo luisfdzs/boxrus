@@ -1,0 +1,60 @@
+---
+// Parada 2: las disciplinas con su nivel (lo más bajo y lo más alto), desde `clases`.
+import { cargarClases } from '../../../lib/contenido';
+import { ETIQUETA_NIVEL } from '../../../lib/etiquetas';
+
+const clases = await cargarClases();
+const nivel = (niveles: string[]) =>
+  niveles.length === 1 ? ETIQUETA_NIVEL[niveles[0]] : `${ETIQUETA_NIVEL[niveles[0]]} a ${ETIQUETA_NIVEL[niveles.at(-1)!].toLowerCase()}`;
+---
+
+<ul class="lista">
+  {
+    clases.map(({ id, data }) => (
+      <li>
+        <a href={`/clases#${id}`}>{data.nombre}</a>
+        <span class="nivel no-movil">{nivel(data.niveles)}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .lista {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 1rem;
+    margin: 0.5rem 0 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    line-height: 1.25;
+  }
+
+  a {
+    display: inline-block;
+    padding-block: 0.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-underline-offset: 3px;
+  }
+
+  a:hover,
+  a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .nivel {
+    color: #aab0b6;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 380px) {
+    .lista {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

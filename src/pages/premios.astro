@@ -1,0 +1,77 @@
+---
+import Pagina from '../layouts/Pagina.astro';
+import { cargarPremios } from '../lib/contenido';
+
+const premios = await cargarPremios();
+---
+
+<Pagina
+  titulo="Premios"
+  descripcion="Premios y reconocimientos de Boxrus: títulos por equipos, campeonatos regionales y mejor gimnasio de deportes de contacto de Valdeacero."
+  entradilla="Lo que hemos ganado, peleando desde aquí."
+  imagen="08-rotulo"
+  h1="Premios y reconocimientos"
+  actual="/premios"
+>
+  <div class="pagina">
+
+    <ol class="lista">
+      {
+        premios.map(({ id, data }) => (
+          <li>
+            <article id={id} aria-labelledby={`premio-${id}`}>
+              <p class="anio">{data.anio}</p>
+              <div>
+                <h2 id={`premio-${id}`}>{data.titulo}</h2>
+                <p class="organismo">{data.organismo}</p>
+                {data.descripcion && <p>{data.descripcion}</p>}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="aviso-ficticio">Premios y organizaciones ficticios: Boxrus es un gimnasio inventado.</p>
+  </div>
+</Pagina>
+
+<style>
+  .lista {
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  article {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid rgb(255 244 226 / 0.12);
+  }
+
+  .anio {
+    margin: 0;
+    font-family: var(--fuente-titulares);
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--color-acento);
+  }
+
+  .organismo {
+    margin: 0 0 0.4rem;
+    color: #c4c9cd;
+    font-weight: 600;
+  }
+
+  p {
+    margin-block: 0;
+  }
+
+  @media (max-width: 480px) {
+    article {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+</style>

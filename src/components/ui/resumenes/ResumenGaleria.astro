@@ -1,0 +1,41 @@
+---
+// Parada 3: tres miniaturas de la galería (las `destacada`; si no hay, las primeras).
+// Sin imágenes en la colección, no pinta nada.
+import { Image } from 'astro:assets';
+import { cargarGaleria } from '../../../lib/contenido';
+
+const galeria = await cargarGaleria();
+const destacadas = galeria.filter(({ data }) => data.destacada);
+const imagenes = (destacadas.length ? destacadas : galeria).slice(0, 3);
+---
+
+{
+  imagenes.length > 0 && (
+    <ul class="miniaturas">
+      {imagenes.map(({ data }) => (
+        <li>
+          <Image src={data.imagen} alt={data.alt} widths={[160, 240, 320]} sizes="(max-width: 640px) 30vw, 10rem" format="webp" />
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .miniaturas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    margin: 0.5rem 0 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+</style>

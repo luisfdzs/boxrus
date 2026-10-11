@@ -1,0 +1,45 @@
+---
+// Parada 5: dirección, teléfono y apertura, con el aviso de dirección ficticia.
+import { cargarGimnasio, telefonoHref } from '../../../lib/contenido';
+import { textoApertura } from '../../../lib/etiquetas';
+
+const gimnasio = await cargarGimnasio();
+const { calle, codigoPostal, localidad } = gimnasio.direccion;
+---
+
+<div class="resumen">
+  <address>
+    {calle}<span class="no-movil"><br />{codigoPostal} {localidad}</span>
+  </address>
+  <p>
+    <a href={telefonoHref(gimnasio.telefono)}>{gimnasio.telefono}</a>
+  </p>
+  <ul class="no-movil">
+    {gimnasio.apertura.map((a) => <li>{textoApertura(a)}</li>)}
+  </ul>
+  <p class="ficticia">Dirección ficticia: Boxrus es un gimnasio inventado.</p>
+</div>
+
+<style>
+  .resumen {
+    margin: 0.5rem 0 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  address {
+    font-style: normal;
+  }
+
+  p,
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ficticia {
+    margin-top: 0.4rem;
+    color: #aab0b6;
+    font-size: 0.8rem;
+  }
+</style>

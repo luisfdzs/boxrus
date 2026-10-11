@@ -1,5 +1,5 @@
 import { Line, Stats } from '@react-three/drei';
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo } from 'react';
 import { RECORRIDO } from '../../../datos/paradas';
 import { comprobarColisiones } from '../../../lib/colisiones';
@@ -10,10 +10,21 @@ import { varianteParaAspecto } from '../camara/ControladorCamara';
 export function Depuracion() {
   const aspecto = useThree((s) => s.size.width / s.size.height);
   const gl = useThree((s) => s.gl);
-  // Llamadas de dibujo y triángulos del último fotograma, para medir desde la consola.
+  // Llamadas de dibujo y triángulos del último fotograma completo (sombras, SSAO,
+  // escena y postproceso), para medir desde la consola. Con el reinicio automático,
+  // `gl.info` solo contaba la última pasada del postproceso (1 llamada).
+  const ultimo = useMemo(() => ({ calls: 0, triangles: 0 }), []);
   useEffect(() => {
-    (window as unknown as { naveRender: typeof gl.info.render }).naveRender = gl.info.render;
-  }, [gl]);
+    gl.info.autoReset = false;
+    (window as unknown as { naveRender: typeof ultimo }).naveRender = ultimo;
+    return () => void (gl.info.autoReset = true);
+  }, [gl, ultimo]);
+  // Prioridad negativa: corre antes que el resto de pasadas del fotograma.
+  useFrame(() => {
+    ultimo.calls = gl.info.render.calls;
+    ultimo.triangles = gl.info.render.triangles;
+    gl.info.reset();
+  }, -1);
   const variante = varianteParaAspecto(aspecto);
   const { posiciones, miras, colisiones } = useMemo(() => {
     const t = crearTrayectoria(variante);

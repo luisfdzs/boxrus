@@ -62,6 +62,17 @@ FPS con atmósfera y postproceso (compilación de producción, 1920 × 855, DPR 
 
 **Decisión (2026-10-10, Luis):** el postproceso se carga en un **trozo diferido** tras el primer fotograma y se mide aparte, con tope propio de ~80 KB (gzip). Los 350 KB siguen siendo el presupuesto de la isla inicial.
 
+### Estado medido (fase 4, rótulos BOXRUS de los postes, 2026-10-11)
+Comparación A/B con el mismo árbol de trabajo (incluidos los cambios de interfaz en curso), con y sin el rótulo:
+| Pieza (gzip) | Sin rótulo | Con rótulo |
+|---|---|---|
+| `events-*.esm.js` | 238,02 KB | 238,03 KB |
+| `client.*.js` | 64,48 KB | 64,48 KB |
+| `Nave.*.js` | 41,63 KB | 42,38 KB (+0,75) |
+| **Total isla inicial** | **344,1 KB** | **344,9 KB de 350** |
+
+Aparte, trozos pequeños que también carga la isla y no se contaban: `scheduler` 4,4 KB, `pausas` 3,6 KB, `ControladorCamara` 1,3 KB, `BufferGeometryUtils` 1,2 KB, `luz` 1,0 KB (sin cambios por el rótulo). El rótulo es una textura de lienzo (`CanvasTexture`, ~0,9 MB en la GPU con mipmaps; no se descarga) con Anton, que ya carga la página: ni `Text` de drei ni fuentes nuevas. Llamadas de dibujo y triángulos: **sin cambios** (los postes siguen siendo una malla instanciada, ahora con su propio material; +1 programa de sombreado).
+
 ### Estado medido (fase 3, iteración 2 de luz, 2026-10-10)
 | Pieza (gzip) | Peso | Cuenta en |
 |---|---|---|
@@ -71,7 +82,7 @@ FPS con atmósfera y postproceso (compilación de producción, 1920 × 855, DPR 
 | **Total JS de la isla** | **341,6 KB de 350** (+ `scheduler.*.js`, 4,7 KB, sin cambios) | |
 | HDRI | ya no se descarga (−0,52 MB; −0,38 MB con gzip) | descarga 3D |
 
-FPS con `?depuracion=1` sobre la compilación de producción (`astro preview`), 1440 × 900, DPR 1, GPU integrada AMD Radeon (APU): 60 en P, 1, 2, 3, 5 y E; 56,7 en la parada 4 (picado con toda la nave). Llamadas de dibujo 33–51 y 47.000–51.000 triángulos, contando la capa de depuración. El modo captura y el servidor de desarrollo dan cifras más bajas y ruidosas: no sirven para medir.
+FPS con `?depuracion=1` sobre la compilación de producción (`astro preview`), 1440 × 900, DPR 1, GPU integrada AMD Radeon (APU): 60 en P, 1, 2, 3, 5 y E; 56,7 en la parada 4 (picado con toda la nave). Llamadas de dibujo 33–51 y 47.000–51.000 triángulos, contando la capa de depuración. *(2026-10-11: esas cifras eran solo parte del fotograma; contando todas las pasadas —sombras, SSAO, escena y postproceso— la auditoría de la fase 4 midió 74–109 llamadas y 77.000–84.000 triángulos según el plano: cumple el tope de escritorio, 150; en móvil P, 1, 2 y 4 pasarían de 80 con estas pasadas.)* El modo captura y el servidor de desarrollo dan cifras más bajas y ruidosas: no sirven para medir.
 
 Palancas si no cabe, de menor a mayor esfuerzo: importar de drei solo lo usado (ya se hace; vigilar que no entren `Text`, `Environment` con presets remotos, etc.); cargar el postproceso en diferido tras el primer fotograma; partir la isla en dos trozos (escena base + postproceso/atmósfera); revisar el presupuesto con Luis si la calidad lo justifica.
 
@@ -79,7 +90,17 @@ Cómo medirlo tras `npm run build`:
 ```bash
 for f in dist/_astro/*.js; do echo "$(gzip -c "$f" | wc -c) $f"; done | sort -n | tail
 ```
-Y en el navegador, con `?depuracion=1`: `window.naveRender` da llamadas de dibujo y triángulos del último fotograma.
+Y en el navegador, con `?depuracion=1`: `window.naveRender` da llamadas de dibujo y triángulos del último fotograma completo (todas las pasadas; corregido el 2026-10-11).
+
+### Estado medido (fase 4, interfaz y páginas, 2026-10-11)
+| Pieza (gzip) | Peso | Cuenta en |
+|---|---|---|
+| `events-*.esm.*.js` + `client.*.js` + `Nave.*.js` | 238,0 + 64,5 + 42,4 = **344,9 KB de 350** | isla inicial (sin cambios por la interfaz) |
+| Script de la landing (`index.astro_*.js`: GSAP, ScrollTrigger, Lenis, viajes, próximas clases) | ~51,8 KB | aparte (no es la isla) |
+| `leaflet-src.*.js` + `leaflet.*.css` | 42,9 KB + 6,4 KB | **solo en `/ubicacion`, al pulsar «Ver mapa»** (import dinámico; el CSS se enlaza por URL desde el script) |
+| Script de `/ubicacion` | ~1 KB | carga inicial de esa página |
+
+Con `import 'leaflet/dist/leaflet.css'` Astro enlazaba el CSS en el HTML inicial; por eso se importa con `?url` y se añade el `<link>` al pulsar.
 
 ## Niveles de calidad
 | Ajuste | Alto | Medio | Bajo |
@@ -101,7 +122,7 @@ Versión estática cuando no hay WebGL, con `prefers-reduced-motion`, si el nive
 
 ## Accesibilidad
 - Contenido y acciones en **HTML semántico**; canvas decorativo (`aria-hidden`).
-- «Saltar al contenido» y «Saltar recorrido».
+- «Saltar al contenido» (primer elemento tabulable de cada página) y «Saltar recorrido» (botón del prólogo; lleva al cierre y enfoca su titular).
 - Teclado completo, foco visible, orden lógico.
 - Contraste AA en todo texto superpuesto.
 - El horario como **tabla accesible** (encabezados de fila y columna), no como imagen.

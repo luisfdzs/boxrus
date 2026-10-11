@@ -1,5 +1,5 @@
 import { defineCollection, reference } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import {
   esquemaClase,
@@ -15,8 +15,9 @@ const clases = defineCollection({
   schema: esquemaClase,
 });
 
+// Toda la semana en un solo fichero: una lista de franjas, cada una con su `id`.
 const horario = defineCollection({
-  loader: glob({ pattern: '**/*.{yaml,yml,json}', base: './src/content/horario' }),
+  loader: file('./src/content/horario/semana.yaml'),
   schema: franjaHoraria({ ...formaFranja, clase: reference('clases') }),
 });
 

@@ -1,0 +1,142 @@
+---
+import { render } from 'astro:content';
+import Pagina from '../layouts/Pagina.astro';
+import { cargarClases, cargarFranjas } from '../lib/contenido';
+import { ETIQUETA_DIA, ETIQUETA_NIVEL } from '../lib/etiquetas';
+
+const [clases, franjas] = await Promise.all([cargarClases(), cargarFranjas()]);
+const fichas = await Promise.all(
+  clases.map(async (clase) => ({
+    clase,
+    Contenido: (await render(clase)).Content,
+    franjas: franjas.filter((f) => f.claseId === clase.id),
+  })),
+);
+---
+
+<Pagina
+  titulo="Clases"
+  descripcion="Las seis disciplinas de Boxrus: boxeo, MMA, muay thai, kickboxing, grappling y preparación física. Niveles, duración y franjas."
+  entradilla="Seis disciplinas, un mismo tatami. ¿Nunca has pisado un tatami? Mejor. Te enseñamos desde cero."
+  imagen="06-dentro-jaula"
+  actual="/clases"
+>
+  <div class="pagina">
+
+    <nav aria-label="Disciplinas" class="indice">
+      <ul>
+        {fichas.map(({ clase }) => <li><a href={`#${clase.id}`}>{clase.data.nombre}</a></li>)}
+      </ul>
+    </nav>
+
+    {
+      fichas.map(({ clase, Contenido, franjas }) => (
+        <article id={clase.id} aria-labelledby={`titulo-${clase.id}`}>
+          <h2 id={`titulo-${clase.id}`}>{clase.data.nombre}</h2>
+          <p class="resumen">{clase.data.resumen}</p>
+          <ul class="datos" aria-label="Niveles y duración">
+            {clase.data.niveles.map((n) => <li class="etiqueta">{ETIQUETA_NIVEL[n] ?? n}</li>)}
+            <li class="etiqueta">{clase.data.duracionMinutos} min</li>
+          </ul>
+          <div class="cuerpo">
+            <Contenido />
+          </div>
+          {franjas.length > 0 && (
+            <section aria-labelledby={`franjas-${clase.id}`}>
+              <h3 id={`franjas-${clase.id}`}>Cuándo</h3>
+              <ul class="franjas">
+                {franjas.map((f) => (
+                  <li>
+                    <a href={`/horario#${f.id}`}>
+                      {ETIQUETA_DIA[f.dia]} {f.inicio}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <p>
+                <a href="/horario">Ver el horario completo</a>
+              </p>
+            </section>
+          )}
+        </article>
+      ))
+    }
+  </div>
+</Pagina>
+
+<style>
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .indice ul,
+  .datos,
+  .franjas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .indice {
+    margin-bottom: 1rem;
+  }
+
+  .indice a {
+    display: block;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgb(255 244 226 / 0.35);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .indice a:hover {
+    border-color: var(--color-luz);
+  }
+
+  article {
+    padding: 2rem 0;
+    border-bottom: 1px solid rgb(255 244 226 / 0.12);
+    scroll-margin-top: 1rem;
+  }
+
+  article:target h2 {
+    color: var(--color-acento);
+  }
+
+  .resumen {
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+
+  .cuerpo {
+    max-width: 40rem;
+    margin-top: 1rem;
+  }
+
+  .cuerpo :global(p) {
+    margin: 0 0 0.8rem;
+  }
+
+  h3 {
+    margin: 1.25rem 0 0.5rem;
+    padding-left: 0.6rem;
+    border-left: 3px solid var(--color-acento);
+    font-size: 1.4rem;
+    color: var(--color-luz);
+  }
+
+  .franjas a {
+    display: block;
+    padding: 0.2rem 0.6rem;
+    border-bottom: 2px solid var(--color-acento);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  section p {
+    margin: 0.75rem 0 0;
+  }
+</style>

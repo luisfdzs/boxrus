@@ -10,7 +10,7 @@ Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajust
 |---|---|---|---|---|---|---|
 | P | Prólogo: la entrada | Jaula + sacos | Simétrico desde el portón, cámara baja | (0,0, 1,3, 3,0) | (0,0, 1,6, −30,0) | 27 mm |
 | 1 | Horario | Marcador de asaltos | Tres cuartos hacia la pared izquierda | (−9,5, 2,2, −14,0) | (−17,9, 3,2, −22,5) | 35 mm |
-| 2 | Clases | Interior de la jaula | Gran angular desde dentro, a través de la malla | (−0,6, 2,1, −19,4) | (3,2, 1,5, −23,2) | 20 mm |
+| 2 | Clases | Interior de la jaula | Gran angular desde dentro, a través de la malla | (−0,6, 2,1, −19,4) | (2,5, 1,5, −23,8) | 20 mm |
 | 3 | Galería | Sacos del bastidor derecho | Travelling lateral paralelo a la fila | (12,5, 1,6, −12,0) | (16,5, 1,3, −18,0) | 35 mm |
 | 4 | Premios | La jaula desde arriba | Picado desde las cerchas | (0,0, 5,6, −7,5) | (0,0, 0,6, −20,0) | 22 mm |
 | 5 | Ubicación | Ventanales del fondo | Contraluz con haces de luz | (6,0, 1,6, −31,0) | (−1,0, 2,8, −44,0) | 24 mm |
@@ -24,7 +24,7 @@ Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajust
 - **Interfaz:**
   - Titular: «Boxrus»
   - Subtítulo: «Entrena donde se forjan los combates.»
-  - Texto: «MMA, boxeo y deportes de contacto en una nave de 1.700 m².»
+  - Texto: «MMA, boxeo y deportes de contacto en una nave de 1.700 m². Aquí no vienes a mirar. Vienes a entrenar.»
   - Indicación: «Desliza para entrar» + botón «Saltar recorrido».
 
 ### 1 · Horario — marcador de asaltos
@@ -68,20 +68,24 @@ Coordenadas en el sistema de `03-escena.md`. La tabla recoge los valores **ajust
 - **Idea:** la salida al mundo: dónde estamos.
 - **Interfaz:**
   - Antetítulo: «Ubicación»
-  - Titular: «Ven a conocernos.»
+  - Titular: «Ven. La puerta está abierta.»
   - Contenido: dirección, teléfono y horario de apertura.
   - Botones: «Cómo llegar» (abre la ruta en un servicio de mapas) y «Ver ubicación» → `/ubicacion`
 
 ### E · Epílogo
 - **Movimiento:** una sola transición desde Ubicación, igual que las demás: la cámara sube y avanza hacia el ventanal central y funde a blanco en la segunda mitad del tramo (`RECORRIDO.inicioFundidoFinal`). Al llegar, la pausa del epílogo es el cierre en blanco; no hay parada en el ventanal ni scroll posterior.
-- **Interfaz:** «Boxrus. Tu primera clase te espera.» + accesos a las 5 secciones.
+- **Interfaz:** «Boxrus. Tu primera clase te espera.» (BOXRUS en rojo), subtítulo «No la hagas esperar.», botón rojo «Reserva tu primera clase» → `/horario` y accesos a las 5 secciones.
+
+**Interfaz en móvil (fase 4):** con el scroll por paradas, cada panel se queda en antetítulo, titular, una línea y botones (la próxima clase, los 6 nombres, 2 premios, calle y teléfono); el resto vive en las páginas. El logotipo fijo se oculta en el prólogo y en el cierre, donde el titular ya dice BOXRUS.
 
 Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arquitectura.md` (colecciones de contenido).
 
 ### Ajustes de la fase 1
 - **P · Prólogo:** cámara a `z = 3,0` (con la deriva no cabe más cerca del portón) y 27 mm; sacos protagonistas en (±2,2, −3) para el tríptico saco–jaula–saco, también en vertical.
+  - *Fase 4 (2026-10-11):* en vertical la mira baja de (0, 0,6, −30) a (0, −4, −30), sin perder la simetría: la jaula sube unos 70 px (cable superior en `y ≈ 313`, base de la plataforma en `y ≈ 379` de 844) y deja de tocar el panel. En escritorio no cambia: el panel del prólogo va centrado abajo, entre los dos sacos (interfaz).
 - **1 · Horario:** marcador movido a `z = −22`, en pared limpia. Los sacos quedan a media distancia, no en primer término: el saco cercano caería bajo la tarjeta.
-- **2 · Clases:** cámara a `y = 2,1` (ojos de alguien de pie sobre la lona, que está a 0,6 m), por debajo del cable superior al cruzar la puerta. Mira a la puerta trasera: sus dos postes anclan el plano y anticipan la salida. En vertical, un poste centrado (donde irá BOXRUS).
+- **2 · Clases:** cámara a `y = 2,1` (ojos de alguien de pie sobre la lona, que está a 0,6 m), por debajo del cable superior al cruzar la puerta. Mira a la puerta trasera: sus dos postes anclan el plano y anticipan la salida. En vertical, un poste centrado, con su rótulo BOXRUS.
+  - *Fase 4 (2026-10-11), convivencia con la interfaz:* en escritorio la mira pasa de (3,2, 1,5, −23,2) a (2,5, 1,5, −23,8): el panel (abajo a la izquierda, `x ≤ 464`, `y ≥ 441` a 1440 × 900) tapaba el «BOX» del poste izquierdo; ahora los dos rótulos caen en `x ≈ 590` y `x ≈ 1130` (`y ≈ 400–490`), libres. En vertical la mira baja de `y = 1,4` a `y = 0,4` (misma x y z, poste de −22,5°): el rótulo queda en `y ≈ 300–355` px de 844 (el 55 % superior, sobre el panel, que ocupa como mucho el 38 % inferior por encima de la píldora) y la lona al pie del poste entra en `y ≈ 405`.
 - **3 · Galería:** el travelling avanza hacia **+Z** (2 m): la cámara llega desde la puerta trasera por el sur y así no tiene que dar media vuelta.
 - **4 · Premios:** retrasada a `z = −7,5` con 22 mm: el picado abarca la jaula entera y los fluorescentes entran por arriba. El refuerzo de la jaula baja a `y = 4,4` para no confundirse con la banda de ventanales.
 - **5 · Ubicación:** en (6, 1,6, −31) con 24 mm: el pilar (−10, −40) entra como silueta a contraluz y se ve más suelo, donde caerán los haces.
@@ -99,10 +103,14 @@ Todos los textos y cifras son **borradores ficticios**; ver contenido en `05-arq
 - **Scroll por paradas (móvil):** en pantalla táctil y vertical (ancho/alto < 0,8), cada gesto lleva a la parada siguiente o a la anterior, sin posiciones intermedias. El scroll se anima a ritmo constante (2,2 s por transición, en `RECORRIDO.paginadoMovil`) y la trayectoria pone su propia aceleración y frenada, así que la cámara hace el mismo recorrido que con scroll libre. Los gestos durante la animación se ignoran; el gesto desde Ubicación lleva directamente al cierre y es el último. Deslizar **hacia la izquierda** también avanza y **hacia la derecha** retrocede (cuenta el eje dominante del gesto), pero solo entre el prólogo y Ubicación: la salida por el ventanal hasta el cierre, y la vuelta, solo con deslizamiento vertical. Se puede forzar en escritorio con `?paginado=1`.
 - **Menú de píldora (móvil):** abajo y centrado, con un icono de **Inicio** (casa, lleva al prólogo) y uno por sección (reloj, octógono, fotografía, trofeo, chincheta). Un toque lleva a esa parada y **todos los saltos duran lo mismo: 1,5 s** (`RECORRIDO.paginadoMovil.segundosPorTramoMenu`). Si la sección es vecina, la cámara hace el tramo real. Si está a más de un paso, recorre la primera mitad del tramo de salida, funde a negro, corta en negro total a la mitad del tramo de llegada y funde desde negro hasta el destino (`corte`: el fundido ocupa el 40 % central del salto y el negro total, el 16 %). La cámara no se detiene y va a la misma velocidad que en un salto vecino. Durante el salto solo se muestra el texto de la parada de destino y su icono va resaltado; los toques durante un salto se ignoran. Solo aparece con el scroll por paradas activo.
 - **Logotipo BOXRUS (arriba):** en el recorrido vuelve al prólogo con un viaje igual que los del menú (tramo real si es vecino; si no, salto con fundido a negro; 1,5 s), en escritorio y en móvil, sin recargar la página. En escritorio, el salto sale de la posición actual aunque esté entre dos paradas, y la rueda queda bloqueada mientras dura. En las demás páginas lleva a `/`.
-- **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables.
+- **Indicador de progreso:** «01 / 05» con el nombre de la sección y puntos clicables (`Indicador.astro`). Solo visible en las paradas 1–5 (oculto en prólogo y cierre). En móvil (scroll por paradas) queda solo la cuenta, arriba a la izquierda, para no chocar con la píldora. Es redundante con la navegación: va oculto a los lectores de pantalla y sus puntos no se tabulan.
+- **Cabecera de escritorio:** píldora arriba a la derecha (`NavSecciones.astro`) con las 5 secciones; en la landing cada enlace hace el viaje animado a su parada (mismo `crearViajes` que la píldora móvil) y, con Ctrl/Cmd/Mayús o clic central, abre la página. Con ventana estrecha sin scroll por paradas baja bajo el logotipo; en móvil con scroll por paradas se oculta (la sustituye la píldora).
+- **Saltar recorrido:** botón del prólogo (`<a href="#cierre">`) que viaja al cierre y deja el foco en su titular. Sin JavaScript, el enlace lleva a `#cierre`.
+- **Logotipo en el prólogo:** se oculta mientras el progreso está dentro del prólogo (`html[data-prologo]`) porque coincide con el titular grande «BOXRUS»; aparece con un fundido al avanzar a la parada 1 y vuelve a ocultarse al volver al prólogo. El logotipo oculto no recibe foco.
+- **Cierre:** accesos a las 5 secciones y pie compacto (dirección, contacto, aviso de contenido ficticio y atribuciones) sobre el fundido a blanco.
 
 ## Encuadres en móvil (vertical)
-Cada parada define un **encuadre alternativo** para pantalla vertical: más campo de visión o más distancia, y el elemento protagonista desplazado hacia arriba para dejar la interfaz abajo. Se usa cuando la relación ancho/alto es menor que 0,8. Valores de la fase 1 (390 × 844) en `src/datos/paradas.ts` (`movil`); focales entre 14 y 24 mm. En el prólogo vertical los sacos protagonistas quedan fuera de cuadro: se prioriza la jaula.
+Cada parada define un **encuadre alternativo** para pantalla vertical: más campo de visión o más distancia, y el elemento protagonista desplazado hacia arriba para dejar la interfaz abajo. Se usa cuando la relación ancho/alto es menor que 0,8. Valores de la fase 1 (390 × 844) en `src/datos/paradas.ts` (`movil`); focales entre 14 y 24 mm. En el prólogo vertical los sacos protagonistas solo asoman en los bordes: se prioriza la jaula. Desde la fase 4 los encuadres móviles se comprueban proyectando el protagonista con la cámara real (`focalAFov`, 390 × 844) contra el panel de la interfaz: debe quedar en el 55 % superior de la pantalla.
 
 ## Modo de captura (necesario para verificar)
 - `/?parada=N` (N = `P`, `1`…`5`, `E`) coloca la cámara directamente en esa parada.
@@ -110,4 +118,5 @@ Cada parada define un **encuadre alternativo** para pantalla vertical: más camp
 - `/?depuracion=1` muestra la trayectoria, los ejes, el FPS y los avisos de colisión (y expone `window.naveRender` con llamadas de dibujo y triángulos).
 - `/?ajuste=1` activa el ajuste a paradas (pregunta abierta 6).
 - `/?paginado=1` fuerza el scroll por paradas del móvil (para probarlo en escritorio).
+- `/?camara=x,y,z,mx,my,mz,focal` fija la cámara en un encuadre libre (posición, punto de mira y focal en mm) en lugar del recorrido. Con `?captura=1` sirve para las fotos de la galería (`herramientas/galeria/`).
 - Cuando la cámara está colocada y hay fotogramas pintados, `<html>` recibe `data-nave-lista`: es la señal para capturar.

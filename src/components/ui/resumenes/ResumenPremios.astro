@@ -1,0 +1,53 @@
+---
+// Parada 4: los tres primeros reconocimientos por `orden`.
+import { cargarPremios } from '../../../lib/contenido';
+
+const premios = (await cargarPremios()).slice(0, 3);
+---
+
+<ul class="lista">
+  {
+    premios.map(({ id, data }) => (
+      <li>
+        <span class="anio">{data.anio}</span>
+        <a href={`/premios#${id}`}>{data.titulo}</a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .lista {
+    margin: 0.5rem 0 0.75rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    line-height: 1.3;
+  }
+
+  .anio {
+    font-family: var(--fuente-titulares);
+    color: var(--color-chapa);
+  }
+
+  a {
+    text-decoration: none;
+    text-underline-offset: 3px;
+  }
+
+  a:hover,
+  a:focus-visible {
+    text-decoration: underline;
+  }
+
+  /* Móvil: solo dos reconocimientos. */
+  :global([data-paginado]) li:nth-child(n + 3) {
+    display: none;
+  }
+</style>

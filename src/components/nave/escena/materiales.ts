@@ -284,6 +284,10 @@ desgasteLona.wrapS = desgasteLona.wrapT = ClampToEdgeWrapping;
 const emisivo = (color: string, intensidad: number, extra: ConstructorParameters<typeof MeshStandardMaterial>[0] = {}) =>
   new MeshStandardMaterial({ color: '#000000', emissive: color, emissiveIntensity: intensidad, ...extra });
 
+// Vinilo de los acolchados: negro con algo de brillo. En los postes va en blanco: el negro
+// y el rótulo BOXRUS los pone su textura (rotuloPostes.ts), con el mismo acabado.
+const vinilo = { roughness: 0.45 } as const;
+
 export const MATERIALES = {
   // Ladrillo: color, normal y arm llegan con TexturasNave (blanco para no teñir el mapa de color).
   muro: material('#ffffff', { roughness: 1 }),
@@ -309,8 +313,8 @@ export const MATERIALES = {
   porton: material('#3a3d40', { roughness: 0.6, metalness: 0.3 }),
   lona: material('#3a3c3f', { roughness: 0.92, map: desgasteLona, roughnessMap: desgasteLona }),
   faldon: material('#121314', { roughness: 0.7 }),
-  // Vinilo de los acolchados: negro con algo de brillo.
-  acolchado: material('#141517', { roughness: 0.45 }),
+  acolchado: material('#141517', vinilo),
+  acolchadoPoste: material('#ffffff', vinilo),
   // Malla: acero galvanizado medio mate; a distancia, un velo gris (la cobertura media del alfa ronda el 22 %).
   malla: material('#8a9096', {
     map: texturaMalla,
@@ -336,6 +340,8 @@ export const MATERIALES = {
 
 // Nombres: los usa ?exportar=1 para reconocer cada material al hornear la luz en Blender.
 for (const [nombre, m] of Object.entries(MATERIALES)) m.name = nombre;
+// Al hornear, los postes cuentan como acolchado (albedo de LUZ.horneado.albedos; el rótulo no pesa en el rebote).
+MATERIALES.acolchadoPoste.name = 'acolchado';
 
 // UV en el mundo. Los mapas que aún no estén asignados se ignoran (#ifdef) hasta que TexturasNave los cargue.
 usarUvMundo(MATERIALES.muro, 'pared', {

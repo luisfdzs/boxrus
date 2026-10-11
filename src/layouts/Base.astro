@@ -2,20 +2,21 @@
 import '@fontsource/anton/latin-400.css';
 import '@fontsource-variable/inter/wght.css';
 import '../estilos/global.css';
-import Logo from '../components/ui/Logo.astro';
 
 interface Props {
   titulo: string;
   descripcion: string;
+  /** Landing: arranca en el prólogo (oculta el logotipo fijo hasta que el script lo decida). */
+  prologo?: boolean;
 }
 
-const { titulo, descripcion } = Astro.props;
+const { titulo, descripcion, prologo = false } = Astro.props;
 const tituloCompleto = titulo === 'Boxrus' ? titulo : `${titulo} · Boxrus`;
 const canonica = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" data-prologo={prologo ? "" : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -28,9 +29,10 @@ const canonica = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : und
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    <slot name="head" />
   </head>
   <body>
-    <Logo />
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
     <slot />
   </body>
 </html>

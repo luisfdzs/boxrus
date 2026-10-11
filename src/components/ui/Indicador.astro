@@ -1,0 +1,96 @@
+---
+// Indicador «01 / 05» de la parada actual (oculto en el prólogo y en el cierre). Lo
+// actualiza index.astro; es redundante con la navegación, así que se oculta a los lectores
+// de pantalla y sus puntos no entran en el orden de tabulación.
+import { SECCIONES } from '../../lib/secciones';
+
+const total = String(SECCIONES.length).padStart(2, '0');
+---
+
+<div class="indicador" aria-hidden="true">
+  <p class="cuenta">
+    <span data-numero>01</span> / {total}
+    <span class="nombre" data-nombre>{SECCIONES[0].nombre}</span>
+  </p>
+  <div class="puntos">
+    {SECCIONES.map((s) => <button type="button" tabindex="-1" data-indice={s.indice} title={s.nombre}></button>)}
+  </div>
+</div>
+
+<style>
+  .indicador {
+    position: fixed;
+    right: clamp(0.75rem, 2vw, 1.5rem);
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 3;
+    display: grid;
+    gap: 0.4rem;
+    justify-items: end;
+    padding: 0.5rem 0.8rem;
+    background: rgb(13 14 16 / 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 0.6rem;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s;
+  }
+
+  .indicador[data-visible] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  p {
+    margin: 0;
+    font-family: var(--fuente-titulares);
+    font-size: 1.1rem;
+    letter-spacing: 0.06em;
+  }
+
+  .nombre {
+    margin-left: 0.5rem;
+    color: #aab0b6;
+    font-family: var(--fuente-texto);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .puntos {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  button {
+    width: 0.7rem;
+    height: 0.7rem;
+    padding: 0;
+    border: 1px solid var(--color-chapa);
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  button[aria-current='true'] {
+    background: var(--color-acento);
+    border-color: var(--color-acento);
+  }
+
+  /* Móvil (scroll por paradas): solo la cuenta, arriba a la izquierda, junto al logotipo. */
+  :global([data-paginado]) .indicador {
+    top: calc(1.15rem + env(safe-area-inset-top));
+    right: auto;
+    bottom: auto;
+    left: 0.9rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  :global([data-paginado]) .nombre,
+  :global([data-paginado]) .puntos {
+    display: none;
+  }
+</style>

@@ -1,0 +1,245 @@
+---
+import { getImage } from 'astro:assets';
+import Pagina from '../layouts/Pagina.astro';
+import { cargarGimnasio, cargarImagenGaleria, telefonoHref, urlComoLlegar } from '../lib/contenido';
+import { textoApertura } from '../lib/etiquetas';
+
+const gimnasio = await cargarGimnasio();
+const { calle, codigoPostal, localidad, provincia } = gimnasio.direccion;
+const { lat, lng } = gimnasio.coordenadas;
+
+const DIA_SCHEMA = {
+  lunes: 'Monday',
+  martes: 'Tuesday',
+  miercoles: 'Wednesday',
+  jueves: 'Thursday',
+  viernes: 'Friday',
+  sabado: 'Saturday',
+  domingo: 'Sunday',
+} as const;
+
+const portada = await cargarImagenGaleria('09-ventanales');
+const imagenSeo = await getImage({ src: portada.imagen, width: 1200, format: 'jpg' });
+
+// Datos estructurados para SEO local, generados desde src/content/ubicacion/.
+const datosEstructurados = {
+  '@context': 'https://schema.org',
+  '@type': 'ExerciseGym',
+  name: gimnasio.nombre,
+  description: 'Gimnasio de MMA y deportes de contacto.',
+  telephone: gimnasio.telefono,
+  email: gimnasio.email,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: calle,
+    postalCode: codigoPostal,
+    addressLocality: localidad,
+    addressRegion: provincia,
+    addressCountry: 'ES',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: lat, longitude: lng },
+  openingHoursSpecification: gimnasio.apertura.map((a) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: a.dias.map((d) => DIA_SCHEMA[d]),
+    opens: a.inicio,
+    closes: a.fin,
+  })),
+  url: new URL('/ubicacion', Astro.site).href,
+  image: new URL(imagenSeo.src, Astro.site).href,
+};
+const json = JSON.stringify(datosEstructurados).replace(/</g, '\\u003c');
+---
+
+<Pagina
+  titulo="Ubicación"
+  descripcion={`Dónde está Boxrus: ${calle}, ${codigoPostal} ${localidad}. Teléfono, email, horario de apertura y mapa.`}
+  entradilla="Ven cuando quieras: aquí tienes cómo llegar."
+  imagen="09-ventanales"
+  pieReducido
+  actual="/ubicacion"
+>
+  <script slot="head" type="application/ld+json" set:html={json} />
+  <div class="pagina">
+
+    <div class="columnas">
+      <section aria-labelledby="titulo-direccion">
+        <h2 id="titulo-direccion">Dónde estamos</h2>
+        <address>
+          <strong>{gimnasio.nombre}</strong><br />
+          {calle}<br />
+          {codigoPostal} {localidad}
+        </address>
+        <p class="aviso-ficticio">Dirección ficticia: Boxrus es un gimnasio inventado.</p>
+      </section>
+
+      <section aria-labelledby="titulo-contacto">
+        <h2 id="titulo-contacto">Contacto</h2>
+        <p>
+          Teléfono: <a href={telefonoHref(gimnasio.telefono)}>{gimnasio.telefono}</a><br />
+          Email: <a href={`mailto:${gimnasio.email}`}>{gimnasio.email}</a>
+        </p>
+      </section>
+
+      <section aria-labelledby="titulo-apertura">
+        <h2 id="titulo-apertura">Abrimos</h2>
+        <ul class="apertura">
+          {gimnasio.apertura.map((a) => <li>{textoApertura(a)}</li>)}
+        </ul>
+      </section>
+    </div>
+
+    <div class="acciones">
+      <a class="boton" href={urlComoLlegar(gimnasio.coordenadas)} target="_blank" rel="noopener">
+        Cómo llegar<span class="solo-lectores"> (se abre en otra pestaña)</span>
+      </a>
+      <button type="button" class="boton boton--borde" id="ver-mapa" aria-controls="mapa" aria-expanded="false">Ver mapa</button>
+    </div>
+
+    <!-- Se reserva el hueco del mapa desde el principio para que no haya saltos de maquetación. -->
+    <div class="zona-mapa">
+      <div id="reserva-mapa" class="mapa reserva">Pulsa «Ver mapa» para cargarlo.</div>
+      <div
+        id="mapa"
+        class="mapa"
+        role="region"
+        aria-label={`Mapa de la ubicación de ${gimnasio.nombre}`}
+        data-lat={lat}
+        data-lng={lng}
+        data-nombre={gimnasio.nombre}
+        hidden
+      >
+      </div>
+      <p id="estado-mapa" class="estado" role="status"></p>
+    </div>
+    <p class="aviso-ficticio" id="aviso-mapa">
+      Dirección ficticia: Boxrus es un gimnasio inventado. El mapa de OpenStreetMap te enseña un lugar real que no tiene
+      nada que ver con Boxrus.
+    </p>
+  </div>
+</Pagina>
+
+<script>
+  // Leaflet y su CSS se descargan solo al pulsar «Ver mapa»: nunca en la carga inicial.
+  const boton = document.querySelector<HTMLButtonElement>('#ver-mapa')!;
+  const contenedor = document.querySelector<HTMLElement>('#mapa')!;
+  const estado = document.querySelector<HTMLElement>('#estado-mapa')!;
+  const reserva = document.querySelector<HTMLElement>('#reserva-mapa')!;
+
+  boton.addEventListener('click', async () => {
+      boton.disabled = true;
+      estado.textContent = 'Cargando el mapa…';
+      try {
+        // El CSS se pide por URL y se enlaza aquí: con `import '...css'` Astro lo enlazaría en la carga inicial.
+        const [{ default: L }, { default: urlCss }] = await Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css?url')]);
+        if (!document.querySelector('link[data-leaflet]')) {
+          const enlace = Object.assign(document.createElement('link'), { rel: 'stylesheet', href: urlCss });
+          enlace.dataset.leaflet = '';
+          document.head.append(enlace);
+          await new Promise((fin) => { enlace.onload = enlace.onerror = fin; });
+        }
+        const { lat, lng, nombre } = contenedor.dataset;
+        const centro: [number, number] = [Number(lat), Number(lng)];
+        contenedor.hidden = false;
+        reserva.hidden = true;
+        const mapa = L.map(contenedor, { center: centro, zoom: 16, zoomControl: false, attributionControl: false });
+        L.control.zoom({ zoomInTitle: 'Acercar', zoomOutTitle: 'Alejar' }).addTo(mapa);
+        L.control
+          .attribution({ prefix: '<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>' })
+          .addTo(mapa);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">colaboradores de OpenStreetMap</a>',
+        }).addTo(mapa);
+        // Marcador con CSS propio: no se usan las imágenes de Leaflet.
+        L.marker(centro, {
+          title: nombre,
+          alt: nombre,
+          icon: L.divIcon({ className: 'pin-boxrus', iconSize: [28, 28], iconAnchor: [14, 28] }),
+        }).addTo(mapa);
+        boton.textContent = 'Mapa cargado';
+        boton.setAttribute('aria-expanded', 'true');
+        estado.textContent = 'Mapa cargado.';
+        contenedor.focus();
+      } catch (error) {
+        console.error('[mapa]', error);
+        estado.textContent = 'No se pudo cargar el mapa. Usa «Cómo llegar» para abrirlo en OpenStreetMap.';
+        boton.disabled = false;
+      }
+  });
+</script>
+
+<style>
+  .columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  address {
+    margin-bottom: 0.75rem;
+    font-style: normal;
+  }
+
+  p {
+    margin-block: 0;
+  }
+
+  .apertura {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .mapa {
+    height: min(26rem, 70svh);
+    margin-bottom: 0.75rem;
+    background: var(--color-tatami);
+  }
+
+  .reserva {
+    display: grid;
+    place-items: center;
+    color: #aab0b6;
+  }
+
+  .reserva[hidden] {
+    display: none;
+  }
+
+  .zona-mapa .estado {
+    min-height: 1.5rem;
+  }
+
+  .estado {
+    min-height: 1.5em;
+    margin-bottom: 0.5rem;
+    color: #c4c9cd;
+    font-size: 0.9rem;
+  }
+
+  .mapa :global(.pin-boxrus) {
+    background: var(--color-acento);
+    border: 3px solid #fff;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+  }
+
+  /* El control de atribución de Leaflet es claro: se le fuerza texto oscuro y enlaces legibles. */
+  .mapa :global(.leaflet-control-attribution) {
+    color: #333;
+  }
+
+  .mapa :global(.leaflet-control-attribution a) {
+    color: #0b5394;
+  }
+</style>

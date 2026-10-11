@@ -2,9 +2,15 @@
 // Logotipo (texto BOXRUS) arriba y centrado: vuelve al inicio. En el recorrido
 // lo anima la página (evento `ir-al-inicio`, cancelado por quien lo atiende);
 // en el resto, va a `/` y empieza en el prólogo.
+// `fijo` (landing): píldora fija arriba y centrada. Sin él (páginas): en línea, dentro de la cabecera.
+// En el prólogo y el cierre de la landing se oculta (`html[data-prologo]`, `html[data-cierre]`): ahí ya aparece el titular BOXRUS.
+interface Props {
+  fijo?: boolean;
+}
+const { fijo = false } = Astro.props;
 ---
 
-<a class="logo" href="/" aria-label="Boxrus, volver al inicio">BOXRUS</a>
+<a class:list={['logo', { fijo }]} href="/" aria-label="Boxrus, volver al inicio">BOXRUS</a>
 
 <script>
   const logo = document.querySelector<HTMLAnchorElement>('.logo')!;
@@ -20,11 +26,7 @@
 
 <style>
   .logo {
-    position: fixed;
-    top: calc(0.9rem + env(safe-area-inset-top));
-    left: 50%;
-    z-index: 3;
-    transform: translateX(-50%);
+    display: inline-block;
     padding: 0.35rem 1.1rem 0.3rem;
     font-family: var(--fuente-titulares);
     font-size: 1.35rem;
@@ -40,8 +42,21 @@
     box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
   }
 
-  .logo:focus-visible {
-    outline: 2px solid var(--color-luz);
-    outline-offset: 3px;
+  .logo.fijo {
+    position: fixed;
+    top: calc(0.9rem + env(safe-area-inset-top));
+    left: 50%;
+    z-index: 3;
+    transform: translateX(-50%);
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s;
   }
+
+  :global(html[data-prologo]) .logo.fijo,
+  :global(html[data-cierre]) .logo.fijo {
+    opacity: 0;
+    visibility: hidden;
+  }
+
 </style>

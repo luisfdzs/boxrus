@@ -1,0 +1,124 @@
+---
+// Layout común de las páginas de sección: cabecera, contenido y pie.
+import Cabecera from '../components/ui/Cabecera.astro';
+import Pie from '../components/ui/Pie.astro';
+import { Image } from 'astro:assets';
+import { cargarImagenGaleria } from '../lib/contenido';
+import Base from './Base.astro';
+
+interface Props {
+  titulo: string;
+  /** Titular de la página (por defecto, el título). */
+  h1?: string;
+  entradilla: string;
+  /** Id de la imagen de galería para la cabecera (decorativa, oscurecida). */
+  imagen: string;
+  /** Pie sin dirección, contacto ni apertura (si la página ya los muestra). */
+  pieReducido?: boolean;
+  descripcion: string;
+  /** Ruta de la página (marca la sección actual en la navegación). */
+  actual: string;
+}
+const { titulo, h1 = titulo, entradilla, imagen, pieReducido = false, descripcion, actual } = Astro.props;
+const foto = await cargarImagenGaleria(imagen);
+---
+
+<Base titulo={titulo} descripcion={descripcion}>
+  <slot name="head" slot="head" />
+  <Cabecera actual={actual} />
+  <main id="contenido" tabindex="-1">
+    <div class="hero">
+      <Image
+        src={foto.imagen}
+        alt=""
+        widths={[640, 960, 1440, 1920]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        format="webp"
+        class="hero-foto"
+      />
+      <div class="hero-texto">
+        <h1>{h1}</h1>
+        <p class="entradilla">{entradilla}</p>
+      </div>
+    </div>
+    <slot />
+  </main>
+  <Pie reducido={pieReducido} />
+</Base>
+
+<style is:global>
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(11rem, 26vw, 17rem);
+    overflow: hidden;
+    background: var(--color-tatami);
+  }
+
+  .hero-foto {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Oscurece la foto para que el titular cumpla el contraste AA. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(13 14 16 / 0.95) 0%, rgb(13 14 16 / 0.72) 55%, rgb(13 14 16 / 0.6) 100%);
+  }
+
+  .hero-texto {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 2rem clamp(1rem, 4vw, 2rem) 1.5rem;
+  }
+
+  .hero-texto h1 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(2.6rem, 8vw, 5rem);
+    color: var(--color-luz);
+  }
+
+  .hero-texto .entradilla {
+    max-width: 40rem;
+    margin: 0;
+    color: #e3e6e8;
+    font-size: 1.1rem;
+  }
+
+  .pagina {
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: clamp(1.5rem, 5vw, 3.5rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 6vw, 4rem);
+  }
+
+  .pagina h2 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  .etiqueta {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border: 1px solid rgb(255 244 226 / 0.35);
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+
+  .aviso-ficticio {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    border-left: 3px solid var(--color-acento);
+    background: rgb(212 56 42 / 0.12);
+    font-size: 0.9rem;
+  }
+</style>

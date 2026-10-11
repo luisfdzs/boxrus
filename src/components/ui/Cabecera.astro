@@ -1,0 +1,35 @@
+---
+// Cabecera de las páginas: logotipo que vuelve a `/` y navegación a las 5 secciones.
+import Logo from './Logo.astro';
+import NavSecciones from './NavSecciones.astro';
+
+interface Props {
+  actual?: string;
+}
+const { actual } = Astro.props;
+---
+
+<header class="cabecera">
+  <div class="interior">
+    <Logo />
+    <NavSecciones actual={actual} />
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    background: rgb(13 14 16 / 0.92);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  .interior {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    width: min(72rem, 100%);
+    margin-inline: auto;
+    padding: 0.6rem clamp(1rem, 4vw, 2rem);
+  }
+</style>

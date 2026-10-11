@@ -37,7 +37,7 @@ Todas las cifras son **hipótesis de partida** que se validan en la fase de maqu
 | Cable superior | acolchado negro a `y = 2,45` |
 | Puertas | 2, en las caras que miran a la diagonal delantera izquierda (−X, +Z) y trasera derecha (+X, −Z); hueco libre de 1,2 m centrado en la cara. Los vértices están a 22,5° + k·45° para que haya caras mirando a las diagonales |
 | Lona | gris muy oscuro, mate (`#3a3c3f`, rugosidad 0,92), con desgaste por código en planta (`LONA`: anillo de roce, manchas y rozaduras de pisadas, determinista); la caída del foco del refuerzo hace el resto |
-| Rotulación | «BOXRUS» vertical en los 8 acolchados |
+| Rotulación | «BOXRUS» vertical en los 8 acolchados *(fase 4, `JAULA.rotulo`)*: se lee de abajo arriba, **dos veces por poste**, hacia fuera y hacia dentro del octógono (el plano 2 ve los postes desde dentro). Letras en Anton (la de los titulares, ya cargada por la página; si no llega en 3 s, una condensada del sistema), blanco roto `#e6e3dc` (con blanco puro se quemaban) de 0,16 m de alto sobre la curva, espaciado 0,1 em: ~0,61 m de largo, centradas en `y = 1,55` (tope de 0,95 m para fuentes de respaldo anchas). Detalle rojo de marca `#d4382a`: raya de 14 mm paralela a la palabra, a 2 cm del pie de las letras. Una sola textura de lienzo (`CanvasTexture`, 600 px/m, 283 × 606 px) en el material del acolchado de los postes, que pasa a blanco con el negro del vinilo pintado en la textura; cubre media vuelta y se repite dos veces alrededor, y a lo alto solo la franja del rótulo. Cada poste va girado para que el rótulo mire a su vértice; las tapas del cilindro apuntan al fondo de la textura (`lib/rotulo.ts`, `escena/rotuloPostes.ts`) |
 
 ## Sacos y bastidores
 | Elemento | Valor |

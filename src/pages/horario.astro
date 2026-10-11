@@ -1,0 +1,161 @@
+---
+import Pagina from '../layouts/Pagina.astro';
+import { cargarFranjas, cargarGimnasio } from '../lib/contenido';
+import { DIAS } from '../lib/esquemas';
+import { ETIQUETA_DIA, ETIQUETA_NIVEL, ETIQUETA_SALA, textoApertura } from '../lib/etiquetas';
+
+const [franjas, gimnasio] = await Promise.all([cargarFranjas(), cargarGimnasio()]);
+const dias = DIAS.map((dia) => ({ dia, franjas: franjas.filter((f) => f.dia === dia) })).filter((d) => d.franjas.length > 0);
+---
+
+<Pagina
+  titulo="Horario"
+  descripcion="Horario semanal de clases de Boxrus: boxeo, MMA, muay thai, kickboxing, grappling y preparación física, con nivel y sala."
+  entradilla="Cada asalto empieza a su hora. Elige la tuya y no faltes."
+  imagen="05-marcador"
+  actual="/horario"
+>
+  <div class="pagina">
+
+    <section class="apertura" aria-labelledby="titulo-apertura">
+      <h2 id="titulo-apertura">Abrimos</h2>
+      <ul>
+        {gimnasio.apertura.map((a) => <li>{textoApertura(a)}</li>)}
+      </ul>
+    </section>
+
+    <table>
+      <caption>Horario semanal de clases de Boxrus</caption>
+      <thead>
+        <tr>
+          <th scope="col">Hora</th>
+          <th scope="col">Clase</th>
+          <th scope="col">Nivel</th>
+          <th scope="col" class="col-sala">Sala</th>
+        </tr>
+      </thead>
+      {
+        dias.map(({ dia, franjas }) => (
+          <tbody id={dia}>
+            <tr class="dia">
+              <th scope="rowgroup" colspan="4">
+                {ETIQUETA_DIA[dia]}
+              </th>
+            </tr>
+            {franjas.map((f) => (
+              <tr id={f.id}>
+                <th scope="row">
+                  <time datetime={f.inicio}>{f.inicio}</time>–<time datetime={f.fin}>{f.fin}</time>
+                </th>
+                <td>
+                  <a href={`/clases#${f.claseId}`}>{f.clase}</a>
+                  <span class="sala-linea">{ETIQUETA_SALA[f.sala] ?? f.sala}</span>
+                </td>
+                <td>{ETIQUETA_NIVEL[f.nivel] ?? f.nivel}</td>
+                <td class="col-sala">{ETIQUETA_SALA[f.sala] ?? f.sala}</td>
+              </tr>
+            ))}
+          </tbody>
+        ))
+      }
+    </table>
+  </div>
+</Pagina>
+
+<style>
+  .apertura {
+    margin-bottom: 2rem;
+  }
+
+  .apertura ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  caption {
+    padding-bottom: 0.75rem;
+    text-align: left;
+    color: #c4c9cd;
+    font-size: 0.9rem;
+  }
+
+  thead th {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    color: #c4c9cd;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--color-acento);
+  }
+
+  .dia th {
+    padding: 1.5rem 0.75rem 0.4rem;
+    text-align: left;
+    font-family: var(--fuente-titulares);
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    scroll-margin-top: 1rem;
+  }
+
+  tbody td,
+  tbody tr:not(.dia) th {
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+    font-weight: 400;
+    border-bottom: 1px solid rgb(255 244 226 / 0.12);
+  }
+
+  tbody tr:not(.dia) th {
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  tr:target > * {
+    background: rgb(212 56 42 / 0.25);
+  }
+
+  a {
+    text-underline-offset: 3px;
+  }
+
+  .sala-linea {
+    display: none;
+  }
+
+  /* Móvil: sin scroll horizontal; la hora no se parte y la sala pasa debajo de la clase. */
+  @media (max-width: 640px) {
+    .col-sala {
+      display: none;
+    }
+
+    .sala-linea {
+      display: block;
+      color: #aab0b6;
+      font-size: 0.8rem;
+    }
+
+    table {
+      font-size: 0.9rem;
+    }
+
+    thead th,
+    tbody td,
+    tbody tr:not(.dia) th {
+      padding-inline: 0.4rem;
+    }
+
+    tbody tr:not(.dia) th {
+      white-space: nowrap;
+    }
+  }
+</style>

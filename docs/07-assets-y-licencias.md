@@ -26,7 +26,7 @@
 | Mapa de entorno | **Capturado de la propia nave** en tiempo de ejecución (cámara cúbica y PMREM, `luz/Entorno.tsx`) ✅ fase 3, iteración 2. Empty Warehouse 01 (Poly Haven, CC0, reducido a 512 × 256 con `herramientas/reducir_hdr.py`) **ya no se carga** y se retiró del repo el 2026-10-10 (decisión de Luis) | — |
 | Tipografías | Fontsource / Google Fonts (OFL), alojadas en el sitio | — |
 | Mapa de `/ubicacion` | Teselas de OpenStreetMap (ODbL, atribución obligatoria) vía Leaflet | Enlace externo sin mapa embebido |
-| Imágenes de la galería | Capturas de la propia escena | — |
+| Imágenes de la galería | Capturas de la propia escena (`herramientas/galeria/capturar.mjs`, encuadres en `planos.json`), JPG 1600 × 1000 en `src/content/galeria/` | — (recurso propio) |
 
 ## Formatos y compresión
 - Modelos: `.glb` con Draco o Meshopt.
@@ -63,6 +63,8 @@ Las texturas sueltas (sin modelo) se convierten con `toktx --t2 --encode etc1s -
 | Concrete 034 (hormigón de la entrada; color y rugosidad a 1K, normal a 512 × 256) | `public/texturas/hormigon_{color,normal,rugosidad}.ktx2` | ambientCG | https://ambientcg.com/view?id=Concrete034 | CC0 | No (cortesía en créditos) | 2026-10-10 |
 | Rubber 004 (solo normal, a 512: relieve del tatami) | `public/texturas/caucho_normal.ktx2` | ambientCG | https://ambientcg.com/view?id=Rubber004 | CC0 | No (cortesía en créditos) | 2026-10-10 |
 | Empty Warehouse 01 (HDRI, mapa de entorno; reducido a 512 × 256, RGBE sin RLE, 512 KB / 384 KB con gzip). **Retirado del repo el 2026-10-10**: no se carga desde la fase 3, iteración 2 (entorno capturado de la nave) | Estuvo en `public/entorno/empty_warehouse_01_512.hdr` (MD5 `cc4870deef4a56daed6099bf59d0819a`). Origen: `https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/empty_warehouse_01_1k.hdr`, MD5 `ab2931b0191b050b97b1e08ab67b0fb0` | Sergej Majboroda | https://polyhaven.com/a/empty_warehouse_01 | CC0 | No (cortesía en créditos) | 2026-10-10 |
+| Leaflet (librería de mapas; se carga con import dinámico solo en `/ubicacion`, al pulsar «Ver mapa») | `leaflet` (npm, dependencia; `@types/leaflet` de desarrollo) | Volodymyr Agafonkin y colaboradores | https://leafletjs.com · https://github.com/Leaflet/Leaflet | BSD-2-Clause | No (licencia incluida en el paquete; se enlaza en la atribución del mapa) | 2026-10-11 |
+| Teselas y datos de OpenStreetMap (mapa de `/ubicacion`, `https://tile.openstreetmap.org/{z}/{x}/{y}.png`) | No se descargan al repo: las pide el navegador al pulsar «Ver mapa» | Colaboradores de OpenStreetMap | https://www.openstreetmap.org/copyright | ODbL 1.0 | **Sí:** «© colaboradores de OpenStreetMap» visible en el mapa (control de atribución, enlazado a `/copyright`) | 2026-10-11 |
 | Transcodificador Basis Universal (código, no asset; copiado de `three/examples/jsm/libs/basis/`) | `public/basis/basis_transcoder.{js,wasm}` | Binomial LLC / three.js | https://github.com/BinomialLLC/basis_universal | Apache 2.0 | No | 2026-10-10 |
 
 Descartados en la fase 2: Leather 011 (ambientCG, CC0) por ser cuero capitoné; modelos de guantes de Sketchfab (CC BY, 85.000 triángulos o más).
@@ -75,3 +77,8 @@ toktx --t2 --encode etc1s --clevel 4 --qlevel 200 --genmipmap --assign_oetf line
 # normales: UASTC + zstd reducidas a 512 (a 1K pesaban ~1,3 MB cada una; RDO apenas ahorraba)
 toktx --t2 --encode uastc --uastc_quality 2 --zcmp 19 --genmipmap --resize 512x512 --assign_oetf linear salida.ktx2 normal_gl.jpg
 ```
+
+### Mapa de `/ubicacion` (fase 4)
+- Leaflet y su CSS se importan dinámicamente al pulsar «Ver mapa»; no entran en la landing ni en la carga inicial de la página. El marcador es un `divIcon` con CSS propio: no se usan las imágenes de Leaflet.
+- Las teselas del servidor público de OpenStreetMap están sujetas a su política de uso (https://operations.osmfoundation.org/policies/tiles/): válido para esta práctica por carga bajo demanda y bajo volumen. Con el gimnasio real y más tráfico habrá que usar un proveedor de teselas propio o de pago.
+- OpenStreetMap muestra un sitio real aunque la dirección sea ficticia: la página lleva un aviso visible (ver `09`).

@@ -1,0 +1,89 @@
+---
+// Parada 1: apertura y próximas clases. Las próximas se calculan en el cliente con la
+// hora de Madrid (index.astro); el HTML estático muestra las del primer día con clases.
+import { cargarFranjas, cargarGimnasio } from '../../../lib/contenido';
+import { ETIQUETA_DIA, proximasClases, textoApertura } from '../../../lib/etiquetas';
+
+const [franjas, gimnasio] = await Promise.all([cargarFranjas(), cargarGimnasio()]);
+// Respaldo sin JavaScript: el primer día de la semana, desde primera hora.
+const respaldo = proximasClases(franjas, 1, 0);
+const datos = JSON.stringify(franjas.map(({ id, dia, inicio, fin, clase, claseId, nivel }) => ({ id, dia, inicio, fin, clase, claseId, nivel }))).replace(/</g, '\u003c');
+---
+
+<div class="resumen">
+  <ul class="apertura no-movil">
+    {gimnasio.apertura.map((a) => <li>{textoApertura(a)}</li>)}
+  </ul>
+  {
+    respaldo.length > 0 && (
+      <div data-proximas>
+        <p class="rotulo" data-proximas-titulo>
+          Próximas clases · {ETIQUETA_DIA[respaldo[0].dia]}
+        </p>
+        <ul class="clases" data-proximas-lista>
+          {respaldo.map((c) => (
+            <li>
+              <span class="hora">{c.inicio}</span> <a href={`/clases#${c.claseId}`}>{c.clase}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  <script type="application/json" id="datos-horario" set:html={datos} />
+</div>
+
+<style>
+  .resumen {
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .apertura {
+    font-size: 0.95rem;
+  }
+
+  .rotulo {
+    margin: 0.6rem 0 0.2rem;
+    color: var(--color-chapa);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Las filas de las próximas clases las rehace el cliente: estilos globales acotados. */
+  .clases :global(.hora) {
+    display: inline-block;
+    min-width: 3.2rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .clases :global(a) {
+    display: inline-block;
+    padding-block: 0.1rem;
+    text-decoration: none;
+    text-underline-offset: 3px;
+  }
+
+  .clases :global(a:hover),
+  .clases :global(a:focus-visible) {
+    text-decoration: underline;
+  }
+
+  .clases :global(.en-curso) {
+    margin-left: 0.4rem;
+    padding: 0.05rem 0.4rem;
+    background: var(--color-acento);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>

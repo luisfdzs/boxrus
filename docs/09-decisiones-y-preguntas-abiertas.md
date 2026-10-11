@@ -66,20 +66,45 @@
 | 2026-10-10 | **Final en una sola transición**: Ubicación → cierre «Boxrus. Tu primera clase te espera.», con el avance al ventanal y el fundido a blanco dentro del tramo; se elimina la parada en el ventanal y el scroll extra del cierre (ahora capa fija en la pausa del epílogo) | Petición de Luis: las dos transiciones finales se hacían largas y pesadas. Dura lo mismo que las demás (un tramo; 2,2 s por gesto en móvil) |
 | 2026-10-10 | **Volver al inicio con un viaje**: el logotipo y un nuevo botón de Inicio en la píldora llevan al prólogo con la misma animación que los saltos del menú, sin recargar; los viajes pasan a funcionar también en escritorio (`crearViajes` en `paginado.ts`) | Petición de Luis |
 | 2026-10-10 | **Deslizamiento horizontal en móvil**: izquierda avanza, derecha retrocede, como el vertical; solo del prólogo a Ubicación (no hacia ni desde el cierre) | Petición de Luis |
+| 2026-10-11 | **Ciudad ficticia: Valdeacero** (pregunta 7). Nombre inventado por Claude, por encargo de Luis | Suena a ciudad industrial española y no existe |
+| 2026-10-11 | **Acento: rojo Boxrus `#d4382a`** (pregunta 8), el que ya usa `02` | Elección de Claude, por encargo de Luis: es el único acento cálido junto al ladrillo y ya está en la dirección de arte |
+| 2026-10-11 | **Tono: tuteo, cercano y agresivo** (pregunta 9): frases cortas, imperativos, energía de esquina del ring, sin insultos ni postureo | Decisión de Luis |
+| 2026-10-11 | **La píldora del menú no se oculta nunca**, tampoco en el cierre en blanco | Decisión de Luis |
+| 2026-10-11 | Sin pruebas en un teléfono real por ahora; se sigue con gestos simulados | Decisión de Luis |
+| 2026-10-11 | Rama `main` antigua **borrada** (local y GitHub) | Confirmación de Luis |
+| 2026-10-11 | **Dirección ficticia sobre un mapa real**: Calle de la Fundición, 14, Polígono Los Altos Hornos, 47990 Valdeacero; las coordenadas caen en campo abierto y la página avisa de que la dirección es ficticia | OpenStreetMap solo tiene sitios reales; así el marcador no señala ningún negocio existente. Recomendación de Claude aprobada por Luis |
+| 2026-10-11 | Teléfono `+34 600 000 000` y correo `hola@boxrus.example` (dominio reservado para ejemplos) | Que no puedan pertenecer a nadie |
+| 2026-10-11 | **Reflejos de los tubos en el tatami: franjas pintadas en el sombreador del suelo** (opción 2 de 3), en la **fase 6** | Recomendación de Claude aprobada por Luis. El entorno capturado (128 px, un solo punto) solo da un brillo difuso; un reflejo planar real dibujaría la escena dos veces |
+| 2026-10-11 | Horario en **un solo fichero** (`src/content/horario/semana.yaml`, loader `file()`, una franja con `id` por elemento) en vez de un fichero por franja | 33 franjas en 33 ficheros serían inmanejables para el gimnasio real |
+| 2026-10-11 | Las 6 disciplinas son las de `04`: boxeo, MMA, muay thai, kickboxing, grappling y preparación física | Se descarta el jiu-jitsu sin kimono que se mencionó en el plan: el grappling ya lo cubre |
+| 2026-10-11 | Fotos de la galería generadas con **Chrome sin ventana** (`herramientas/galeria/capturar.mjs` + `planos.json`) y el nuevo modo `?camara=` | La extensión de Chrome no estaba conectada; el script es repetible y sirve para regenerar la galería tras cambiar la escena |
+| 2026-10-11 | Logotipo de arriba **oculto en el prólogo** (`html[data-prologo]`) y con fundido al avanzar; el titular BOXRUS es el único rótulo del prólogo | Resuelve el pendiente de la coincidencia logotipo / titular |
+| 2026-10-11 | «Próximas clases» de la parada 1 con la hora de Madrid (`Europe/Madrid`), no la del visitante | El horario es del gimnasio |
+| 2026-10-11 | CSS de Leaflet enlazado al pulsar «Ver mapa» (`?url`), no importado | Con `import` Astro lo ponía en el HTML inicial |
+| 2026-10-11 | Teselas del servidor público de OpenStreetMap solo para la práctica; con tráfico real, proveedor propio (`07`) | Política de uso de las teselas de OSM |
+| 2026-10-11 | En el cierre del móvil no se muestra el horario de apertura del pie | El cierre no admite scroll interno con los gestos |
+| 2026-10-11 | `paradas.ts` gana `botonRuta` («Cómo llegar», con enlace calculado desde las coordenadas del contenido) y `saltar`; textos del prólogo y de las paradas 1 y 2 ajustados al tono | Fuente única de textos |
+| 2026-10-11 | **Rótulos BOXRUS de los postes** pintados con Anton en un `CanvasTexture` (la fuente ya la carga la página), una sola textura repetida dos veces alrededor: cada poste lo lleva hacia fuera y hacia dentro, sin llamadas de dibujo extra (+0,75 KB en la isla) | La misma marca que el logotipo, casi gratis en peso; el plano 2 ve los postes desde dentro |
+| 2026-10-11 | Rótulo en blanco roto `#e6e3dc` con una raya roja `#d4382a` de 14 mm bajo las letras; letras de 0,16 m centradas en `y = 1,55` | Que no se quemen con la luz de la jaula ni el bloom; detalle rojo de `02` |
+| 2026-10-11 | Encuadres para convivir con la interfaz de la fase 4: plano 2 escritorio mira (2,5, 1,5, −23,8); plano 2 móvil mira (4,53, 0,4, −21,88); prólogo móvil mira (0, −4, −30) | El panel tapaba el rótulo BOXRUS de los postes (escritorio y móvil) y tocaba la base de la jaula en el prólogo vertical; cifras comprobadas proyectando con la cámara real (ver `04`) |
+| 2026-10-11 | Revisión visual y auditoría de la fase 4 (agentes `revisor-visual` y `auditor-rendimiento`): se aplican sus recomendaciones. Galería a 13 fotos (fuera el banco, los balones, la pera y la vista repetida desde la entrada; dentro un primer plano del rótulo BOXRUS); miniaturas de la parada 3 con el campo `destacada` (guantes, marcador, malla) | Las piezas de primitivas de cerca tenían aspecto de videojuego (`02`, «Evitar») y había vistas repetidas |
+| 2026-10-11 | Textos al tuteo directo: «Aquí no vienes a mirar. Vienes a entrenar.», «Ven. La puerta está abierta.»; el cierre gana «No la hagas esperar.» y un botón «Reserva tu primera clase» → `/horario` | Tono cercano y agresivo (pregunta 9); el cierre se quedaba sin llamada a la acción |
+| 2026-10-11 | `window.naveRender` cuenta ahora el fotograma completo (`gl.info.autoReset = false` y reinicio al empezar cada fotograma) | Con postproceso solo contaba la última pasada (1 llamada); las cifras reales son 74–111 |
+| 2026-10-11 | Logotipo fijo oculto también en el **cierre** (coincide con el titular BOXRUS, en rojo); `SECCIONES` excluye siempre la parada E | Mismo choque que en el prólogo; el botón de E no debe colarse como sexta sección |
+| 2026-10-11 | **Paneles móviles cortos**: con el scroll por paradas, antetítulo, titular, una línea y botones (próxima clase, 6 nombres, 2 premios, calle y teléfono); el contenido largo vive en las páginas. Encuadres móviles de P y 2 y de escritorio de 2 reajustados (solo `mira`) para que la jaula y los rótulos queden sobre el panel | La revisión visual vio paneles del 45–50 % de la pantalla tapando la jaula y el poste con BOXRUS |
+| 2026-10-11 | Panel del prólogo de escritorio **centrado abajo**, entre los dos sacos | Respeta la composición simétrica saco–jaula–saco de `04` |
+| 2026-10-11 | Páginas con **cabecera fotográfica** (foto de la galería oscurecida, elegida por id) y navegación de una línea con scroll horizontal en móvil; enlaces de navegación ≥ 36 px (44 px en móvil) | Vínculo visual con la nave; objetivos táctiles de WCAG 2.2 (`target-size` de Lighthouse) |
+| 2026-10-11 | `site: 'https://boxrus.vercel.app'` (canónicas absolutas) y JSON-LD `ExerciseGym` con `url` e `image` en `/ubicacion`; el `noindex` sigue | SEO local de `06`, preparado para el gimnasio real |
 
 ## Preguntas abiertas
 
 | # | Pregunta | Afecta a | Cuándo hace falta |
 |---|---|---|---|
 | 6 | ¿Ajuste a paradas al dejar de hacer scroll o scroll libre? **En escritorio** (en móvil ya está decidido: scroll por paradas) | Coreografía | Fase 1 (probar ambos) |
-| 7 | ¿Ciudad para la dirección ficticia? (afecta al mapa) | Contenido | Fase 4 |
-| 8 | Paleta de marca: ¿rojo Boxrus (`#d4382a`) como acento o prefieres otro? | Interfaz | Fase 4 |
-| 9 | Tono de los textos (tú/usted, más agresivo o más cercano) | Interfaz | Fase 4 |
 
 ## Pendientes menores
-- Probar en un **teléfono real** (sobre todo iPhone/Safari) el scroll por paradas, el deslizamiento horizontal, el menú de píldora (con Inicio), la vuelta al inicio desde el logotipo y los saltos con fundido; solo se han probado con gestos simulados.
-- En el cierre en blanco del móvil sigue visible la píldora del menú: valorar ocultarla ahí (fase 4).
-- Rama **`main`** antigua en GitHub, sin uso (las ramas de trabajo son `dev`, `test` y `prod`): borrarla cuando Luis lo confirme.
+- Probar en un **teléfono real** (sobre todo iPhone/Safari) el scroll por paradas, el deslizamiento horizontal, el menú de píldora (con Inicio), la vuelta al inicio desde el logotipo y los saltos con fundido; solo se han probado con gestos simulados. *Aplazado por Luis (2026-10-11).*
 - `docs/02` **enlaza** la imagen de referencia de un tercero en un repositorio público (no la aloja). Valorar sustituir el enlace por una mención a la memoria local.
+- Rendimiento de la landing **sin medir con GPU**: Lighthouse en Chrome sin ventana (WebGL por software) da 59 en escritorio y 40 en móvil, que no son fiables; repetir en Chrome real o PageSpeed sobre `boxrustest` (fase 5). Las 5 páginas dan 98–100.
+- En la navegación móvil de las páginas, «Ubicación» queda cortada al borde (se alcanza con scroll horizontal): valorar una pista visual o abreviar.
 - Duración de los saltos: gesto 2,2 s, menú 1,5 s (`RECORRIDO.paginadoMovil`). Revisar en el teléfono si conviene igualarlas.
-- En el prólogo coinciden el logotipo de arriba y el titular grande «BOXRUS» (se revisará con la interfaz, fase 4).

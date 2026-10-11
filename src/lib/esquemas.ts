@@ -1,16 +1,12 @@
 // Esquemas puros de las colecciones de contenido (docs/05-arquitectura.md).
 // Viven fuera de content.config.ts para poder probarlos con Vitest.
 import { z } from 'astro/zod';
+import { DIAS, aMinutos } from './dias';
 
-export const DIAS = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'] as const;
+export { DIAS, aMinutos };
 export const NIVELES = ['iniciacion', 'intermedio', 'avanzado', 'todos'] as const;
 
 const hora = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Formato HH:MM');
-
-export const aMinutos = (hhmm: string): number => {
-  const [h, m] = hhmm.split(':').map(Number);
-  return h * 60 + m;
-};
 
 export const franjaHoraria = <T extends z.ZodRawShape>(forma: T) =>
   z
@@ -53,6 +49,8 @@ export const formaImagenGaleria = {
   alt: z.string().min(1),
   pie: z.string().optional(),
   orden: z.number().int(),
+  /** Sale entre las miniaturas de la parada Galería de la landing. */
+  destacada: z.boolean().default(false),
 };
 
 export const esquemaUbicacion = z.object({

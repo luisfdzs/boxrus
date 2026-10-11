@@ -1,0 +1,105 @@
+---
+// Navegación a las 5 secciones. En la landing (`landing`) es una píldora fija arriba a la
+// derecha en escritorio y cada enlace hace el viaje animado a su parada (lo conecta
+// index.astro con `data-indice`); en las páginas es la navegación de la cabecera.
+import { SECCIONES } from '../../lib/secciones';
+
+interface Props {
+  landing?: boolean;
+  /** Ruta de la página actual (marca `aria-current="page"`). */
+  actual?: string;
+}
+const { landing = false, actual } = Astro.props;
+---
+
+<nav class:list={['secciones', { landing }]} aria-label="Secciones">
+  <ul>
+    {
+      SECCIONES.map((s) => (
+        <li>
+          <a href={s.href} data-indice={landing ? s.indice : undefined} aria-current={actual === s.href ? 'page' : undefined}>
+            {s.nombre}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0.2rem 0.8rem;
+    color: var(--color-luz);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  a:hover {
+    border-bottom-color: var(--color-chapa);
+  }
+
+  a[aria-current] {
+    border-bottom-color: var(--color-acento);
+  }
+
+  /* Páginas en móvil: una sola línea con scroll horizontal (los enlaces enfocados se desplazan a la vista). */
+  @media (max-width: 640px) {
+    nav:not(.landing) {
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    nav:not(.landing) ul {
+      flex-wrap: nowrap;
+    }
+
+    nav:not(.landing) a {
+      min-height: 2.75rem;
+      padding-inline: 0.7rem;
+      white-space: nowrap;
+    }
+  }
+
+  /* Landing: píldora fija; en móvil (scroll por paradas) la sustituye el menú de píldora. */
+  .landing {
+    position: fixed;
+    top: calc(0.9rem + env(safe-area-inset-top));
+    right: clamp(0.75rem, 2vw, 1.5rem);
+    z-index: 3;
+    padding: 0.1rem 0.4rem;
+    background: rgb(13 14 16 / 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgb(255 255 255 / 0.08);
+    border-radius: 999px;
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  }
+
+  :global([data-paginado]) .landing {
+    display: none;
+  }
+
+  /* Ventana estrecha sin scroll por paradas: la píldora baja bajo el logotipo. */
+  @media (max-width: 900px) {
+    .landing {
+      top: calc(4rem + env(safe-area-inset-top));
+      right: 50%;
+      transform: translateX(50%);
+    }
+  }
+</style>

@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 ✅ (2026-10-10) · **Siguiente: fase 4** (punto de partida abajo, en la fase 4).
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 ✅ (2026-10-10) · **Fase 4 en curso** (desde el 2026-10-11): todo construido, pendiente de revisión y de la aprobación de Luis.
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -91,12 +91,12 @@ Estado al empezar:
 - **Peso:** isla inicial ~344,7 KB de 350. Lo que se añada a la isla (rótulos) debe ser casi gratis: textura por código con `CanvasTexture` como `Marcador.tsx`, **nada de `Text` de drei** (trae troika y una fuente). Leaflet solo en `/ubicacion`, cargado bajo demanda, nunca en la landing.
 
 Orden propuesto:
-1. Preguntas a Luis antes de escribir contenido: 7 (ciudad ficticia), 8 (acento rojo), 9 (tono).
-2. Contenido ficticio en `src/content/` (clases, horario, premios, ubicación) y galería con capturas propias de la escena (modo `?captura=1`, como la skill `verificar-visual`; son recursos propios, sin licencia externa).
-3. Páginas `/horario` (tabla accesible), `/clases`, `/galeria` (visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda con atribución de OpenStreetMap), con un layout de página común.
-4. Resúmenes del contenido en las paradas de la landing, cabecera de escritorio, «Saltar recorrido», indicador «01 / 05» y pie.
-5. Rótulos BOXRUS en los postes (hilo principal o agente `escena-3d`: el agente `interfaz` no toca la isla 3D).
-6. Pendiente heredado: en el prólogo coinciden el logotipo de arriba y el titular grande «BOXRUS» (`09`).
+1. ✅ Preguntas 7, 8 y 9 respondidas el 2026-10-11: ciudad ficticia Valdeacero, acento `#d4382a`, tuteo cercano y agresivo (ver `09`).
+2. ✅ (2026-10-11) Contenido ficticio en `src/content/` (clases, horario, premios, ubicación) y galería con capturas propias de la escena (modo `?captura=1`, como la skill `verificar-visual`; son recursos propios, sin licencia externa). Hecho con `herramientas/galeria/` (15 fotos).
+3. ✅ (2026-10-11, agente `interfaz`) Páginas `/horario` (tabla accesible), `/clases`, `/galeria` (visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda con atribución de OpenStreetMap), con un layout de página común.
+4. ✅ (2026-10-11, agente `interfaz`) Resúmenes del contenido en las paradas de la landing, cabecera de escritorio, «Saltar recorrido», indicador «01 / 05» y pie.
+5. ✅ (2026-10-11, agente `escena-3d`) Rótulos BOXRUS en los postes (hilo principal o agente `escena-3d`: el agente `interfaz` no toca la isla 3D).
+6. ✅ (logotipo oculto en el prólogo) Pendiente heredado: en el prólogo coinciden el logotipo de arriba y el titular grande «BOXRUS» (`09`).
 - Contenido ficticio completo en `src/content/`: horario semanal, 6 disciplinas, 4–6 premios inventados, 12–18 imágenes de galería (capturas de la escena), ubicación ficticia.
 - Interfaz de cada parada con resúmenes del contenido.
 - Páginas `/horario`, `/clases`, `/galeria` (con visor accesible), `/premios`, `/ubicacion` (mapa bajo demanda).

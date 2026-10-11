@@ -18,6 +18,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   margin: 0;
@@ -35,4 +39,103 @@ h3 {
   line-height: 1.05;
   letter-spacing: 0.01em;
   text-transform: uppercase;
+}
+
+a {
+  color: inherit;
+}
+
+/* Foco visible en todo el sitio (sobre fondo oscuro y sobre el fundido a blanco). */
+:focus-visible {
+  outline: 2px solid var(--color-luz);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px var(--color-acero);
+}
+
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* «Saltar al contenido»: invisible hasta que recibe el foco. */
+.saltar {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  background: var(--color-acento);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.saltar:focus {
+  transform: none;
+}
+
+/* Botón de acción: rojo Boxrus con texto blanco (contraste 4,8:1). */
+.boton {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  border: 2px solid var(--color-acento);
+  background: var(--color-acento);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background: #e0473a;
+  border-color: #e0473a;
+}
+
+.boton--borde {
+  background: transparent;
+  color: var(--color-luz);
+  border-color: var(--color-luz);
+}
+
+.boton--borde:hover {
+  background: rgb(255 244 226 / 0.12);
+  border-color: var(--color-luz);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Móvil con scroll por paradas: los paneles son más bajos y dejan ver la nave. */
+[data-paginado] .no-movil,
+[data-paginado] .panel [data-proximas-lista] li:nth-child(n + 2) {
+  display: none;
+}
+
+/* Textos que solo se ven en móvil (p. ej. separadores de una sola línea). */
+.solo-movil {
+  display: none;
+}
+
+[data-paginado] .solo-movil {
+  display: inline;
 }

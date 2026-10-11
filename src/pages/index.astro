@@ -1,24 +1,40 @@
 ---
 import Nave from '../components/nave/Nave';
+import Indicador from '../components/ui/Indicador.astro';
+import Logo from '../components/ui/Logo.astro';
 import MenuParadas from '../components/ui/MenuParadas.astro';
+import NavSecciones from '../components/ui/NavSecciones.astro';
+import Pie from '../components/ui/Pie.astro';
+import ResumenClases from '../components/ui/resumenes/ResumenClases.astro';
+import ResumenGaleria from '../components/ui/resumenes/ResumenGaleria.astro';
+import ResumenHorario from '../components/ui/resumenes/ResumenHorario.astro';
+import ResumenPremios from '../components/ui/resumenes/ResumenPremios.astro';
+import ResumenUbicacion from '../components/ui/resumenes/ResumenUbicacion.astro';
 import Base from '../layouts/Base.astro';
 import { PARADAS, RECORRIDO } from '../datos/paradas';
+import { cargarGimnasio, urlComoLlegar } from '../lib/contenido';
+import { SECCIONES } from '../lib/secciones';
 
 // El epílogo no lleva panel: su pausa es el cierre, sobre el fundido a blanco.
 const superpuestas = PARADAS.filter((p) => p.id !== 'E');
 const epilogo = PARADAS.find((p) => p.id === 'E')!;
-const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
+const gimnasio = await cargarGimnasio();
+// «Boxrus. Tu primera clase te espera.»: la primera frase (la marca) va en rojo.
+const [, tituloMarca, tituloResto] = epilogo.interfaz.titular.match(/^(.+?\.)\s+(.*)$/) ?? [, '', epilogo.interfaz.titular];
 ---
 
-<Base titulo="Boxrus" descripcion="Gimnasio de MMA y deportes de contacto. Recorre la nave: horario, clases, galería, premios y ubicación.">
+<Base titulo="Boxrus" descripcion="Gimnasio de MMA y deportes de contacto. Recorre la nave: horario, clases, galería, premios y ubicación." prologo>
   <div class="lienzo">
     <Nave client:only="react" />
   </div>
   <div class="fundido" aria-hidden="true"></div>
   <div class="corte" aria-hidden="true"></div>
+  <Logo fijo />
+  <NavSecciones landing />
+  <Indicador />
   <MenuParadas />
 
-  <main>
+  <main id="contenido" tabindex="-1">
     <div id="pista" class="pista" style={`--pantallas: ${RECORRIDO.pantallas}`}>
       {
         superpuestas.map((parada) => (
@@ -31,11 +47,31 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
                 <h2 id={`titular-${parada.id}`}>{parada.interfaz.titular}</h2>
               )}
               {parada.interfaz.subtitulo && <p class="subtitulo">{parada.interfaz.subtitulo}</p>}
-              {parada.interfaz.texto && <p>{parada.interfaz.texto}</p>}
-              {parada.interfaz.boton && (
-                <a class="boton" href={parada.interfaz.boton.href}>
-                  {parada.interfaz.boton.texto}
-                </a>
+              {parada.interfaz.texto && <p class="no-movil">{parada.interfaz.texto}</p>}
+              {parada.id === '1' && <ResumenHorario />}
+              {parada.id === '2' && <ResumenClases />}
+              {parada.id === '3' && <ResumenGaleria />}
+              {parada.id === '4' && <ResumenPremios />}
+              {parada.id === '5' && <ResumenUbicacion />}
+              {(parada.interfaz.boton || parada.interfaz.botonRuta || parada.interfaz.saltar) && (
+                <div class="acciones">
+                  {parada.interfaz.botonRuta && (
+                    <a class="boton" href={urlComoLlegar(gimnasio.coordenadas)} target="_blank" rel="noopener">
+                      {parada.interfaz.botonRuta}
+                      <span class="solo-lectores"> (se abre en otra pestaña)</span>
+                    </a>
+                  )}
+                  {parada.interfaz.boton && (
+                    <a class={parada.interfaz.botonRuta ? 'boton boton--borde' : 'boton'} href={parada.interfaz.boton.href}>
+                      {parada.interfaz.boton.texto}
+                    </a>
+                  )}
+                  {parada.interfaz.saltar && (
+                    <a class="boton boton--borde" href="#cierre" data-saltar>
+                      {parada.interfaz.saltar}
+                    </a>
+                  )}
+                </div>
               )}
               {parada.interfaz.indicacion && <p class="indicacion">{parada.interfaz.indicacion}</p>}
             </div>
@@ -44,19 +80,26 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
       }
     </div>
 
-    <section class="cierre" data-parada={epilogo.id} aria-labelledby="titular-cierre">
-      <h2 id="titular-cierre">{epilogo.interfaz.titular}</h2>
-      <nav aria-label="Secciones">
-        <ul>
-          {
-            secciones.map((p) => (
-              <li>
-                <a href={p.interfaz.boton?.href}>{p.interfaz.antetitulo}</a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
+    <section class="cierre" id="cierre" data-parada={epilogo.id} aria-labelledby="titular-cierre">
+      <div class="cierre-centro">
+        <h2 id="titular-cierre" tabindex="-1">
+          {tituloMarca && <span class="marca">{tituloMarca}</span>} {tituloResto}
+        </h2>
+        {epilogo.interfaz.subtitulo && <p class="cierre-subtitulo">{epilogo.interfaz.subtitulo}</p>}
+        {epilogo.interfaz.boton && <a class="boton boton--grande" href={epilogo.interfaz.boton.href}>{epilogo.interfaz.boton.texto}</a>}
+        <nav aria-label="Secciones">
+          <ul>
+            {
+              SECCIONES.map((s) => (
+                <li>
+                  <a href={s.href}>{s.nombre}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+      <Pie variante="claro" compacto />
     </section>
   </main>
 </Base>
@@ -68,11 +111,19 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
   import { suscribir } from '../lib/progreso';
   import { iniciarScroll } from '../lib/scroll';
   import type { ControladorViajes } from '../lib/paginado';
+  import { INDICE_CIERRE } from '../lib/secciones';
+  import { proximasClases, type FranjaSimple } from '../lib/etiquetas';
 
   const modo = leerModo();
   const pausas = calcularPausas();
   const secciones = [...document.querySelectorAll<HTMLElement>('[data-parada]')];
   const botones = [...document.querySelectorAll<HTMLButtonElement>('.menu button')];
+  // Cabecera de escritorio y puntos del indicador: mismos viajes que la píldora.
+  const enlaces = [...document.querySelectorAll<HTMLAnchorElement>('.secciones a[data-indice]')];
+  const indicador = document.querySelector<HTMLElement>('.indicador')!;
+  const puntos = [...indicador.querySelectorAll<HTMLButtonElement>('button')];
+  const numero = indicador.querySelector<HTMLElement>('[data-numero]')!;
+  const nombre = indicador.querySelector<HTMLElement>('[data-nombre]')!;
   let controlador: ControladorViajes | undefined;
   const fundido = document.querySelector<HTMLElement>('.fundido')!;
   const corte = document.querySelector<HTMLElement>('.corte')!;
@@ -100,10 +151,73 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     const cercana = pausas.reduce((m, pausa, k) => (Math.abs(pausa.centro - p) < Math.abs(pausas[m].centro - p) ? k : m), 0);
     const actual = String(destino ?? cercana);
     botones.forEach((b) => b.setAttribute('aria-current', String(b.dataset.indice === actual)));
+    enlaces.forEach((a) => (a.dataset.indice === actual ? a.setAttribute('aria-current', 'true') : a.removeAttribute('aria-current')));
+
+    // Logotipo oculto en el prólogo (ahí manda el titular BOXRUS); «01 / 05» solo en las paradas 1–5.
+    document.documentElement.toggleAttribute('data-prologo', p < pausas[0].fin);
+    document.documentElement.toggleAttribute('data-cierre', secciones.at(-1)!.hasAttribute('data-activa'));
+    const posicion = puntos.findIndex((b) => b.dataset.indice === actual);
+    indicador.toggleAttribute('data-visible', posicion >= 0 && secciones[Number(actual)]?.hasAttribute('data-activa') === true);
+    if (posicion >= 0) {
+      numero.textContent = String(posicion + 1).padStart(2, '0');
+      nombre.textContent = puntos[posicion].title;
+      puntos.forEach((b, k) => b.setAttribute('aria-current', String(k === posicion)));
+    }
   });
 
   controlador = iniciarScroll(document.getElementById('pista')!, modo, (opacidad) => (corte.style.opacity = String(opacidad)));
   botones.forEach((boton) => boton.addEventListener('click', () => controlador?.irA(Number(boton.dataset.indice))));
+  puntos.forEach((punto) => punto.addEventListener('click', () => controlador?.irA(Number(punto.dataset.indice))));
+  // En la landing, la cabecera hace el viaje animado; con teclas modificadoras se abre el enlace normal.
+  enlaces.forEach((enlace) =>
+    enlace.addEventListener('click', (e) => {
+      if (!controlador || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      controlador.irA(Number(enlace.dataset.indice));
+    }),
+  );
+
+  // «Saltar recorrido»: viaje al cierre y el foco al titular del cierre al llegar.
+  document.querySelector<HTMLAnchorElement>('[data-saltar]')?.addEventListener('click', (e) => {
+    if (!controlador) return;
+    e.preventDefault();
+    controlador.irA(INDICE_CIERRE);
+    const espera = setInterval(() => {
+      if (controlador?.destinoViaje() !== null) return;
+      clearInterval(espera);
+      document.getElementById('titular-cierre')?.focus({ preventScroll: true });
+    }, 100);
+  });
+
+  // Próximas clases del día con la hora del gimnasio (Madrid); sin JavaScript queda el respaldo estático.
+  const datosHorario = document.getElementById('datos-horario');
+  const cajaProximas = document.querySelector<HTMLElement>('[data-proximas]');
+  if (datosHorario?.textContent && cajaProximas) {
+    const franjas: FranjaSimple[] = JSON.parse(datosHorario.textContent);
+    const titulo = cajaProximas.querySelector<HTMLElement>('[data-proximas-titulo]')!;
+    const lista = cajaProximas.querySelector<HTMLElement>('[data-proximas-lista]')!;
+    const DIAS_INGLES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const formato = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const pintarProximas = () => {
+      const partes = Object.fromEntries(formato.formatToParts(new Date()).map((x) => [x.type, x.value]));
+      const proximas = proximasClases(franjas, DIAS_INGLES.indexOf(partes.weekday), Number(partes.hour) * 60 + Number(partes.minute));
+      if (proximas.length === 0) return;
+      titulo.textContent = `Próximas clases · ${proximas[0].cuando}`;
+      lista.replaceChildren(
+        ...proximas.map((c) => {
+          const li = document.createElement('li');
+          const hora = Object.assign(document.createElement('span'), { className: 'hora', textContent: c.inicio });
+          const enlace = Object.assign(document.createElement('a'), { href: `/clases#${c.claseId}`, textContent: c.clase });
+          li.append(hora, ' ', enlace);
+          if (c.enCurso) li.append(Object.assign(document.createElement('span'), { className: 'en-curso', textContent: 'En curso' }));
+          return li;
+        }),
+      );
+    };
+    pintarProximas();
+    setInterval(pintarProximas, 60_000);
+  }
+
   // El logotipo vuelve al prólogo con un viaje, como el menú.
   addEventListener('ir-al-inicio', (e) => {
     e.preventDefault();
@@ -205,25 +319,79 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     color: var(--color-chapa);
   }
 
-  .boton {
-    display: inline-block;
-    margin-top: 0.5rem;
-    padding: 0.6rem 1.1rem;
-    background: var(--color-acento);
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .panel p {
+    margin-block: 0.25rem;
+  }
+
+  .panel .antetitulo,
+  .panel .indicacion {
+    margin-block: 0;
+  }
+
+  .panel .indicacion {
+    margin-top: 0.75rem;
   }
 
   /* Sobre el fundido a blanco, que pone el fondo. */
   .cierre {
     inset: 0;
-    display: grid;
-    place-content: center;
-    gap: 1.5rem;
-    padding: 2rem;
+    display: flex;
+    flex-direction: column;
     text-align: center;
     color: var(--color-acero);
+  }
+
+  .cierre-centro {
+    display: grid;
+    flex: 1;
+    align-content: center;
+    gap: 1.5rem;
+    padding: 2rem;
+  }
+
+  .cierre :global(:focus-visible) {
+    outline-color: var(--color-acero);
+    box-shadow: 0 0 0 5px #fff;
+  }
+
+  .cierre .marca {
+    color: var(--color-acento);
+  }
+
+  .cierre-subtitulo {
+    margin: -0.75rem 0 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .cierre .cierre-centro :global(a.boton) {
+    color: #fff;
+  }
+
+  .cierre :global(.boton--grande) {
+    justify-self: center;
+    padding: 0.9rem 1.8rem;
+    font-size: 1.15rem;
+  }
+
+  .cierre nav a {
+    display: inline-block;
+    padding: 0.35rem 0.25rem;
+  }
+
+  .cierre h2:focus {
+    outline: none;
+  }
+
+  .cierre :global(.pie) {
+    text-align: left;
   }
 
   .cierre h2 {
@@ -246,9 +414,59 @@ const secciones = PARADAS.filter((p) => p.interfaz.antetitulo);
     font-weight: 600;
   }
 
-  /* La píldora del menú ocupa la parte baja: el panel sube por encima. */
+  /* La píldora del menú ocupa la parte baja: el panel y el cierre suben por encima. */
   :global([data-paginado]) .parada {
     padding-bottom: calc(4.9rem + env(safe-area-inset-bottom));
+  }
+
+  :global([data-paginado]) .cierre {
+    padding-bottom: calc(4.9rem + env(safe-area-inset-bottom));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parada,
+    .cierre {
+      transition: none;
+    }
+  }
+
+  /* Prólogo en escritorio: centrado abajo, en la franja de tatami entre los dos sacos. */
+  @media (min-width: 900px) {
+    :global(html:not([data-paginado])) #parada-P {
+      inset: auto auto 0 50%;
+      width: min(34rem, 38vw);
+      padding: 0 0 1.25rem;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+
+    :global(html:not([data-paginado])) #parada-P .panel {
+      padding: 0.9rem 1.25rem;
+      border-left: 0;
+      border-top: 3px solid var(--color-acento);
+    }
+
+    :global(html:not([data-paginado])) #parada-P h1 {
+      font-size: clamp(3rem, 6vw, 4.5rem);
+    }
+
+    :global(html:not([data-paginado])) #parada-P .acciones {
+      justify-content: center;
+    }
+  }
+
+  /* Móvil: paneles bajos (~38 % de la pantalla) para no tapar la nave. */
+  :global([data-paginado]) .panel {
+    padding: 0.75rem 1rem;
+  }
+
+  :global([data-paginado]) .panel h2 {
+    margin: 0.15rem 0 0.4rem;
+    font-size: 1.6rem;
+  }
+
+  :global([data-paginado]) .panel h1 {
+    font-size: 2.6rem;
   }
 
   @media (max-width: 640px) {

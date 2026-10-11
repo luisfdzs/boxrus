@@ -35,10 +35,13 @@ src/
     ubicacion/               # dirección, coordenadas, teléfono, apertura
   content.config.ts          # esquemas de las colecciones (zod)
   layouts/
-    Base.astro               # <html lang="es">, metadatos, fuentes, estilos globales
+    Base.astro               # <html lang="es">, metadatos, fuentes, estilos globales, «Saltar al contenido»
+    Pagina.astro             # layout de las páginas de sección: Cabecera + <main id="contenido"> + Pie
   components/
-    ui/                      # Astro: cabecera, paradas (HTML), progreso, saltar, pie,
-                             # MenuParadas (píldora del móvil), Logo (arriba, vuelve al inicio con un viaje)
+    ui/                      # Astro: Cabecera y NavSecciones (escritorio / páginas), Indicador «01 / 05»,
+                             # Pie, MenuParadas (píldora del móvil), Logo (arriba, vuelve al inicio con un viaje)
+      resumenes/             # Resumen{Horario,Clases,Galeria,Premios,Ubicacion}: lo que cada parada
+                             # de la landing lee de las colecciones
     nave/                    # isla React Three Fiber
       Nave.tsx               # <Canvas>, carga, niveles de calidad
       escena/                # Envolvente, Ventanales, Techo, Fluorescentes, Pilares,
@@ -54,6 +57,9 @@ src/
     progreso.ts              # estado compartido del progreso del scroll
     pausas.ts                # reparto del progreso en pausas (sin Three.js)
     paginado.ts              # scroll por paradas en móvil
+    contenido.ts             # lectura de las colecciones (clases, franjas, premios, galería, ubicación)
+    etiquetas.ts             # textos de días/niveles/salas, «lunes a viernes», próximas clases (con pruebas)
+    secciones.ts             # las 5 secciones (nombre, ruta, índice de parada) derivadas de paradas.ts
     trayectoria.ts           # progreso → posición, mira y campo de visión
     colisiones.ts            # obstáculos de la nave y prueba de colisiones
     scroll.ts                # Lenis + ScrollTrigger → progreso
@@ -78,6 +84,9 @@ tests/                       # Vitest
 ## Contenido ficticio
 - Realista pero inventado: nombres de clases y niveles plausibles, horarios coherentes, premios con organismos **inventados** (nunca organizaciones o personas reales), dirección y teléfono ficticios.
 - Las imágenes de la galería, en este proyecto, son **capturas de la propia escena 3D** (en modo `?captura=1`, desde ángulos extra) más imágenes generadas por código; nada de fotos de terceros.
+- Galería: `src/content/galeria/NN-nombre.yaml` + el `.jpg` junto a él; `/galeria` y las miniaturas de la parada 3 usan `astro:assets` (miniaturas responsive en WebP; versión de 1600 px para el visor).
+- Horario: un único `src/content/horario/semana.yaml` (loader `file()`); cada franja tiene `id` y `clase` referencia a `clases`.
+- Próximas clases de la parada 1: se calculan en el cliente con la hora de Madrid a partir de un JSON incrustado en la página (`#datos-horario`); sin JavaScript queda el primer día de la semana.
 - Mapa de `/ubicacion`: mapa interactivo de OpenStreetMap (Leaflet) **cargado bajo demanda** al pulsar, para no penalizar la carga; enlace «Cómo llegar» a un servicio de mapas.
 
 ## Flujo scroll → cámara → interfaz

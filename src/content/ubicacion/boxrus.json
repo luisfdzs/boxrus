@@ -1,0 +1,16 @@
+{
+  "nombre": "Boxrus",
+  "direccion": {
+    "calle": "Calle de la Fundición, 14 (Polígono Los Altos Hornos)",
+    "codigoPostal": "47990",
+    "localidad": "Valdeacero",
+    "provincia": "Valdeacero"
+  },
+  "coordenadas": { "lat": 41.6012, "lng": -4.8473 },
+  "telefono": "+34 600 000 000",
+  "email": "hola@boxrus.example",
+  "apertura": [
+    { "dias": ["lunes", "martes", "miercoles", "jueves", "viernes"], "inicio": "07:00", "fin": "22:30" },
+    { "dias": ["sabado"], "inicio": "09:00", "fin": "14:00" }
+  ]
+}

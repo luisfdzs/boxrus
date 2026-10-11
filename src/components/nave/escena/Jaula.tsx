@@ -1,10 +1,26 @@
-import { useMemo } from 'react';
-import { BufferGeometry, Float32BufferAttribute } from 'three';
+import { use, useMemo } from 'react';
+import { BufferGeometry, Float32BufferAttribute, Quaternion, Vector3 } from 'three';
 import { JAULA, verticesJaula } from '../../../datos/nave';
+import { giroPoste } from '../../../lib/rotulo';
 import { CILINDRO_UNIDAD, Cajas, barra, type Caja } from './Cajas';
 import { MATERIALES } from './materiales';
+import { prepararRotulo } from './rotuloPostes';
 
 const [cx, , cz] = JAULA.centro;
+const EJE_Y = new Vector3(0, 1, 0);
+
+/**
+ * Cilindro unidad de los postes con las tapas apuntando a una esquina de fondo de
+ * la textura del rótulo: con sus UV radiales, el rótulo asomaría en la tapa de arriba.
+ * Los primeros vértices son el tubo (una fila por altura); el resto, las tapas.
+ */
+const CILINDRO_POSTE = (() => {
+  const g = CILINDRO_UNIDAD.clone();
+  const uv = g.getAttribute('uv');
+  const { radialSegments, heightSegments } = CILINDRO_UNIDAD.parameters;
+  for (let i = (radialSegments + 1) * (heightSegments + 1); i < uv.count; i++) uv.setXY(i, 0, 0);
+  return g;
+})();
 const esCaraConPuerta = (i: number) => {
   const normal = JAULA.anguloVertice0 + i * 45 + 22.5;
   return Object.values(JAULA.puertas).some((a) => Math.abs(((normal - a + 540) % 360) - 180) < 1);
@@ -22,7 +38,12 @@ function piezas() {
 
   vertices.forEach(([x, z], i) => {
     const d = JAULA.poste.radio * 2;
-    postes.push({ posicion: [x, JAULA.poste.alto / 2, z], tamano: [d, JAULA.poste.alto, d] });
+    // Girado para que el rótulo mire hacia fuera (y su copia, hacia dentro).
+    postes.push({
+      posicion: [x, JAULA.poste.alto / 2, z],
+      tamano: [d, JAULA.poste.alto, d],
+      rotacion: new Quaternion().setFromAxisAngle(EJE_Y, giroPoste(i)),
+    });
     const [x1, z1] = vertices[(i + 1) % 8];
     cable.push(barra([x, JAULA.cable.y, z], [x1, JAULA.cable.y, z1], JAULA.cable.radio * 2));
 
@@ -51,6 +72,8 @@ function piezas() {
 }
 
 export function Jaula() {
+  // Suspende hasta tener la textura del rótulo (fuente cargada y lienzo pintado).
+  use(prepararRotulo());
   const { postes, malla, cable } = useMemo(piezas, []);
   const h = JAULA.altoPlataforma;
   const tapa = 0.08;
@@ -65,7 +88,7 @@ export function Jaula() {
           args={[JAULA.radio - JAULA.retranqueoFaldon, JAULA.radio - JAULA.retranqueoFaldon, h - tapa, 8, 1, false, Math.PI / 8]}
         />
       </mesh>
-      <Cajas cajas={postes} material={MATERIALES.acolchado} geometria={CILINDRO_UNIDAD} sombras />
+      <Cajas cajas={postes} material={MATERIALES.acolchadoPoste} geometria={CILINDRO_POSTE} sombras />
       <Cajas cajas={cable} material={MATERIALES.acolchado} />
       <mesh geometry={malla} material={MATERIALES.malla} />
     </group>
