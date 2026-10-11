@@ -4,6 +4,12 @@ Boxrus es un gimnasio ficticio de MMA y deportes de contacto. Este repo es un **
 
 @memory/MEMORY.md
 
+## Al empezar una sesión sin contexto
+Si Luis abre la sesión con un saludo («hola») o sin un encargo concreto, retoma el proyecto donde quedó:
+1. Lee la nota de arranque de la fase en curso de la memoria local (`arranque-fase-N` en el índice de arriba) y sigue su **prompt inicial** como si Luis lo hubiera pegado. Si no hay nota, el estado está en `docs/08-hoja-de-ruta.md` (sección «Estado» y «Punto de partida» de la fase siguiente).
+2. Comprueba que el repo coincide con la nota (`git status`, `git log --oneline -3`, rama `dev`) y avisa si no.
+3. Responde con un resumen breve del estado y lo que toca, y ejecuta el **primer paso** del prompt (normalmente: leer los documentos indicados y presentar el plan de la fase). No implementes nada hasta que Luis apruebe el plan.
+
 ## Documentación: léela antes de trabajar
 El plan completo está en `docs/` (índice en `docs/README.md`):
 - Escena 3D → `docs/02-direccion-de-arte.md` y `docs/03-escena.md`
