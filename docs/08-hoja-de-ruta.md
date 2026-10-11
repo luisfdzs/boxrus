@@ -7,7 +7,7 @@ Agentes: ver `.claude/agents/` y la política de uso en `.claude/CLAUDE.md`. El 
 ---
 
 ## Estado
-- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 ✅ (2026-10-10) · **Fase 4 en curso** (desde el 2026-10-11): todo construido, pendiente de revisión y de la aprobación de Luis.
+- Fase 0 ✅ · Fase 1 ✅ (2026-10-10) · Fase 2 ✅ (2026-10-10) · Fase 3 ✅ (2026-10-10) · Fase 4 ✅ (2026-10-11) · **Siguiente: fase 5** (punto de partida abajo, en la fase 5).
 
 ## Fase 0 · Preparación
 - Limpiar el starter de Astro.
@@ -105,11 +105,22 @@ Orden propuesto:
 - Agente: `interfaz`.
 
 **Criterios de aceptación:**
-- [ ] Cambiar un dato en `src/content/` actualiza landing y página sin tocar código.
-- [ ] Navegación completa con teclado; horario como tabla accesible.
-- [ ] **Aprobación de Luis** de textos y diseño.
+- [x] Cambiar un dato en `src/content/` actualiza landing y página sin tocar código.
+- [x] Navegación completa con teclado; horario como tabla accesible (comprobado por el agente `auditor-rendimiento` con el protocolo de depuración de Chrome).
+- [x] **Aprobación de Luis** de textos y diseño.
+
+**✅ Fase 4 aprobada por Luis el 2026-10-11** (publicada en `dev`, `test` y `prod`, commit `e29d73d`). Resultado: contenido ficticio de Valdeacero en `src/content/` (6 clases, 33 franjas de horario, 5 premios, ubicación, 13 fotos de galería generadas con `herramientas/galeria/`), las 5 páginas con cabecera fotográfica, interfaz completa de la landing (resúmenes, cabecera, «Saltar recorrido», indicador, cierre con llamada a la acción, pie) y rótulos BOXRUS en los 8 postes. Revisión visual y auditoría aplicadas; decisiones en `09`.
 
 ## Fase 5 · Rendimiento, accesibilidad y alternativas
+Punto de partida en una sesión nueva: leer `06` (presupuestos, niveles de calidad, alternativas sin 3D, SEO local, estado del peso), `05` («Carga y renderizado»), `03` (iluminación y postproceso, para saber qué apagar en cada nivel), `09` (decisiones del 2026-10-11 y «Pendientes menores») y la memoria local (`arranque-fase-5` y `entorno-local`).
+
+Estado al empezar:
+- **No existe todavía:** `src/lib/soporte.ts` (WebGL, movimiento reducido, nivel de calidad), los **niveles de calidad**, los **pósters** de los 7 planos (`public/posters/`), la **versión estática**, Open Graph ni sitemap. El JSON-LD `ExerciseGym` ya está en `/ubicacion` y `site` en `astro.config.mjs`.
+- **Rendimiento de la landing sin medir de verdad:** Lighthouse en Chrome sin ventana (WebGL por software) da 59 en escritorio y 40 en móvil, cifras no fiables. Medir en Chrome con GPU o con PageSpeed sobre `boxrus.vercel.app` (público). Las 5 páginas dan 98–100.
+- **Llamadas de dibujo reales** (fotograma completo, `window.naveRender` corregido): 74–111 según el plano, ~77.000–84.000 triángulos. Cumple el tope de escritorio (150), pero **P, 1, 2 y 4 pasan del de móvil (80)**: los niveles medio y bajo tienen que quitar pasadas (sombras, SSAO) o geometría.
+- **Peso:** isla inicial 344,9 KB de 350. Lo que se añada para los niveles de calidad o la versión estática no puede entrar en la isla: fuera de ella (script de la página) o en trozos diferidos.
+- La extensión de Chrome puede no estar conectada: capturas y mediciones con `herramientas/verificar/capturar.mjs` (Chrome sin ventana). Ver la skill `verificar-visual`.
+
 - Niveles de calidad y ajuste automático.
 - Pósters de los 7 planos y versión estática.
 - Datos estructurados `ExerciseGym`, Open Graph, sitemap.

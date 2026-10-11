@@ -18,4 +18,9 @@ Procedimiento:
 5. Versión estática con movimiento reducido y sin WebGL.
 6. Validez de los datos estructurados `ExerciseGym` (horarios, dirección).
 
+Lo aprendido en la fase 4 (2026-10-11):
+- **Chrome sin ventana (`--headless`) dibuja WebGL por software**: sus cifras de rendimiento, TBT, LCP y FPS de la landing **no son fiables** (dio 59/40). Para la landing, mide con Chrome real con GPU o con PageSpeed sobre `boxrus.vercel.app` (público); las páginas sin 3D sí se pueden medir sin ventana.
+- `window.naveRender` cuenta el **fotograma completo** (todas las pasadas: sombras, SSAO, escena y postproceso); antes solo contaba la última. Referencia: 74–111 llamadas según el plano.
+- Si la extensión de Chrome no está conectada, controla Chrome sin ventana por el protocolo de depuración (ejemplo en `herramientas/verificar/capturar.mjs`). Si usas `npm run preview`, para el proceso al terminar y comprueba que no queda escuchando en el puerto.
+
 Devuelve una tabla métrica por métrica (objetivo, medido, cumple/no cumple) y mejoras ordenadas por impacto/esfuerzo, con fichero y causa probable. No hagas cambios.

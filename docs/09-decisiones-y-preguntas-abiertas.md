@@ -95,6 +95,7 @@
 | 2026-10-11 | Panel del prólogo de escritorio **centrado abajo**, entre los dos sacos | Respeta la composición simétrica saco–jaula–saco de `04` |
 | 2026-10-11 | Páginas con **cabecera fotográfica** (foto de la galería oscurecida, elegida por id) y navegación de una línea con scroll horizontal en móvil; enlaces de navegación ≥ 36 px (44 px en móvil) | Vínculo visual con la nave; objetivos táctiles de WCAG 2.2 (`target-size` de Lighthouse) |
 | 2026-10-11 | `site: 'https://boxrus.vercel.app'` (canónicas absolutas) y JSON-LD `ExerciseGym` con `url` e `image` en `/ubicacion`; el `noindex` sigue | SEO local de `06`, preparado para el gimnasio real |
+| 2026-10-11 | **Fase 4 aprobada** y publicada en `dev`, `test` y `prod` (`e29d73d`) | Aprobación de Luis |
 
 ## Preguntas abiertas
 
